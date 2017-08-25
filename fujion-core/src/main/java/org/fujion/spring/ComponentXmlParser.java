@@ -37,9 +37,9 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
  *        http://www.fujion.org/schema/extensions/component-extensions.xsd">
  *
  *    <!-- Scan by package -->
- *    <ffc:component-scan package="org.carewebframework.shell" />
+ *    <ffc:component-scan package="org.acme.foo" />
  *    <!-- Scan by class -->
- *    <ffc:component-scan class="org.carewebframework.shell.CareWebShell" />
+ *    <ffc:component-scan class="org.acme.foo.Bar" />
  * </beans>
  * }
  * </pre>

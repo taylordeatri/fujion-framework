@@ -59,7 +59,7 @@
 			<artifactId>fbjs</artifactId>
 			<version>0.8.12</version>
 		</dependency>
-		<!-- CareWeb Framework -->
+		<!-- Fujion Framework -->
 		<dependency>
 			<groupId>org.fujion</groupId>
 			<artifactId>fujion-core</artifactId>

@@ -77,7 +77,7 @@
 	</build>
 	
 	<dependencies>
-		<!-- CareWeb Framework -->
+		<!-- Fujion Framework -->
 		<dependency>
 			<groupId>org.fujion</groupId>
 			<artifactId>fujion-core</artifactId>

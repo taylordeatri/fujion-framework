@@ -5,14 +5,14 @@
     <!-- Appenders -->
     <appender class="org.apache.log4j.DailyRollingFileAppender" name="exc">
         <param value="'.'yyyy-MM-dd" name="DatePattern"/>
-        <param value="${java.io.tmpdir}/log/CareWeb-exception.log" name="File"/>
+        <param value="${java.io.tmpdir}/log/fujion-exception.log" name="File"/>
         <layout class="org.apache.log4j.PatternLayout">
             <param value="%d{yyyy-MM-dd HH:mm:ss.SSS} %p %t %c - %m%n" name="ConversionPattern"/>
         </layout>
     </appender>
     <appender class="org.apache.log4j.DailyRollingFileAppender" name="R">
         <param value="'.'yyyy-MM-dd" name="DatePattern"/>
-        <param value="${java.io.tmpdir}/log/CareWeb.log" name="File"/>
+        <param value="${java.io.tmpdir}/log/fujion.log" name="File"/>
         <layout class="org.apache.log4j.PatternLayout">
             <param value="%d{yyyy/MM/dd HH:mm:ss.SSS} %p %t %c - %m%n" name="ConversionPattern"/>
         </layout>
