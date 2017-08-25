@@ -1,0 +1,20 @@
+.fujion_codemirror {
+  display: flex;
+  flex-direction: column;
+}
+
+.fujion_codemirror > .CodeMirror {
+  flex: 1;
+  width: 100%;
+}
+
+.fujion_codemirror .CodeMirror-placeholder,
+.fujion_codemirror .CodeMirror-empty {
+  opacity: .5;
+}
+
+.fujion_codemirror .CodeMirror-matchingtag {
+  	background: rgba(255, 250, 0, .3); 
+  	text-decoration: underline;
+}
+

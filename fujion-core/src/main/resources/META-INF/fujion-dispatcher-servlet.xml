@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" 
+	xmlns:websocket="http://www.springframework.org/schema/websocket"
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context  
+ 		http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        http://www.springframework.org/schema/websocket
+        http://www.springframework.org/schema/websocket/spring-websocket.xsd">
+
+	<context:property-placeholder
+		location="classpath*:/META-INF/*-default.properties,${org.fujion.location.properties:classpath:fujion*.properties}"
+		ignore-resource-not-found="true"  />
+
+	<context:component-scan base-package="org.fujion" />
+
+	<mvc:annotation-driven />
+
+	<mvc:interceptors>
+
+		<bean class="org.springframework.web.servlet.mvc.WebContentInterceptor">
+			<property name="cacheMappings">
+				<props>
+					<prop key="/**/*.fsp">0</prop>
+				</props>
+			</property>
+		</bean>
+
+		<bean class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor">
+			<property name="paramName" value="locale" />
+		</bean>
+
+	</mvc:interceptors>
+
+	<bean id="fujion_WebSocketHandler" 
+		class="org.fujion.websocket.WebSocketHandler" />
+
+	<bean class="org.springframework.web.socket.server.standard.ServletServerContainerFactoryBean">
+		<property name="asyncSendTimeout" 
+			value="${org.fujion.websocket.asyncSendTimeout}" />		
+		<property name="maxSessionIdleTimeout" 
+			value="${org.fujion.websocket.maxSessionIdleTimeout}" />		
+		<property name="maxBinaryMessageBufferSize" 
+			value="${org.fujion.websocket.maxBinaryMessageBufferSize}" />		
+		<property name="maxTextMessageBufferSize" 
+			value="${org.fujion.websocket.maxTextMessageBufferSize}" />		
+	</bean>
+	
+	<bean id="fujion_Sessions" 
+		factory-method="getInstance"
+		class="org.fujion.websocket.Sessions" />
+	
+	<bean id="fujion_WebJarLocator" 
+		factory-method="getInstance"
+		class="org.fujion.client.WebJarLocator" />
+	
+	<bean class="org.fujion.event.EventRequestHandler" />
+
+	<bean class="org.fujion.websocket.InitRequestHandler" />
+	
+	<bean class="org.fujion.client.PingRequestHandler" />
+
+	<bean class="org.fujion.logging.LogRequestHandler" />
+
+	<bean id="fujion_ComponentScanner" 
+		factory-method="getInstance"
+		class="org.fujion.annotation.ComponentScanner" />
+	
+	<bean id="fujion_EventTypeScanner" 
+		factory-method="getInstance"
+		class="org.fujion.annotation.EventTypeScanner" />
+	
+	<bean id="fujion_ELEvaluator" 
+		factory-method="getInstance"
+		class="org.fujion.expression.ELEvaluator" />
+
+	<bean id="messageSource" name="msg,message"
+		factory-method="getInstance"
+		class="org.fujion.spring.ClasspathMessageSource" />
+
+	<bean id="localeResolver"
+		class="org.springframework.web.servlet.i18n.SessionLocaleResolver">
+		<property name="defaultLocale" value="en" />
+	</bean>
+	
+	<bean factory-method="getInstance" 
+		class="org.fujion.taglib.TagLibraryRegistry" />
+	
+	<bean factory-method="getInstance"
+		class="org.fujion.script.ScriptRegistry" />
+	
+	<bean factory-method="getInstance" depends-on="fujion_WebJarLocator"
+		class="org.fujion.theme.ThemeRegistry" />
+	
+	<bean class="org.springframework.beans.factory.config.MethodInvokingBean">
+		<property name="staticMethod" value="org.fujion.core.InitLocalizer.init" />
+	</bean>
+	
+	<bean class="org.springframework.beans.factory.config.MethodInvokingBean">
+		<property name="staticMethod" value="org.fujion.logging.LogUtil.initSettings" />
+		<property name="arguments">
+			<map>
+				<entry key="debug" 
+					value="${org.fujion.logging.debug:NONE}" />
+				<entry key="error" 
+					value="${org.fujion.logging.error:BOTH}" />
+				<entry key="fatal" 
+					value="${org.fujion.logging.fatal:BOTH}" />
+				<entry key="info" 
+					value="${org.fujion.logging.info:NONE}" />
+				<entry key="trace" 
+					value="${org.fujion.logging.trace:NONE}" />
+				<entry key="warn" 
+					value="${org.fujion.logging.warn:NONE}" />
+			</map>
+		</property>
+	</bean>
+
+</beans>

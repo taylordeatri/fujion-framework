@@ -1,0 +1,8 @@
+<span controller="org.fujion.testharness.TimerController">
+	<div>timer: name="timer" repeat="5" interval="2000" running="false"</div>
+	<timer name="timer" repeat="5" interval="2000" running="false" />
+	<toolbar>
+		<button name="btnToggleTimer" />
+		<progressbar name="pbTimer" />
+	</toolbar>
+</span>

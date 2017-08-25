@@ -1,0 +1,27 @@
+<head>
+	<title></title>
+	<base href='${baseUrl}' target='#'>
+</head>
+
+<body>
+	<script src='webjars/systemjs/dist/system.js'></script>
+	
+	<script>
+        System.config(
+        	${webjarInit}
+        );
+        
+		System.import('fujion-core').then(function(fujion) {
+			fujion.init({
+				pid: '${pid}',
+				baseurl: '${baseUrl}',
+				wsurl: '${wsUrl}',
+				debug: ${debug},
+				keepalive: ${keepalive},
+				logging: ${logging}
+			});	
+		});
+	</script>
+	
+	<div id='fujion_root' style='visibility:hidden'></div>
+</body>

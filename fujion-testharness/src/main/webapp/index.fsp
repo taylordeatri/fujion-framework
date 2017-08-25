@@ -1,0 +1,114 @@
+ 
+<page name="page" title="Fujion Test Harness"> 
+	<messagewindow name="messagewindow" />
+	
+	<window title="Fujion Component Tests" class="flavor:panel-primary" 
+		controller="org.fujion.testharness.MainController">
+		<tabview name="tabview" height="500px" tabPosition="left">
+			<tab>
+				<import src="pages/@intro.fsp" />
+			</tab>
+			
+			<tab label="Angular" hint="${@msg.fujion.testharness.angular}">
+				<import src="web/org/fujion/angular/example/pomodoro.fsp" />
+			</tab>
+			
+			<tab label="Buttons" hint="${@msg.fujion.testharness.buttons}">
+				<import src="pages/buttons.fsp" />
+			</tab>
+			
+			<tab label="Chart" hint="${@msg.fujion.testharness.chart}">
+				<import src="pages/chart.fsp" />
+			</tab>
+			
+			<tab label="Conditionals" hint="${@msg.fujion.testharness.conditionals}">
+				<import src="pages/conditionals.fsp" />
+			</tab>
+			
+			<tab label="Drag &amp; Drop" hint="${@msg.fujion.testharness.dnd}">
+				<import src="pages/dnd.fsp" />
+			</tab>
+
+			<tab label="EL Expressions" hint="${@msg.fujion.testharness.explang}">
+				<import src="pages/explang.fsp" />
+			</tab>
+			
+			<tab label="Grid" hint="${@msg.fujion.testharness.grids}">
+				<import src="pages/grids.fsp" />
+			</tab>
+			
+			<tab label="HTML" hint="${@msg.fujion.testharness.html}">
+				<import src="pages/html.fsp" />
+			</tab>
+			
+			<tab label="IFrame" hint="${@msg.fujion.testharness.iframe}">
+				<import src="pages/iframe.fsp" />
+			</tab>
+			
+			<tab name="tabInputBoxes" label="Input Boxes" hint="${@msg.fujion.testharness.boxes}">
+				<import src="pages/boxes.fsp" />
+			</tab>
+
+			<tab label="Menus" hint="${@msg.fujion.testharness.menus}">
+				<import src="pages/menus.fsp" />
+			</tab>
+			
+			<tab label="Miscellaneous" hint="${@msg.fujion.testharness.misc}">
+				<import src="pages/misc.fsp" />
+			</tab>
+			
+			<tab label="Paneview" hint="${@msg.fujion.testharness.panes}">
+				<import src="pages/panes.fsp" />
+			</tab>
+
+			<tab label="React" hint="${@msg.fujion.testharness.react}">
+				<import src="web/org/fujion/react/example/pomodoro.fsp" />
+			</tab>
+			
+			<tab label="Sandbox" hint="${@msg.fujion.testharness.sandbox}">
+				<import src="web/org/fujion/sandbox/main.fsp" />
+			</tab>
+			
+			<tab label="Scripts" hint="${@msg.fujion.testharness.scripts}">
+				<import src="pages/scripts.fsp" />
+			</tab>
+			
+			<tab label="Styles" selected="true" hint="${@msg.fujion.testharness.styles}">
+				<import src="pages/styles.fsp" />
+			</tab>
+			
+			<tab label="Subclassing" hint="${@msg.fujion.testharness.subclass}">
+				<import src="pages/subclass.fsp" />
+			</tab>
+			
+			<tab label="Tabview" hint="${@msg.fujion.testharness.tabs}">
+				<import src="pages/tabs.fsp" />
+			</tab>			
+												
+			<tab label="Template" hint="${@msg.fujion.testharness.template}">
+				<import src="pages/templates.fsp" />
+			</tab>
+			
+			<tab label="Timer" hint="${@msg.fujion.testharness.timer}">
+				<import src="pages/timer.fsp" />
+			</tab>
+			
+			<tab label="Tree" hint="${@msg.fujion.testharness.trees}">
+				<import src="pages/trees.fsp" />
+			</tab>
+			
+			<tab label="Window" hint="${@msg.fujion.testharness.windows}">
+				<import src="pages/windows.fsp" />
+			</tab>
+									
+		</tabview>
+		
+						
+		<label label="Status log:" style="display:block"/>
+		<memobox name="statusLog" height="100px" width="100%" readonly="true" autoScroll="true" />
+		<toolbar width="100%" alignment="start">
+			<button name="btnClearLog" label="Clear Log" />
+			<checkbox name="chkScrollLock" label="Scroll Lock" checked="true" />
+		</toolbar>
+	</window>
+</page>

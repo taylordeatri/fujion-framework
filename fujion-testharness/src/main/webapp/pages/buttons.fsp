@@ -1,0 +1,108 @@
+<page>
+	<grid controller="org.fujion.testharness.ButtonsController">
+		<columns style="visibility:hidden">
+			<column width="40%" />
+			<column width="80%" />
+		</columns>
+		<rows>
+			<row>
+				<button label="fire event" name="btnWithEvent" />
+				This button should have an event handler.
+			</row>
+			<row>
+				<button label="image" image="images/ri.png" />
+				This is a button with an image.
+			</row>
+			<row>
+				<link label="link" name="link" href="about://" target="about" />
+				This is a simple hyperlink.
+			</row>
+			<row>
+				<link label="link+image" image="images/ri.png" />
+				This is a hyperlink with an image.
+			</row>
+			<row>
+				<image src="images/ri.png" alt="this is alt text" />
+				This is just a standalone image.
+			</row>
+			<row>
+				<radiogroup name="rg1">
+					<radiobutton label="button #1" />
+					<radiobutton label="button #2" checked="true" />
+					<radiobutton label="button #3" />
+					<radiobutton label="button #4" />
+				</radiogroup>
+				This is a group of horizontally arranged radio buttons.  The second should be selected initially
+				and selection should be mutually exclusive.
+			</row>
+			<row>
+				<radiogroup name="rg2" orientation="vertical">
+					<radiobutton label="button #1" />
+					<radiobutton label="button #2" checked="true" />
+					<radiobutton label="button #3" />
+					<radiobutton label="button #4" />
+				</radiogroup>
+				Same as above, but vertically arranged.
+			</row>
+			<row>
+				<toolbar>
+					<button class="flavor:btn-default" label="default" />
+					<button class="flavor:btn-primary" label="primary" />
+					<button class="flavor:btn-info" label="info" />
+					<button class="flavor:btn-danger" label="danger" />
+					<button class="flavor:btn-success" label="success" />
+					<button class="flavor:btn-warning" label="warning" />
+				</toolbar>
+				This is a horizontal, start aligned toolbar with styled buttons.
+			</row>
+			<row>
+				<span style="display: flex">
+					<toolbar orientation="vertical" alignment="start" height="200px">
+						<button class="flavor:btn-danger" label="danger" />
+						<button class="flavor:btn-success" label="success" />
+						<button class="flavor:btn-warning" label="warning" />
+					</toolbar>
+					<toolbar orientation="vertical" alignment="center" height="200px">
+						<button class="flavor:btn-danger" label="danger" />
+						<button class="flavor:btn-success" label="success" />
+						<button class="flavor:btn-warning" label="warning" />
+					</toolbar>
+					<toolbar orientation="vertical" alignment="end" height="200px">
+						<button class="flavor:btn-danger" label="danger" />
+						<button class="flavor:btn-success" label="success" />
+						<button class="flavor:btn-warning" label="warning" />
+					</toolbar>
+				</span>
+				Vertically-oriented toolbars with start, center, and end alignments.
+			</row>
+			<row>
+				<span>
+					<toolbar orientation="horizontal" alignment="start" width="250px">
+						<button class="flavor:btn-danger" label="danger" />
+						<button class="flavor:btn-success" label="success" />
+						<button class="flavor:btn-warning" label="warning" />
+					</toolbar>
+					<toolbar orientation="horizontal" alignment="center" width="250px">
+						<button class="flavor:btn-danger" label="danger" />
+						<button class="flavor:btn-success" label="success" />
+						<button class="flavor:btn-warning" label="warning" />
+					</toolbar>
+					<toolbar orientation="horizontal" alignment="end" width="250px">
+						<button class="flavor:btn-danger" label="danger" />
+						<button class="flavor:btn-success" label="success" />
+						<button class="flavor:btn-warning" label="warning" />
+					</toolbar>
+				</span>
+				Horizontally-oriented toolbars with start, center, and end
+				alignments.
+			</row>
+			<row>
+				<toolbar>
+					<upload name="upload" maxsize="100000" progress="true" />
+					<checkbox name="chkMultiple" label="multiple" />
+				</toolbar>
+				File uploader
+			</row>
+		</rows>
+	</grid>
+</page>

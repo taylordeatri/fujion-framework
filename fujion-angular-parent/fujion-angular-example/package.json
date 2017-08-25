@@ -1,0 +1,31 @@
+{
+  "name": "fujion-angular-example",
+  "version": "1.0.0",
+  "description": "Angular 2 example",
+  "main": "",
+  "keywords": ["fujion", "angular"],
+  "author": "CareWeb Framework",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/fujion/fujion-framework.git"
+  },
+  "scripts": {
+  	"postinstall" : "tsc"
+  },
+  "dependencies": {
+    "@angular/common": "~4.2.4",
+    "@angular/compiler": "~4.2.4",
+    "@angular/core": "~4.2.4",
+    "@angular/forms": "~4.2.4",
+    "@angular/http": "~4.2.4",
+    "@angular/platform-browser": "~4.2.4",
+    "@angular/platform-browser-dynamic": "~4.2.4",
+    "@angular/router": "~4.2.4",
+    "core-js": "^2.4.1",
+    "rxjs": "5.4.1",
+    "zone.js": "^0.8.12"
+  },
+  "devDependencies": {
+  	"typescript": "~2.2.0"
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "name": "fujion-react-example",
+  "version": "1.0.0",
+  "description": "React example",
+  "main": "",
+  "keywords": [
+    "fujion",
+    "react"
+  ],
+  "author": "Fujion Framework",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/fujion/fujion-framework.git"
+  },
+  "scripts": {
+    "postinstall": "babel --presets es2015 --out-file src/main/webjar/pomodoro.js src/main/webjar/pomodoro.es6.js"
+  },
+  "dependencies": {
+    "react": "^15.6.1",
+    "react-dom": "^15.6.1"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.24.1",
+    "babel-preset-es2015": "^6.24.1"
+  }
+}

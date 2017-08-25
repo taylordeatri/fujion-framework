@@ -1,0 +1,111 @@
+<span controller="org.fujion.testharness.MiscController">
+	<popup name="hoverPopup">
+		<label label="This is a test of a hover popup." />
+	</popup>
+	<grid>
+		<columns style="visibility:hidden">
+			<column width="30%" />
+			<column width="70%" />
+		</columns>
+		<rows>
+			<row>
+				<checkbox name="chkPreventClosure" label="Prevent page closure" />
+				Checking this should cause browser to challenge page closure.
+			</row>
+			<row>
+				<cell label="This is a cell">
+					With some text content.
+				</cell>
+				Cell with label and text content.
+			</row>
+			<row>
+				<cell label="This is a cell" />
+				Cell with label only.
+			</row>
+			<row>
+				<cell>
+					Text content.
+				</cell>
+				Cell with content only.
+			</row>
+			<row>
+				<rowcell colspan="2" label="Row cell spanning both columns" />
+			</row>
+			<row>
+				<label label="label" />
+				Simple label.
+			</row>
+			<row>
+				<span name="dynamicContent" />
+				This is dynamically-generated content.
+			</row>
+			<row>
+				<button label="Has Context Menu" context="contextMenu" />
+				This button has a context menu associated with it.
+			</row>
+			<row>
+				<button label="Has Hover Popup" popup="hoverPopup" />
+				This button has a hover popup associated with it.
+			</row>
+			<row>
+				<button name="btnSaveAsFile" label="Save to File" />
+				This button saves some text to a file.
+			</row>
+			<row>
+				<toolbar>
+					<div name="divMaskTest" height="50px" width="100px" style="display:inline-block; border: 1px solid black">
+						<button label="behind mask" />
+					</div>
+					<button name="btnMaskTest" label="Click to toggle mask"/>
+				</toolbar>
+				Test of masking components.  Should mask div to left of button.
+			</row>
+			<row>
+				<button name="btnToggleBalloon" label="Click Here" balloon="Balloon Text" />
+				Click to toggle balloon text.
+			</row>
+			<row>
+				<span name="custom">
+					This span has a custom attribute.
+					<?attribute key="test" value="this is a custom attribute"?>
+				</span>
+				Test of custom attribute: ${custom.test}
+			</row>
+			<row>
+				<slider synchronized="true"/>
+				Slider control.
+			</row>
+			<row>
+				<caption name="caption" label="caption" alignment="start" position="left">
+					<textbox height="40px" width="100%"/>
+				</caption>
+				<div class="fujion-layout-vertical">
+					<radiogroup name="rgPosition">
+						<radiobutton label="top" />
+						<radiobutton label="bottom" />
+						<radiobutton label="left" checked="true" />
+						<radiobutton label="right" />
+					</radiogroup>
+					<radiogroup name="rgAlignment">
+						<radiobutton label="start" checked="true" />
+						<radiobutton label="center" />
+						<radiobutton label="end" />
+					</radiogroup>
+				</div>	
+			</row>
+			<row>
+				<detail name="detail" label="Click to open/close">
+					This is a detail box!
+				</detail>
+				<button name="btnToggleDetail" label="Toggle open/close" />
+			</row>
+			<row>
+				<groupbox title="Groupbox" height="50px" width="90%">
+					This is a group box!
+				</groupbox>
+				Group box.
+			</row>
+		</rows>
+	</grid>
+	
+</span>

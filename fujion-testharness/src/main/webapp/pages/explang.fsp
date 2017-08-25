@@ -1,0 +1,29 @@
+<grid>
+	<columns style="visibility:hidden">
+		<column width="60%" />
+		<column width="40%" />
+	</columns>
+	<?taglib uri="http://www.fujion.org/tld/test" prefix="test"?>
+	<rows>
+		<row>
+			<div>This should resolve to a class name</div>
+			<div>${@fujion_ELEvaluator.class.name}</div>
+		</row>
+		<row>
+			<div>This should resolve to external label text</div>
+			<div>${@msg.test.message}</div>
+		</row>
+		<row>
+			<div>This should evaluate to 20</div>
+			<div>${(1+4)*4}</div>
+		</row>
+		<row>
+			<div>This should evaluate to the div's name</div>
+			<div name="testdiv">${testdiv.name}</div>
+		</row>
+		<row>
+			<div>Test of tag library method resolutions</div>
+			<div>${test.getLabel('test.message')}</div>
+		</row>
+	</rows>
+</grid>

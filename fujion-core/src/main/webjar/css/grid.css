@@ -1,0 +1,39 @@
+/* Grid */
+
+.fujion_grid {
+    background-color: white;
+    margin-bottom: 0;
+}
+
+/* Row */
+
+.fujion_row {
+    cursor:default
+}
+
+.fujion_row.ui-selectee:hover:not(.ui-selected) {
+	background-color: lightgray;
+}
+
+.fujion_row > td {
+	vertical-align: middle!important;
+}
+
+.fujion_row > td > * {
+	line-height: normal;
+}
+
+/* Column */
+
+.fujion_column > .glyphicon {
+	margin-left: 5px;
+	padding: 2px;
+	font-size: 60%;
+	vertical-align: top;
+	opacity: .5
+}
+
+.fujion_column > .glyphicon:hover {
+	text-decoration: underline;
+	opacity: 1;
+}

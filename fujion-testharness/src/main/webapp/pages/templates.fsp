@@ -1,0 +1,6 @@
+<template src="pages/template_src.fsp">
+	<snippet src="pages/template_snippet1.fsp" anchor="anchor1" />
+	<snippet src="pages/template_snippet2.fsp" anchor="anchor2" />
+	<snippet src="pages/template_snippet3.fsp" anchor="anchor3" position="before" />
+	<snippet src="pages/template_snippet4.fsp" anchor="anchor4" position="replace" />
+</template>

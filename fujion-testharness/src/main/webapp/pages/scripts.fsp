@@ -1,0 +1,53 @@
+<page>
+	<div controller="org.fujion.testharness.ScriptsController">
+		<div>
+		You should see the message "Embedded client script was executed." in the status log.
+		</div>
+		<cscript>
+			System.import('fujion-core').then(function(fujion) {
+			var msg = 'Embedded client script was executed.';
+			fujion.event.sendToServer({type: 'log', data: msg});
+			console.log(msg);
+			});
+		</cscript>
+		<div>
+		You should see the message "External client script was executed." in the status log.
+		</div>
+		<cscript src="scripts/cscript.js" />
+		<div>
+		You should see the message "Groovy script was executed." in the status log.
+		</div>
+		<sscript name="groovyscript" type="groovy">
+			return self.getName() + " is groovy!";
+		</sscript>
+		<div>
+			You should see the message "JRuby script was executed." in the status log.
+		</div>
+		<sscript name="jrubyscript" type="jruby">
+			require "java"
+			"#{$self.getName} rocks!"
+		</sscript>
+		<div>
+			You should see the message "Jython script was executed." in the status log.
+		</div>
+		<sscript name="jythonscript" type="jython">
+			self.getName() + " crushes!"
+		</sscript>
+		<div>
+			You should see the message "Renjin script was executed." in the status log.
+		</div>
+		<sscript name="rscript" type="renjin">
+			paste(self$getName(), "worked!")
+		</sscript>
+		<div>
+			You should see the message "Clojure script was executed." in the status log.
+		</div>
+		<sscript name="clojurescript" type="clojure">
+			(str (.getName (.get args "self")) " finished!")
+		</sscript>
+		<div>
+			You should see the message "External server script was executed." in the status log.
+		</div>
+		<sscript name="externalscript" type="groovy" src="scripts/sscript.groovy" />
+	</div>
+</page>

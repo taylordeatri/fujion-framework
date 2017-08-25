@@ -1,0 +1,22 @@
+{
+  "name": "fujion-react",
+  "version": "1.0.0",
+  "description": "React libraries",
+  "main": "",
+  "keywords": [
+    "fujion",
+    "react"
+  ],
+  "author": "Fujion Framework",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/fujion/fujion-framework.git"
+  },
+  "dependencies": {
+    "react": "^15.6.1",
+    "react-dom": "^15.6.1"
+  },
+  "devDependencies": {
+    "typescript": "~2.2.0"
+  }
+}

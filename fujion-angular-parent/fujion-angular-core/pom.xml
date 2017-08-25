@@ -1,0 +1,92 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.fujion</groupId>
+		<artifactId>fujion-angular-parent</artifactId>
+		<version>1.0.0-SNAPSHOT</version>
+	</parent>
+
+	<name>Fujion Angular 4 Integration</name>
+	<artifactId>fujion-angular-core</artifactId>
+
+	<properties>
+		<webjar.name>fujion-angular</webjar.name>
+        <systemjs>
+        {	'map': {
+        		'fujion-angular-widget': 'fujion/widget.js',
+        		'fujion-angular-bootstrap': 'fujion/bootstrap.js',
+		      	'@angular/core': '@angular/core/bundles/core.umd.js',
+		      	'@angular/common': '@angular/common/bundles/common.umd.js',
+		      	'@angular/compiler': '@angular/compiler/bundles/compiler.umd.js',
+		      	'@angular/platform-browser': '@angular/platform-browser/bundles/platform-browser.umd.js',
+		      	'@angular/platform-browser-dynamic': '@angular/platform-browser-dynamic/bundles/platform-browser-dynamic.umd.js',
+		      	'@angular/http': '@angular/http/bundles/http.umd.js',
+		      	'@angular/router': '@angular/router/bundles/router.umd.js',
+		      	'@angular/forms': '@angular/forms/bundles/forms.umd.js',
+		      	'@angular/animations': '@angular/animations/bundles/animations.umd.js',
+        		'rxjs': 'rxjs',
+        		'core-js': 'core-js',
+        		'zone.js': 'zone.js/dist/zone.js'
+        	},
+        	
+        	'packages': {
+        		'rxjs': {
+        			'defaultExtension': 'js'
+        		},
+        		'core-js': {
+        			'defaultExtension': 'js'
+        		}
+        	}
+		}
+        </systemjs>
+	</properties>
+
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-webjar-resources</id>
+						<configuration>
+							<resources>
+								<resource>
+									<directory>node_modules</directory>
+									<filtering>true</filtering>
+									<include>**/*.umd.*</include>
+									<include>rxjs/**/*.js</include>
+									<include>rxjs/**/*.map</include>
+									<include>core-js/**/*.js</include>
+									<include>core-js/**/*.map</include>
+									<include>zone.js/dist/*.*</include>
+								</resource>
+								<resource>
+									<directory>${basedir}/src/main/webjar</directory>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+			    <groupId>com.github.eirslett</groupId>
+			    <artifactId>frontend-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+	
+	<dependencies>
+		<!-- CareWeb Framework -->
+		<dependency>
+			<groupId>org.fujion</groupId>
+			<artifactId>fujion-core</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<!-- Testing -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+		</dependency>
+	</dependencies>
+</project>

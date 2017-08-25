@@ -1,0 +1,23 @@
+<tabview height="100%" controller="org.fujion.testharness.TabsController">
+	<tab label="Plain">
+		This is an example of a plain tab.
+	</tab>
+	<tab label="Closable" closable="true">
+		This tab is closable by clicking on the x.
+	</tab>
+	<tab label="Image" image="images/ri.png">
+		This is a tab with an associated image.
+	</tab>
+	<tab label="Closable+Image" closable="true" image="images/ri.png">
+		This is a closable tab with an associated image.
+	</tab>
+	<tab label="Can't Close" closable="true" name="tabNoClose">
+		This closable tab has a close event handler that prevents it from being
+		closed.
+	</tab>
+	<tab label="With Badge" name="tabWithBadge">
+		<button label="Increment" name="btnIncBadge" class="flavor:btn-success" />
+		<button label="Decrement" name="btnDecBadge" class="flavor:btn-danger" />
+		<button label="Reset" name="btnClrBadge" class="flavor:btn-warning" />
+	</tab>
+</tabview>
