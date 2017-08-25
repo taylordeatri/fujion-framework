@@ -100,12 +100,12 @@
 		<dependency>
 		    <groupId>org.webjars.npm</groupId>
 		    <artifactId>systemjs</artifactId>
-		    <version>0.20.14</version>
+		    <version>0.20.15</version>
 		</dependency>
 		<dependency>
 		    <groupId>org.webjars.npm</groupId>
 		    <artifactId>github-com-systemjs-plugin-css</artifactId>
-		    <version>0.1.32</version>
+		    <version>0.1.35</version>
 		</dependency>
 		<dependency>
 		    <groupId>org.webjars.npm</groupId>
