@@ -38,35 +38,35 @@ import org.springframework.core.io.Resource;
  * Base class for tests using mock environment.
  */
 public class MockTest {
-    
-    public static Class<? extends MockEnvironment> mockEnvironmentClass = MockEnvironment.class;
-    
-    public static MockConfig rootConfig = new MockConfig(new String[] { "classpath:/META-INF/fujion-dispatcher-servlet.xml" },
-            null);
-    
-    public static MockConfig childConfig;
-    
-    private static MockEnvironment mockEnvironment;
 
-    private static int initCount;
+    public static Class<? extends MockEnvironment> mockEnvironmentClass = MockEnvironment.class;
+
+    public static MockConfig rootConfig = new MockConfig(
+            new String[] { "classpath:/META-INF/fujion-dispatcher-servlet.xml" }, null);
+
+    public static MockConfig childConfig;
+
+    private static MockEnvironment mockEnvironment;
     
+    private static int initCount;
+
     @BeforeClass
     public static void beforeClass() throws Exception {
         initCount++;
         getMockEnvironment();
     }
-    
+
     @AfterClass
     public static void afterClass() {
         initCount = initCount <= 0 ? 0 : initCount - 1;
-
+        
         if (initCount == 0 && mockEnvironment != null) {
             System.out.println("Destroying mock environment...");
             mockEnvironment.close();
             mockEnvironment = null;
         }
     }
-    
+
     /**
      * Returns the mock environment, instantiating it if necessary.
      *
@@ -82,10 +82,10 @@ public class MockTest {
                 throw MiscUtil.toUnchecked(e);
             }
         }
-        
+
         return mockEnvironment;
     }
-    
+
     /**
      * Reads text from the specified resource on the classpath.
      *
@@ -98,9 +98,9 @@ public class MockTest {
         InputStream is = resource.getInputStream();
         Writer writer = new StringWriter();
         char[] buffer = new char[1024];
-        
+
         try {
-            Reader reader = new BufferedReader(new InputStreamReader(is, StrUtil.CHARSET));
+            Reader reader = new BufferedReader(new InputStreamReader(is, StrUtil.UTF8));
             int n;
             while ((n = reader.read(buffer)) != -1) {
                 writer.write(buffer, 0, n);
