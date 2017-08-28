@@ -7,7 +7,7 @@
 		<version>1.0.1-SNAPSHOT</version>
 	</parent>
 	
-	<name>React Support Modules</name>
+	<name>Fujion React Support Modules</name>
 	<artifactId>fujion-react-parent</artifactId>
 	<packaging>pom</packaging>
 	

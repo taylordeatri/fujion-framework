@@ -7,7 +7,7 @@
 		<version>1.0.1-SNAPSHOT</version>
 	</parent>
 	
-	<name>JRuby Script Extension</name>
+	<name>Fujion JRuby Script Extension</name>
 	<artifactId>fujion-script-jruby</artifactId>
 	
 	<dependencies>
