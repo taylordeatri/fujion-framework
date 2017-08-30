@@ -549,6 +549,11 @@ caption:empty {
 
 .fujion_radiobutton label {
 	margin-top: 2px;
+	margin-bottom: 0;
+}
+
+.fujion_radiobutton.fujion_labeled-left > label {
+	order: -1;
 }
 
 /* Input box components */
