@@ -22,19 +22,58 @@ package org.fujion.component;
 
 import org.fujion.annotation.Component;
 import org.fujion.annotation.Component.ContentHandling;
+import org.fujion.annotation.Component.PropertyGetter;
+import org.fujion.annotation.Component.PropertySetter;
 
 /**
  * A component that allows embedding native HTML within a page.
  */
 @Component(tag = "html", widgetClass = "Html", content = ContentHandling.AS_ATTRIBUTE, parentTag = "*")
-public class Html extends BaseSourcedComponent {
+public class Html extends BaseUIComponent {
 
+    private String src;
+    
     public Html() {
-        super(true);
+        super();
     }
 
     public Html(String content) {
-        super(content, true);
+        super();
+        setContent(content);
+    }
+
+    @PropertySetter("content")
+    @Override
+    public void setContent(String content) {
+        content = nullify(content);
+        
+        if (content != null) {
+            setSrc(null);
+        }
+        
+        super.setContent(content);
+    }
+
+    @PropertyGetter("src")
+    public String getSrc() {
+        return src;
+    }
+    
+    @PropertySetter(value = "src")
+    public void setSrc(String src) {
+        src = nullify(src);
+        
+        if (src != null) {
+            super.setContent(null);
+        }
+        
+        if (!areEqual(src, this.src)) {
+            this.src = src;
+
+            if (isContentSynced()) {
+                sync("src", src);
+            }
+        }
     }
 
 }
