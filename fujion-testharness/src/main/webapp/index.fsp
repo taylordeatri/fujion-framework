@@ -2,7 +2,8 @@
 <page name="page" title="Fujion Test Harness"> 
 	<messagewindow name="messagewindow" />
 	
-	<window title="Fujion Component Tests" class="flavor:panel-primary" 
+	<window title="Fujion Component Tests" class="flavor:panel-default" 
+		image="images/fujion.png"
 		controller="org.fujion.testharness.MainController">
 		<tabview name="tabview" height="500px" tabPosition="left">
 			<tab>

@@ -5,10 +5,10 @@
 	<tab label="Closable" closable="true">
 		This tab is closable by clicking on the x.
 	</tab>
-	<tab label="Image" image="images/ri.png">
+	<tab label="Image" image="images/fujion.png">
 		This is a tab with an associated image.
 	</tab>
-	<tab label="Closable+Image" closable="true" image="images/ri.png">
+	<tab label="Closable+Image" closable="true" image="images/fujion.png">
 		This is a closable tab with an associated image.
 	</tab>
 	<tab label="Can't Close" closable="true" name="tabNoClose">

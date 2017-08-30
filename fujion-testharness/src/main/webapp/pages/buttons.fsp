@@ -10,7 +10,7 @@
 				This button should have an event handler.
 			</row>
 			<row>
-				<button label="image" image="images/ri.png" />
+				<button label="image" image="images/fujion.png" />
 				This is a button with an image.
 			</row>
 			<row>
@@ -18,11 +18,11 @@
 				This is a simple hyperlink.
 			</row>
 			<row>
-				<link label="link+image" image="images/ri.png" />
+				<link label="link+image" image="images/fujion.png" />
 				This is a hyperlink with an image.
 			</row>
 			<row>
-				<image src="images/ri.png" alt="this is alt text" />
+				<image src="images/fujion.png" alt="this is alt text" />
 				This is just a standalone image.
 			</row>
 			<row>
