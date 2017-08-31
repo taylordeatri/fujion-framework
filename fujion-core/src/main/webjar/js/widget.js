@@ -1334,7 +1334,7 @@ define('fujion-widget', ['fujion-core', 'bootstrap', 'jquery-ui', 'jquery-scroll
 	 * Main page widget
 	 ******************************************************************************************************************/ 
 	
-	fujion.widget.Page = fujion.widget.UIWidget.extend({
+	fujion.widget.Page = fujion.widget.BaseWidget.extend({
 		
 		/*------------------------------ Lifecycle ------------------------------*/
 		
