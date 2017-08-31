@@ -59,6 +59,7 @@
 	flex: 1;
 	padding: 2px;
 	height: 100%;
+	overflow: auto;
 }
 
 .fujion_tab {
