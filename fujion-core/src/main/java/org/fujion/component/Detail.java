@@ -23,6 +23,8 @@ package org.fujion.component;
 import org.fujion.annotation.Component;
 import org.fujion.annotation.Component.ChildTag;
 import org.fujion.annotation.Component.ContentHandling;
+import org.fujion.annotation.Component.PropertyGetter;
+import org.fujion.annotation.Component.PropertySetter;
 import org.fujion.annotation.EventHandler;
 import org.fujion.event.CloseEvent;
 import org.fujion.event.OpenEvent;
@@ -32,32 +34,34 @@ import org.fujion.event.OpenEvent;
  */
 @Component(tag = "detail", widgetModule = "fujion-detail", widgetClass = "Detail", content = ContentHandling.AS_CHILD, parentTag = "*", childTag = @ChildTag("*"))
 public class Detail extends BaseLabeledComponent<BaseLabeledComponent.LabelPositionNone> {
-
+    
     private boolean open;
-
+    
     public Detail() {
         this(null);
     }
-
+    
     public Detail(String label) {
         super(label);
     }
-    
+
+    @PropertyGetter("open")
     public boolean isOpen() {
         return open;
     }
-    
+
+    @PropertySetter("open")
     public void setOpen(boolean open) {
         if (open != this.open) {
             sync("open", this.open = open);
         }
     }
-
+    
     @EventHandler(value = "open", syncToClient = false)
     private void _onOpen(OpenEvent event) {
         open = true;
     }
-    
+
     @EventHandler(value = "close", syncToClient = false)
     private void _onClose(CloseEvent event) {
         open = false;
