@@ -45,29 +45,29 @@ import org.w3c.dom.Text;
  * Parses a Fujion server page into a page definition.
  */
 public class PageParser {
-    
+
     private static final PageParser instance = new PageParser();
-    
+
     private static final String CONTENT_TAG = "#text";
-    
+
     private final RegistryMap<String, PIParserBase> piParsers = new RegistryMap<>(DuplicateAction.ERROR);
-    
+
     private final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-    
+
     public static PageParser getInstance() {
         return instance;
     }
-    
+
     private PageParser() {
         registerPIParser(new PIParserTagLibrary());
         registerPIParser(new PIParserAttribute());
         documentBuilderFactory.setNamespaceAware(true);
     }
-    
+
     public PageDefinition parse(String src) {
         return parse(WebUtil.getResource(src));
     }
-    
+
     public PageDefinition parse(Resource resource) {
         try {
             PageDefinition def = parse(resource.getInputStream());
@@ -77,7 +77,7 @@ public class PageParser {
             throw new ComponentException(e, "Exception parsing resource '" + resource.getFilename() + "'");
         }
     }
-    
+
     public PageDefinition parse(InputStream stream) {
         try {
             Document document = documentBuilderFactory.newDocumentBuilder().parse(stream);
@@ -90,119 +90,123 @@ public class PageParser {
             IOUtils.closeQuietly(stream);
         }
     }
-    
+
     public void registerPIParser(PIParserBase piParser) {
         piParsers.put(piParser.getTarget(), piParser);
     }
-    
+
     private void parseNode(Node node, PageElement parentElement) {
         ComponentDefinition def;
         ComponentDefinition parentDef = parentElement.getDefinition();
         PageElement childElement;
-        
+
         switch (node.getNodeType()) {
             case Node.ELEMENT_NODE:
                 Element ele = (Element) node;
                 String tag = ele.getTagName();
                 def = ComponentRegistry.getInstance().get(tag);
-                
+
                 if (def == null) {
                     throw new RuntimeException("Unrecognized tag: " + tag);
                 }
-                
+
                 childElement = new PageElement(def, parentElement);
                 NamedNodeMap attributes = ele.getAttributes();
-                
+
                 for (int i = 0; i < attributes.getLength(); i++) {
                     Node attr = attributes.item(i);
-                    childElement.setAttribute(attr.getNodeName(), attr.getNodeValue());
+                    String name = attr.getNodeName();
+
+                    if (!name.startsWith("xml")) {
+                        childElement.setAttribute(name, attr.getNodeValue());
+                    }
                 }
-                
+
                 parseChildren(node, childElement);
                 childElement.validate();
                 break;
-            
+
             case Node.TEXT_NODE:
             case Node.CDATA_SECTION_NODE:
                 Text text = (Text) node;
                 String value = text.getWholeText();
-                
+
                 if (value.trim().isEmpty()) {
                     break;
                 }
-                
+
                 switch (parentDef.contentHandling()) {
                     case ERROR:
                         throw new RuntimeException("Text content is not allowed for tag " + parentDef.getTag());
-                        
+
                     case IGNORE:
                         break;
-                    
+
                     case AS_ATTRIBUTE:
                         parentElement.setAttribute(CONTENT_TAG, normalizeText(value));
                         break;
-                    
+
                     case AS_CHILD:
                         def = ComponentRegistry.getInstance().get(CONTENT_TAG);
                         childElement = new PageElement(def, parentElement);
                         childElement.setAttribute(CONTENT_TAG, normalizeText(value));
                         break;
                 }
-                
+
                 break;
-            
+
             case Node.DOCUMENT_NODE:
                 parseChildren(node, parentElement);
                 break;
-            
+
             case Node.COMMENT_NODE:
                 break;
-            
+
             case Node.PROCESSING_INSTRUCTION_NODE:
                 ProcessingInstruction pi = (ProcessingInstruction) node;
                 PIParserBase piParser = piParsers.get(pi.getTarget());
-                
+
                 if (piParser != null) {
                     piParser.parse(pi, parentElement);
                 } else {
                     throw new RuntimeException("Unrecognized prosessing instruction: " + pi.getTarget());
                 }
-                
+
                 break;
-            
+
             default:
                 throw new RuntimeException("Unrecognized document content: " + node.getNodeName());
         }
     }
-    
+
     private void parseChildren(Node node, PageElement parentElement) {
         NodeList children = node.getChildNodes();
         int childCount = children.getLength();
-        
+
         for (int i = 0; i < childCount; i++) {
             Node childNode = children.item(i);
             parseNode(childNode, parentElement);
         }
     }
-    
+
     private String normalizeText(String text) {
         int i = text.indexOf('\n');
-        
+
         if (i == -1) {
             return text;
         }
-        
+
         if (text.substring(0, i).trim().isEmpty()) {
             text = text.substring(i + 1);
         }
-        
+
         i = text.lastIndexOf('\n');
-        
+
         if (i >= 0 && text.substring(i).trim().isEmpty()) {
             text = text.substring(0, i);
         }
-        
+
         return text;
     }
-    
+
 }
