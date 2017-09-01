@@ -26,10 +26,11 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.beanutils.ConvertUtils;
-import org.fujion.common.StrUtil;
 import org.fujion.ancillary.OptionMap.IOptionMapConverter;
+import org.fujion.common.StrUtil;
 import org.fujion.component.BaseComponent;
 import org.fujion.component.Page;
+import org.springframework.util.Assert;
 
 public class ConvertUtil {
 
@@ -67,6 +68,13 @@ public class ConvertUtil {
 
         if (BaseComponent.class.isAssignableFrom(targetType)) {
             return (T) convertToComponent(value, targetType, instance);
+        }
+
+        if (targetType == Boolean.class || targetType == boolean.class) {
+            String val = value.toString().trim().toLowerCase();
+            Boolean result = "true".equals(val) ? Boolean.TRUE : "false".equals(val) ? Boolean.FALSE : null;
+            Assert.notNull(result, "Not a valid Boolean value: " + value);
+            return (T) result;
         }
 
         return (T) ConvertUtils.convert(value, targetType);
