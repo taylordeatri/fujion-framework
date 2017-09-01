@@ -1,7 +1,6 @@
 package org.fujion.core;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
@@ -42,9 +41,9 @@ public class Tests {
         cmpt.setAttribute(ATTR_TEST, "TRUE");
         assertTrue(cmpt.getAttribute(ATTR_TEST, Boolean.class));
         cmpt.setAttribute(ATTR_TEST, "ANYTHING BUT TRUE");
-        assertFalse(cmpt.getAttribute(ATTR_TEST, Boolean.class));
-        assertFalse(cmpt.getAttribute(ATTR_OBJECT, Boolean.class));
-        assertFalse(cmpt.getAttribute(ATTR_NULL, Boolean.class));
+        assertNull(cmpt.getAttribute(ATTR_TEST, Boolean.class));
+        assertNull(cmpt.getAttribute(ATTR_OBJECT, Boolean.class));
+        assertNull(cmpt.getAttribute(ATTR_NULL, Boolean.class));
         cmpt.setAttribute(ATTR_TEST, ATTR_TEST);
         assertEquals(ATTR_TEST, cmpt.getAttribute(ATTR_TEST, String.class));
         assertTrue(cmpt.getAttribute(ATTR_OBJECT, String.class).contains("Object"));
