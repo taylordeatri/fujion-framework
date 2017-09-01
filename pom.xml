@@ -43,6 +43,7 @@
 		<node.version>v7.9.0</node.version>
 		<npm.version>4.2.0</npm.version>
 		<project.name>${project.artifactId}</project.name>
+		<webjar.version>${project.version}</webjar.version>
 
 		<!-- Maven Plugin Properties -->
 		<tomcat.manager.url>http://localhost:8080/manager</tomcat.manager.url>
