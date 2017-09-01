@@ -57,7 +57,7 @@
 						<configuration>
 							<mainClass>org.fujion.annotation.SchemaGenerator</mainClass>
 							<arguments>
-								<argument>${basedir}/target/classes/web/fujion/fujion.xsd</argument>
+								<argument>${basedir}/target/classes/web/fujion/fsp.xsd</argument>
 							</arguments>
 							<classpathScope>compile</classpathScope>
 						</configuration>
