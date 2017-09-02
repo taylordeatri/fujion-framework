@@ -3570,7 +3570,9 @@ define('fujion-widget', ['fujion-core', 'bootstrap', 'jquery-ui', 'jquery-scroll
 							top: 0,
 							bottom: 0,
 							height: null,
-							width: null
+							width: null,
+							'max-width': null,
+							'max-height': null
 						});
 					}
 					
@@ -3595,7 +3597,9 @@ define('fujion-widget', ['fujion-core', 'bootstrap', 'jquery-ui', 'jquery-scroll
 							top: null,
 							bottom: 0,
 							height: tbheight,
-							width: null
+							width: null,
+							'min-width': null,
+							'min-height': null
 						});
 					}
 					
@@ -3615,16 +3619,7 @@ define('fujion-widget', ['fujion-core', 'bootstrap', 'jquery-ui', 'jquery-scroll
 			function _saveState() {
 				if (!saved) {
 					var s = w$[0].style;
-					
-					saved = {
-					    left: s.left,
-						right: s.right,
-						top: s.top,
-						bottom: s.bottom,
-						height: s.height,
-						width: s.width
-					};
-					
+					saved = _.pick(s, fujion.widget.Window._saveStyles);
 					self.setState('_savedState', saved);
 				}
 			}
@@ -3647,6 +3642,9 @@ define('fujion-widget', ['fujion-core', 'bootstrap', 'jquery-ui', 'jquery-scroll
 		
 	});
 	
+	fujion.widget.Window._saveStyles = ['left', 'right', 'top', 'bottom', 'height', 'width',
+		'min-height', 'max-height', 'min-width', 'max-width'];
+
 	/******************************************************************************************************************
 	 * A widget for displaying alerts (client side only)
 	 ******************************************************************************************************************/ 
