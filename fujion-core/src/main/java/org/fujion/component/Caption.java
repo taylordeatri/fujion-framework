@@ -2,7 +2,7 @@
  * #%L
  * fujion
  * %%
- * Copyright (C) 2008 - 2016 Regenstrief Institute, Inc.
+ * Copyright (C) 2008 - 2017 Regenstrief Institute, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,21 +30,24 @@ import org.fujion.annotation.Component.PropertySetter;
  */
 @Component(tag = "caption", widgetClass = "Caption", parentTag = "*", childTag = @ChildTag("*"))
 public class Caption extends BaseLabeledComponent<BaseLabeledComponent.LabelPositionAll> {
-
+    
+    /**
+     * Alignment of label relative to child component(s).
+     */
     public enum LabelAlignment {
         START, CENTER, END
     }
-
+    
     private LabelAlignment alignment = LabelAlignment.START;
-
+    
     private String labelStyle;
-
+    
     private String labelClass = "label-default";
-
+    
     public Caption() {
         setPosition(LabelPositionAll.LEFT);
     }
-
+    
     /**
      * Returns the position of the label relative to its associated component. Defaults to 'left'.
      *
@@ -55,7 +58,7 @@ public class Caption extends BaseLabeledComponent<BaseLabeledComponent.LabelPosi
     public LabelPositionAll getPosition() {
         return super.getPosition();
     }
-
+    
     /**
      * Sets the position of the label relative to its associated component.
      *
@@ -66,7 +69,7 @@ public class Caption extends BaseLabeledComponent<BaseLabeledComponent.LabelPosi
     public void setPosition(LabelPositionAll position) {
         super.setPosition(position);
     }
-
+    
     /**
      * Returns the alignment of the label. Defaults to 'start'.
      *
@@ -76,7 +79,7 @@ public class Caption extends BaseLabeledComponent<BaseLabeledComponent.LabelPosi
     public LabelAlignment getAlignment() {
         return alignment;
     }
-
+    
     /**
      * Sets the alignment of the label.
      *
@@ -85,12 +88,12 @@ public class Caption extends BaseLabeledComponent<BaseLabeledComponent.LabelPosi
     @PropertySetter("alignment")
     public void setAlignment(LabelAlignment alignment) {
         alignment = alignment == null ? LabelAlignment.START : alignment;
-
+        
         if (alignment != this.alignment) {
             sync("alignment", this.alignment = alignment);
         }
     }
-
+    
     /**
      * Returns the style(s) associated with the label.
      *
@@ -99,7 +102,7 @@ public class Caption extends BaseLabeledComponent<BaseLabeledComponent.LabelPosi
     public String getLabelStyle() {
         return labelStyle;
     }
-
+    
     /**
      * Sets the style(s) of the label.
      *
@@ -110,7 +113,7 @@ public class Caption extends BaseLabeledComponent<BaseLabeledComponent.LabelPosi
             sync("labelStyle", this.labelStyle = labelStyle);
         }
     }
-
+    
     /**
      * Returns the css class(es) associated with the label.
      *
@@ -119,7 +122,7 @@ public class Caption extends BaseLabeledComponent<BaseLabeledComponent.LabelPosi
     public String getLabelClass() {
         return labelClass;
     }
-
+    
     /**
      * Sets the css class(es) of the label.
      *
@@ -130,5 +133,5 @@ public class Caption extends BaseLabeledComponent<BaseLabeledComponent.LabelPosi
             sync("labelClass", this.labelClass = labelClass);
         }
     }
-
+    
 }

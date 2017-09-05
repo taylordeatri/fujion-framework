@@ -2,7 +2,7 @@
  * #%L
  * fujion
  * %%
- * Copyright (C) 2008 - 2016 Regenstrief Institute, Inc.
+ * Copyright (C) 2008 - 2017 Regenstrief Institute, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,65 +30,68 @@ import org.springframework.util.Assert;
  */
 @Component(tag = "memobox", widgetClass = "Memobox", parentTag = "*")
 public class Memobox extends BaseInputboxComponent<String> {
-    
+
+    /**
+     * Wrap mode for memo box.
+     */
     public enum WrapMode {
         HARD, SOFT
-    };
-    
+    }
+
     private boolean autoScroll;
-    
+
     private WrapMode wrap = WrapMode.SOFT;
-    
+
     private int rows = 2;
-    
+
     public Memobox() {
         super();
         addStyle("resize", "none");
     }
-    
+
     @Override
     @PropertyGetter("synchronized")
     public boolean getSynchronized() {
         return super.getSynchronized();
     }
-    
+
     @Override
     @PropertySetter("synchronized")
     public void setSynchronized(boolean synchronize) {
         super.setSynchronized(synchronize);
     }
-    
+
     @PropertyGetter("autoScroll")
     public boolean isAutoScroll() {
         return autoScroll;
     }
-    
+
     @PropertySetter("autoScroll")
     public void setAutoScroll(boolean autoScroll) {
         if (autoScroll != this.autoScroll) {
             sync("autoScroll", this.autoScroll = autoScroll);
         }
     }
-    
+
     @PropertyGetter("wrap")
     public WrapMode getWrap() {
         return wrap;
     }
-
+    
     @PropertySetter("wrap")
     public void setWrap(WrapMode wrap) {
         wrap = defaultify(wrap, WrapMode.SOFT);
-        
+
         if (wrap != this.wrap) {
             sync("wrap", this.wrap = wrap);
         }
     }
-
+    
     @PropertyGetter("rows")
     public int getRows() {
         return rows;
     }
-
+    
     @PropertySetter("rows")
     public void setRows(int rows) {
         if (rows != this.rows) {
@@ -96,15 +99,15 @@ public class Memobox extends BaseInputboxComponent<String> {
             sync("rows", this.rows = rows);
         }
     }
-    
+
     @Override
     protected String _toValue(String value) {
         return value;
     }
-    
+
     @Override
     protected String _toString(String value) {
         return value;
     }
-
+    
 }

@@ -2,7 +2,7 @@
  * #%L
  * fujion
  * %%
- * Copyright (C) 2008 - 2016 Regenstrief Institute, Inc.
+ * Copyright (C) 2008 - 2017 Regenstrief Institute, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,99 +32,102 @@ import org.springframework.util.Assert;
  */
 @Component(tag = "slider", widgetClass = "Slider", parentTag = "*")
 public class Slider extends BaseUIComponent {
-
+    
+    /**
+     * Orientation of slider component.
+     */
     public enum Orientation {
         HORIZONTAL, VERTICAL
     }
-    
+
     private Orientation orientation = Orientation.HORIZONTAL;
-    
+
     private int value;
-    
+
     private int maxValue = 100;
-    
+
     private int minValue;
-
+    
     private int step = 1;
-
+    
     private boolean synced;
-
+    
     @PropertyGetter("value")
     public int getValue() {
         return value;
     }
-    
+
     @PropertySetter("value")
     public void setValue(int value) {
         if (value != this.value) {
             sync("value", this.value = value);
         }
     }
-    
+
     @PropertyGetter("maxValue")
     public int getMaxValue() {
         return maxValue;
     }
-    
+
     @PropertySetter("maxValue")
     public void setMaxValue(int maxValue) {
         if (maxValue != this.maxValue) {
             sync("maxValue", this.maxValue = maxValue);
         }
     }
-    
+
     @PropertyGetter("minValue")
     public int getMinValue() {
         return minValue;
     }
-
+    
     @PropertySetter("minValue")
     public void setMinValue(int minValue) {
         if (minValue != this.minValue) {
             sync("minValue", this.minValue = minValue);
         }
     }
-    
+
     @PropertyGetter("orientation")
     public Orientation getOrientation() {
         return orientation;
     }
-    
+
     @PropertySetter("orientation")
     public void setOrientation(Orientation orientation) {
         orientation = orientation == null ? Orientation.HORIZONTAL : orientation;
-
+        
         if (orientation != this.orientation) {
             sync("orientation", this.orientation = orientation);
         }
     }
-    
+
     @PropertyGetter("step")
     public int getStep() {
         return step;
     }
-    
+
     @PropertySetter("step")
     public void setStep(int step) {
         Assert.isTrue(step > 0, "Step value must be greater than zero.");
-
+        
         if (step != this.step) {
             sync("step", this.step = step);
         }
     }
-
+    
     @PropertyGetter("synchronized")
     public boolean getSynchronized() {
         return synced;
     }
-
+    
     @PropertySetter("synchronized")
     protected void setSynchronized(boolean synced) {
         if (synced != this.synced) {
             sync("synced", this.synced = synced);
         }
     }
-
+    
     @EventHandler(value = "change", syncToClient = false)
     private void _onChange(ChangeEvent event) {
         value = defaultify(event.getValue(Integer.class), value);

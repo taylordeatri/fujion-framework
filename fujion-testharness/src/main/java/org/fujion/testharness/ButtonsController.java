@@ -2,7 +2,7 @@
  * #%L
  * fujion
  * %%
- * Copyright (C) 2008 - 2016 Regenstrief Institute, Inc.
+ * Copyright (C) 2008 - 2017 Regenstrief Institute, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,20 +32,20 @@ import org.fujion.component.Upload;
 import org.fujion.event.ChangeEvent;
 import org.fujion.event.UploadEvent;
 
-/*
+/**
  * Buttons demonstration.
  */
 public class ButtonsController extends BaseController {
-
+    
     @WiredComponent
     private Button btnWithEvent;
-
+    
     @WiredComponent
     private Checkbox chkMultiple;
-
+    
     @WiredComponent
     private Upload upload;
-
+    
     /**
      * Sample button event handler.
      */
@@ -53,17 +53,17 @@ public class ButtonsController extends BaseController {
     private void btnEventHandler() {
         log("Button event handler was invoked");
     }
-
+    
     @EventHandler(value = "change", target = { "rg1", "rg2" })
     private void radiobuttonChangeHandler(ChangeEvent event) {
         Radiobutton rb = event.getValue(Radiobutton.class);
         log("Radiobutton '" + (rb.getLabel() + "' was " + (rb.isChecked() ? "selected." : "deselected.")));
     }
-
+    
     @EventHandler(value = "upload", target = "@upload")
     private void uploadHandler(UploadEvent event) throws Exception {
         String file = event.getFile();
-
+        
         switch (event.getState()) {
             case DONE:
                 String tmpdir = System.getProperty("java.io.tmpdir");
@@ -73,22 +73,22 @@ public class ButtonsController extends BaseController {
                 out.close();
                 log("Uploaded contents to " + file);
                 break;
-
+            
             case MAXSIZE:
                 log("File too large: " + file);
                 break;
-
+            
             case ABORTED:
                 log("Upload aborted for " + file);
                 break;
-
+            
             case LOADING:
                 double pct = event.getLoaded() * 100.0 / event.getTotal();
                 log("Upload " + pct + "% completed for " + file);
                 break;
         }
     }
-
+    
     @EventHandler(value = "change", target = "@chkMultiple")
     private void chkMultipleChangeHandler(ChangeEvent event) {
         upload.setMultiple(chkMultiple.isChecked());

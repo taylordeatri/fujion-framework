@@ -2,7 +2,7 @@
  * #%L
  * fujion
  * %%
- * Copyright (C) 2008 - 2016 Regenstrief Institute, Inc.
+ * Copyright (C) 2008 - 2017 Regenstrief Institute, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,36 +30,48 @@ import org.fujion.annotation.Component.PropertySetter;
  * @param <P> The type of label positioning that is supported.
  */
 public abstract class BaseLabeledComponent<P extends BaseLabeledComponent.ILabelPosition> extends BaseUIComponent implements ILabeled {
-
+    
+    /**
+     * Position specifier for label.
+     */
     public interface ILabelPosition {};
-
+    
+    /**
+     * Horizontal position specifier.
+     */
     public enum LabelPositionHorz implements ILabelPosition {
         RIGHT, LEFT
     }
-
+    
+    /**
+     * Specifier for all label positions.
+     */
     public enum LabelPositionAll implements ILabelPosition {
         RIGHT, LEFT, TOP, BOTTOM
     }
-
+    
+    /**
+     * Specifier for fixed label position.
+     */
     public enum LabelPositionNone implements ILabelPosition {}
-
+    
     private String label;
-
+    
     private P position;
-
+    
     public BaseLabeledComponent() {
     }
-
+    
     public BaseLabeledComponent(String label) {
         setLabel(label);
     }
-
+    
     @Override
     @PropertyGetter("label")
     public String getLabel() {
         return label;
     }
-
+    
     @Override
     @PropertySetter("label")
     public void setLabel(String label) {
@@ -67,15 +79,15 @@ public abstract class BaseLabeledComponent<P extends BaseLabeledComponent.ILabel
             sync("label", this.label = label);
         }
     }
-
+    
     protected P getPosition() {
         return position;
     }
-
+    
     protected void setPosition(P position) {
         if (position != this.position) {
             sync("position", this.position = position);
         }
     }
-
+    
 }

@@ -2,7 +2,7 @@
  * #%L
  * fujion
  * %%
- * Copyright (C) 2008 - 2016 Regenstrief Institute, Inc.
+ * Copyright (C) 2008 - 2017 Regenstrief Institute, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,9 @@ import org.fujion.annotation.EventType;
 import org.fujion.annotation.EventType.EventParameter;
 import org.fujion.component.BaseComponent;
 
+/*
+ * A drop event.
+ */
 @EventType(DropEvent.TYPE)
 public class DropEvent extends Event {
     

@@ -2,7 +2,7 @@
  * #%L
  * fujion
  * %%
- * Copyright (C) 2008 - 2016 Regenstrief Institute, Inc.
+ * Copyright (C) 2008 - 2017 Regenstrief Institute, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,27 +22,30 @@ package org.fujion.highcharts;
 
 import org.fujion.ancillary.Options;
 
+/**
+ * Options for a pivot.
+ */
 public class PivotOptions extends Options {
-    
+
     /**
      * The background color or fill of the pivot. Defaults to black.
      */
     public String backgroundColor;
-    
+
     /**
      * The border or stroke color of the pivot. In able to change this, the borderWidth must also be
      * set to something other than the default 0. Defaults to silver.
      */
     public String borderColor;
-    
+
     /**
      * The border or stroke width of the pivot. Defaults to 0.
      */
     public Integer borderWidth;
-    
+
     /**
      * The pixel radius of the pivot. Defaults to 5.
      */
     public Integer radius;
-    
+
 }

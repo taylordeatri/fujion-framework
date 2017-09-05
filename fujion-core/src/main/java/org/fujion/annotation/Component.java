@@ -2,7 +2,7 @@
  * #%L
  * fujion
  * %%
- * Copyright (C) 2008 - 2016 Regenstrief Institute, Inc.
+ * Copyright (C) 2008 - 2017 Regenstrief Institute, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,11 +35,14 @@ import org.fujion.ancillary.ComponentFactory;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface Component {
-    
+
+    /**
+     * Methods of handling text content nodes.
+     */
     public enum ContentHandling {
         ERROR, IGNORE, AS_ATTRIBUTE, AS_CHILD
     }
-    
+
     /**
      * Marks a property getter.
      */
@@ -47,19 +50,19 @@ public @interface Component {
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
     public @interface PropertyGetter {
-        
+
         /**
          * @return The property name.
          */
         String value();
-        
+
         /**
          * @return If true, hide the getter method from the deserializer. Use this to hide a getter
          *         annotated in a superclass.
          */
         boolean hide() default false;
     }
-    
+
     /**
      * Marks a property setter
      */
@@ -67,25 +70,25 @@ public @interface Component {
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
     public @interface PropertySetter {
-        
+
         /**
          * @return The property name.
          */
         String value();
-        
+
         /**
          * @return If true, hide the setter method from the deserializer. Use this to hide a setter
          *         annotated in a superclass.
          */
         boolean hide() default false;
-        
+
         /**
          * @return If true, defer invoking the setter until deserialization is complete.
          */
         boolean defer() default false;
-        
+
     }
-    
+
     /**
      * Binds a factory parameter to an XML attribute. Such attributes are used to modify factory
      * settings that affect component creation.
@@ -94,14 +97,14 @@ public @interface Component {
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
     public @interface FactoryParameter {
-        
+
         /**
          * @return The attribute name.
          */
         String value();
-        
+
     }
-    
+
     /**
      * Represents a child tag and its cardinality.
      */
@@ -109,57 +112,57 @@ public @interface Component {
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.ANNOTATION_TYPE)
     public @interface ChildTag {
-        
+
         /**
          * @return The child tag.
          */
         String value();
-        
+
         /**
          * @return Minimum number of occurrences.
          */
         int minimum() default 0;
-        
+
         /**
          * @return Maximum number of occurrences.
          */
         int maximum() default Integer.MAX_VALUE;
-        
+
     }
-    
+
     /**
      * @return The XML tag corresponding to this component.
      */
     String tag();
-    
+
     /**
      * @return How to handle text content associated with the tag.
      */
     ContentHandling content() default ContentHandling.ERROR;
-    
+
     /**
      * @return The allowable parent tag(s) for this component.
      */
     String[] parentTag() default {};
-    
+
     /**
      * @return The allowable child tag(s) for this component, including cardinality.
      */
     ChildTag[] childTag() default {};
-    
+
     /**
      * @return Returns the class of the factory for creating this component.
      */
     Class<? extends ComponentFactory> factoryClass() default ComponentFactory.class;
-    
+
     /**
      * @return The JavaScript module containing the widget.
      */
     String widgetModule() default "fujion-widget";
-    
+
     /**
      * @return The JavaScript class for the widget.
      */
     String widgetClass();
-
+    
 }
