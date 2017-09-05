@@ -23,20 +23,20 @@ package org.fujion.event;
 import org.fujion.annotation.EventType;
 import org.fujion.component.BaseComponent;
 
-/*
+/**
  * A close event.
  */
 @EventType(CloseEvent.TYPE)
 public class CloseEvent extends Event {
-    
+
     public static final String TYPE = "close";
-    
+
     public CloseEvent() {
         super(TYPE);
     }
-    
+
     public CloseEvent(BaseComponent target, Object data) {
         super(TYPE, target, data);
     }
-    
+
 }

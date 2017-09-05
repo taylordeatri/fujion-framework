@@ -23,20 +23,20 @@ package org.fujion.event;
 import org.fujion.annotation.EventType;
 import org.fujion.component.BaseComponent;
 
-/*
+/**
  * A double click event.
  */
 @EventType(DblclickEvent.TYPE)
 public class DblclickEvent extends MouseEvent {
-    
+
     public static final String TYPE = "dblclick";
-    
+
     public DblclickEvent() {
         super(TYPE);
     }
-    
+
     public DblclickEvent(BaseComponent target, Object data) {
         super(TYPE, target, data);
     }
-    
+
 }

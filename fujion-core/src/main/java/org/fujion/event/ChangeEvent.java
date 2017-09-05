@@ -25,34 +25,34 @@ import org.fujion.annotation.EventType;
 import org.fujion.annotation.EventType.EventParameter;
 import org.fujion.component.BaseComponent;
 
-/*
+/**
  * A change event.
  */
 @EventType(ChangeEvent.TYPE)
 public class ChangeEvent extends Event {
-    
+
     public static final String TYPE = "change";
-    
+
     @EventParameter
     private Object value;
-    
+
     public ChangeEvent() {
         super(TYPE);
     }
-    
+
     public ChangeEvent(BaseComponent target, Object data) {
         super(TYPE, target, data);
     }
-    
+
     public ChangeEvent(BaseComponent target, Object data, Object value) {
         super(TYPE, target, data);
         this.value = value;
     }
-    
+
     public Object getValue() {
         return value;
     }
-    
+
     public <T> T getValue(Class<T> type) {
         return ConvertUtil.convert(value, type);
     }

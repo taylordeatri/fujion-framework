@@ -23,20 +23,20 @@ package org.fujion.event;
 import org.fujion.annotation.EventType;
 import org.fujion.component.BaseComponent;
 
-/*
+/**
  * A click event.
  */
 @EventType(ClickEvent.TYPE)
 public class ClickEvent extends MouseEvent {
-    
+
     public static final String TYPE = "click";
-    
+
     public ClickEvent() {
         super(TYPE);
     }
-    
+
     public ClickEvent(BaseComponent target, Object data) {
         super(TYPE, target, data);
     }
-    
+
 }

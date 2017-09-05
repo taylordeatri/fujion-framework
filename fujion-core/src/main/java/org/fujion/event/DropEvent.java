@@ -24,32 +24,32 @@ import org.fujion.annotation.EventType;
 import org.fujion.annotation.EventType.EventParameter;
 import org.fujion.component.BaseComponent;
 
-/*
+/**
  * A drop event.
  */
 @EventType(DropEvent.TYPE)
 public class DropEvent extends Event {
-    
+
     public static final String TYPE = "drop";
-    
+
     @EventParameter
     private BaseComponent draggable;
-    
+
     public DropEvent() {
         super(TYPE);
     }
-    
+
     public DropEvent(BaseComponent target, Object data) {
         super(TYPE, target, data);
     }
-    
+
     public DropEvent(BaseComponent target, BaseComponent draggable, Object data) {
         this(target, data);
         this.draggable = draggable;
     }
-
+    
     public BaseComponent getDraggable() {
         return draggable;
     }
-
+    
 }
