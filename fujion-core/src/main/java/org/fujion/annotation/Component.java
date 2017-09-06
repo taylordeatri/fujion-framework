@@ -68,12 +68,16 @@ public @interface Component {
 
         /**
          * The property name.
+         *
+         * @return The property name.
          */
         String value();
 
         /**
          * If true, hide the getter method from the deserializer. Use this to hide a getter
          * annotated in a superclass.
+         *
+         * @return If true, hide the getter method from the deserializer.
          */
         boolean hide() default false;
     }
@@ -88,17 +92,23 @@ public @interface Component {
 
         /**
          * The property name.
+         *
+         * @return The property name.
          */
         String value();
 
         /**
          * If true, hide the setter method from the deserializer. Use this to hide a setter
          * annotated in a superclass.
+         *
+         * @return If true, hide the setter method from the deserializer.
          */
         boolean hide() default false;
 
         /**
          * If true, defer invoking the setter until deserialization is complete.
+         *
+         * @return If true, defer invoking the setter until deserialization is complete.
          */
         boolean defer() default false;
 
@@ -115,6 +125,8 @@ public @interface Component {
 
         /**
          * The attribute name.
+         * 
+         * @return The attribute name.
          */
         String value();
 
@@ -130,16 +142,22 @@ public @interface Component {
 
         /**
          * The child tag.
+         * 
+         * @return The child tag.
          */
         String value();
 
         /**
          * Minimum number of occurrences.
+         * 
+         * @return Minimum number of occurrences.
          */
         int minimum() default 0;
 
         /**
          * Maximum number of occurrences.
+         * 
+         * @return Maximum number of occurrences.
          */
         int maximum() default Integer.MAX_VALUE;
 
@@ -147,36 +165,50 @@ public @interface Component {
 
     /**
      * The XML tag corresponding to this component.
+     * 
+     * @return The XML tag corresponding to this component.
      */
     String tag();
 
     /**
      * How to handle text content associated with the tag.
+     * 
+     * @return The content handling.
      */
     ContentHandling content() default ContentHandling.ERROR;
 
     /**
      * The allowable parent tag(s) for this component.
+     * 
+     * @return The allowable parent tag(s).
      */
     String[] parentTag() default {};
 
     /**
      * The allowable child tag(s) for this component, including cardinality.
+     * 
+     * @return The allowable child tag(s).
      */
     ChildTag[] childTag() default {};
 
     /**
      * The class of the factory for creating this component.
+     * 
+     * @return The factory class.
      */
     Class<? extends ComponentFactory> factoryClass() default ComponentFactory.class;
 
     /**
      * The JavaScript module containing the widget.
+     * 
+     * @return The JavaScript module name.
      */
     String widgetModule() default "fujion-widget";
 
     /**
      * The JavaScript class for the widget.
+     * 
+     * @return The JavaScript widget class.
      */
     String widgetClass();
     

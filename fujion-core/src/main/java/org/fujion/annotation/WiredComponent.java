@@ -33,15 +33,19 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface WiredComponent {
-
+    
     /**
      * The name associated with the component instance to be wired to this field. If not specified,
      * is assumed to be the same as the field name.
+     * 
+     * @return The component name.
      */
     String value() default "";
-
+    
     /**
      * The action to be taken if wiring fails.
+     * 
+     * @return The on failure action.
      */
     OnFailure onFailure() default OnFailure.EXCEPTION;
 }

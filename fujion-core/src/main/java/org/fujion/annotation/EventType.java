@@ -33,12 +33,14 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface EventType {
-    
+
     /**
      * The name of the event represented by this class.
+     * 
+     * @return The event name.
      */
     String value();
-    
+
     /**
      * Marks a field to be wired from client request data.
      */
@@ -46,14 +48,18 @@ public @interface EventType {
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.FIELD)
     public @interface EventParameter {
-        
+
         /**
          * The parameter name. If not specified, defaults to the name of the annotated field.
+         * 
+         * @return The parameter name.
          */
         String value() default "";
-        
+
         /**
          * The action to be taken if wiring fails.
+         * 
+         * @return The on failure action.
          */
         OnFailure onFailure() default OnFailure.LOG;
     }
