@@ -24,8 +24,18 @@ package org.fujion.ancillary;
  * Simple interface for components that have a label.
  */
 public interface ILabeled {
-
+    
+    /**
+     * Returns the value of the label.
+     *
+     * @return The value of the label. May be null.
+     */
     String getLabel();
-
+    
+    /**
+     * Sets the value of the label.
+     *
+     * @param label The new label value.
+     */
     void setLabel(String label);
 }

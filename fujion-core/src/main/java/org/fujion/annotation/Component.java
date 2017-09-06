@@ -29,7 +29,7 @@ import java.lang.annotation.Target;
 import org.fujion.ancillary.ComponentFactory;
 
 /**
- * Class annotation to control deserialization of a fujion resource.
+ * Class annotation to control deserialization of a Fujion resource.
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
@@ -40,7 +40,22 @@ public @interface Component {
      * Methods of handling text content nodes.
      */
     public enum ContentHandling {
-        ERROR, IGNORE, AS_ATTRIBUTE, AS_CHILD
+        /**
+         * Text content throws an exception.
+         */
+        ERROR,
+        /**
+         * Text content is ignored.
+         */
+        IGNORE,
+        /**
+         * Text content is internally represented as an attribute named #text.
+         */
+        AS_ATTRIBUTE,
+        /**
+         * Text content is internally represented as a child component of the class Content.
+         */
+        AS_CHILD
     }
 
     /**
@@ -52,13 +67,13 @@ public @interface Component {
     public @interface PropertyGetter {
 
         /**
-         * @return The property name.
+         * The property name.
          */
         String value();
 
         /**
-         * @return If true, hide the getter method from the deserializer. Use this to hide a getter
-         *         annotated in a superclass.
+         * If true, hide the getter method from the deserializer. Use this to hide a getter
+         * annotated in a superclass.
          */
         boolean hide() default false;
     }
@@ -72,18 +87,18 @@ public @interface Component {
     public @interface PropertySetter {
 
         /**
-         * @return The property name.
+         * The property name.
          */
         String value();
 
         /**
-         * @return If true, hide the setter method from the deserializer. Use this to hide a setter
-         *         annotated in a superclass.
+         * If true, hide the setter method from the deserializer. Use this to hide a setter
+         * annotated in a superclass.
          */
         boolean hide() default false;
 
         /**
-         * @return If true, defer invoking the setter until deserialization is complete.
+         * If true, defer invoking the setter until deserialization is complete.
          */
         boolean defer() default false;
 
@@ -99,7 +114,7 @@ public @interface Component {
     public @interface FactoryParameter {
 
         /**
-         * @return The attribute name.
+         * The attribute name.
          */
         String value();
 
@@ -114,54 +129,54 @@ public @interface Component {
     public @interface ChildTag {
 
         /**
-         * @return The child tag.
+         * The child tag.
          */
         String value();
 
         /**
-         * @return Minimum number of occurrences.
+         * Minimum number of occurrences.
          */
         int minimum() default 0;
 
         /**
-         * @return Maximum number of occurrences.
+         * Maximum number of occurrences.
          */
         int maximum() default Integer.MAX_VALUE;
 
     }
 
     /**
-     * @return The XML tag corresponding to this component.
+     * The XML tag corresponding to this component.
      */
     String tag();
 
     /**
-     * @return How to handle text content associated with the tag.
+     * How to handle text content associated with the tag.
      */
     ContentHandling content() default ContentHandling.ERROR;
 
     /**
-     * @return The allowable parent tag(s) for this component.
+     * The allowable parent tag(s) for this component.
      */
     String[] parentTag() default {};
 
     /**
-     * @return The allowable child tag(s) for this component, including cardinality.
+     * The allowable child tag(s) for this component, including cardinality.
      */
     ChildTag[] childTag() default {};
 
     /**
-     * @return Returns the class of the factory for creating this component.
+     * The class of the factory for creating this component.
      */
     Class<? extends ComponentFactory> factoryClass() default ComponentFactory.class;
 
     /**
-     * @return The JavaScript module containing the widget.
+     * The JavaScript module containing the widget.
      */
     String widgetModule() default "fujion-widget";
 
     /**
-     * @return The JavaScript class for the widget.
+     * The JavaScript class for the widget.
      */
     String widgetClass();
     

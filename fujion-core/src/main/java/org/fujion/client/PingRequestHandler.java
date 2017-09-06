@@ -27,14 +27,17 @@ import org.fujion.websocket.IRequestHandler;
  * logic and serve only to verify client-server connectivity and reset inactivity timeouts.
  */
 public class PingRequestHandler implements IRequestHandler {
-
+    
     @Override
     public void handleRequest(ClientRequest request) {
     }
-
+    
+    /**
+     * Returns a request type of "ping".
+     */
     @Override
     public String getRequestType() {
         return "ping";
     }
-
+    
 }

@@ -21,13 +21,15 @@
 package org.fujion.ancillary;
 
 /**
- * Interface for classes that have a unique identifier for an HTML element.
+ * Interface for classes that assign a unique identifier to an HTML element.
  */
 public interface IElementIdentifier {
-
+    
     /**
-     * @return The unique identifier of the HTML element.
+     * Returns the unique identifier of the corresponding HTML element.
+     * 
+     * @return HTML element unique identifier.
      */
     String getId();
-
+    
 }

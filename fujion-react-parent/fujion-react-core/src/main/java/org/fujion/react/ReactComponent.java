@@ -26,27 +26,43 @@ import org.fujion.annotation.Component.PropertySetter;
 import org.fujion.component.BaseUIComponent;
 
 /**
- * Container for a react component.
+ * Container for a React component.
  */
 @Component(tag = "react", widgetModule = "fujion-react-widget", widgetClass = "ReactWidget", parentTag = "*")
 public class ReactComponent extends BaseUIComponent {
-    
-    private String src;
 
+    private String src;
+    
+    /**
+     * Returns the name of the module containing the React component.
+     *
+     * @return Name of module containing React component.
+     */
     @PropertyGetter("src")
     public String getSrc() {
         return src;
     }
-
+    
+    /**
+     * Sets the module containing the React component.
+     *
+     * @param src Name of module containing React component.
+     */
     @PropertySetter("src")
     public void setSrc(String src) {
         if (!areEqual(src = trimify(src), this.src)) {
             sync("src", this.src = src);
         }
     }
-
+    
+    /**
+     * Invokes a published method on the module containing the React component.
+     *
+     * @param functionName Name of function to invoke.
+     * @param args Arguments to pass to function.
+     */
     public void rxInvoke(String functionName, Object... args) {
         invoke("rxInvoke", functionName, args);
     }
-
+    
 }

@@ -30,7 +30,6 @@ import java.util.Set;
 import java.util.function.IntSupplier;
 
 import org.apache.commons.beanutils.ConstructorUtils;
-import org.fujion.common.MiscUtil;
 import org.fujion.ancillary.ComponentException;
 import org.fujion.ancillary.ComponentFactory;
 import org.fujion.ancillary.ConvertUtil;
@@ -39,6 +38,7 @@ import org.fujion.annotation.Component.ContentHandling;
 import org.fujion.annotation.Component.FactoryParameter;
 import org.fujion.annotation.Component.PropertyGetter;
 import org.fujion.annotation.Component.PropertySetter;
+import org.fujion.common.MiscUtil;
 import org.fujion.component.BaseComponent;
 
 /**
@@ -60,22 +60,48 @@ public class ComponentDefinition {
             this.maximum = maximum;
         }
 
+        /**
+         * Returns the minimum cardinality.
+         *
+         * @return The minimum cardinality.
+         */
         public int getMinimum() {
             return minimum;
         }
 
+        /**
+         * Returns the maximum cardinality.
+         *
+         * @return The maximum cardinality.
+         */
         public int getMaximum() {
             return maximum;
         }
 
+        /**
+         * Returns true if there is a minimum cardinality.
+         *
+         * @return True if there is a minimum cardinality.
+         */
         public boolean hasMinimum() {
             return minimum > 0;
         }
 
+        /**
+         * Returns true if there is a maximum cardinality.
+         *
+         * @return True if there is a maximum cardinality.
+         */
         public boolean hasMaximum() {
             return maximum != Integer.MAX_VALUE;
         }
 
+        /**
+         * Returns true if the count falls within the cardinality constraints.
+         *
+         * @param count The count to test.
+         * @return True if the count falls within the cardinality constraints.
+         */
         public boolean isValid(int count) {
             return count >= minimum && count <= maximum;
         }
@@ -92,12 +118,22 @@ public class ComponentDefinition {
 
         private final Object value;
 
+        /**
+         * Create a deferred setter.
+         *
+         * @param instance Instance containing the setter.
+         * @param method The setter method.
+         * @param value The value to pass to the setter.
+         */
         DeferredSetter(Object instance, Method method, Object value) {
             this.instance = instance;
             this.method = method;
             this.value = value;
         }
 
+        /**
+         * Invoke the deferred setter.
+         */
         public void execute() {
             ConvertUtil.invokeSetter(instance, method, value);
         }
@@ -282,10 +318,22 @@ public class ComponentDefinition {
         return Collections.unmodifiableMap(childTags);
     }
 
+    /**
+     * Returns true if this component allows children.
+     *
+     * @return True if this component allows children.
+     */
     public boolean childrenAllowed() {
         return childTags.size() > 0;
     }
 
+    /**
+     * Validate that a child defined by the component definition is valid for this parent.
+     *
+     * @param childDefinition Definition for child component.
+     * @param childCount Current child count.
+     * @exception ComponentException Thrown if child fails validation.
+     */
     public void validateChild(ComponentDefinition childDefinition, IntSupplier childCount) {
         if (!childrenAllowed()) {
             throw new ComponentException(componentClass, "Children are not allowed");
@@ -305,6 +353,13 @@ public class ComponentDefinition {
 
     }
 
+    /**
+     * Validate that a component defined by the component definition is a valid parent for this
+     * component.
+     *
+     * @param parentDefinition Definition for parent component.
+     * @exception ComponentException Thrown if child fails validation.
+     */
     public void validateParent(ComponentDefinition parentDefinition) {
         if (!isParentTag(parentDefinition.tag)) {
             throw new ComponentException(componentClass, "%s is not a valid parent", parentDefinition.componentClass);
