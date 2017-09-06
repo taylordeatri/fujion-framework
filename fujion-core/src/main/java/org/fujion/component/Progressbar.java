@@ -32,7 +32,7 @@ public class Progressbar extends BaseLabeledComponent<BaseLabeledComponent.Label
 
     private int value;
 
-    private int maxValue = 100;
+    private int maxvalue = 100;
 
     @PropertyGetter("value")
     public int getValue() {
@@ -46,15 +46,15 @@ public class Progressbar extends BaseLabeledComponent<BaseLabeledComponent.Label
         }
     }
 
-    @PropertyGetter("maxValue")
+    @PropertyGetter("maxvalue")
     public int getMaxValue() {
-        return maxValue;
+        return maxvalue;
     }
 
-    @PropertySetter("maxValue")
-    public void setMaxValue(int maxValue) {
-        if (maxValue != this.maxValue) {
-            sync("maxValue", this.maxValue = maxValue);
+    @PropertySetter("maxvalue")
+    public void setMaxValue(int maxvalue) {
+        if (maxvalue != this.maxvalue) {
+            sync("maxvalue", this.maxvalue = maxvalue);
         }
     }
 

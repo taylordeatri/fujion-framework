@@ -1305,15 +1305,15 @@ define('fujion-widget', ['fujion-core', 'bootstrap', 'jquery-ui', 'jquery-scroll
 		
 		/*------------------------------ Other ------------------------------*/
 		
-		validate: function(value, full) {
-			var partial = !full && this._partial.test(value);
+		validate: function(value) {
+			var partial = this._partial.test(value);
 			value = partial ? 0 : _.toNumber(value);
-			return partial || (!_.isNaN(value) && this.validateRange(value, full)); 
+			return partial || (!_.isNaN(value) && this.validateRange(value)); 
 		},
 		
-		validateRange: function(value, full) {
-			var min = full ? _.defaultTo(this.getState('min'), this._min) : this._min,
-				max = full ? _.defaultTo(this.getState('max'), this._max) : this._max;
+		validateRange: function(value) {
+			var min = _.defaultTo(this.getState('minvalue'), this._min),
+				max = _.defaultTo(this.getState('maxvalue'), this._max);
 			
 			value = value === undefined ? +this.input$().val() : +value;
 			return value >= min && value <= max;
@@ -1321,11 +1321,11 @@ define('fujion-widget', ['fujion-core', 'bootstrap', 'jquery-ui', 'jquery-scroll
 		
 		/*------------------------------ State ------------------------------*/
 		
-		minValue: function(v) {
+		minvalue: function(v) {
 			this.attr('min', v, this.input$());
 		},
 		
-		maxValue: function(v) {
+		maxvalue: function(v) {
 			this.attr('max', v, this.input$());
 		}
 	});
@@ -3068,14 +3068,14 @@ define('fujion-widget', ['fujion-core', 'bootstrap', 'jquery-ui', 'jquery-scroll
 		
 		init: function() {
 			this._super();
-			this.initState({maxValue: 100, value: 0})
+			this.initState({maxvalue: 100, value: 0})
 		},
 		
 		/*------------------------------ Other ------------------------------*/
 		
 		_pct: function() {
 			var value = this.getState('value'),
-				max = this.getState('maxValue'),
+				max = this.getState('maxvalue'),
 				pct = max <= 0 ? 0 : value / max * 100;
 			
 			return pct > 100 ? 100 : pct;
@@ -3103,7 +3103,7 @@ define('fujion-widget', ['fujion-core', 'bootstrap', 'jquery-ui', 'jquery-scroll
 			this.widget$.children().first().text(v);
 		},
 		
-		maxValue: function(v) {
+		maxvalue: function(v) {
 			this._adjust();
 		},
 		
@@ -3133,7 +3133,7 @@ define('fujion-widget', ['fujion-core', 'bootstrap', 'jquery-ui', 'jquery-scroll
 		
 		init: function() {
 			this._super();
-			this.initState({value: 0, maxValue: 100, minValue: 0, step: 1, orientation: 'HORIZONTAL', synced: false});
+			this.initState({value: 0, maxvalue: 100, minvalue: 0, step: 1, orientation: 'HORIZONTAL', synced: false});
 			this.forwardToServer('change');
 		},
 		
@@ -3155,11 +3155,11 @@ define('fujion-widget', ['fujion-core', 'bootstrap', 'jquery-ui', 'jquery-scroll
 		
 		/*------------------------------ State ------------------------------*/
 		
-		maxValue: function(v) {
+		maxvalue: function(v) {
 			this._slider('max', v);
 		},
 		
-		minValue: function(v) {
+		minvalue: function(v) {
 			this._slider('min', v);
 		},
 		
