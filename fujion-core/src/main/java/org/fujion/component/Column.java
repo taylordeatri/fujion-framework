@@ -54,10 +54,20 @@ public class Column extends BaseLabeledImageComponent<BaseLabeledComponent.Label
         super(label);
     }
 
+    /**
+     * Returns the comparator to be used for sorting (if any).
+     *
+     * @return The comparator to be used for sorting. May be null.
+     */
     public Comparator<?> getSortComparator() {
         return sortComparator;
     }
 
+    /**
+     * Sets the comparator to be used for sorting.
+     *
+     * @param sortComparator The comparator to be used for sorting. May be null.
+     */
     public void setSortComparator(Comparator<?> sortComparator) {
         if (sortComparator != this.sortComparator) {
             this.sortComparator = sortComparator;
@@ -66,31 +76,62 @@ public class Column extends BaseLabeledImageComponent<BaseLabeledComponent.Label
         }
     }
 
+    /**
+     * Sets the name of the model property to be used for sorting.
+     *
+     * @param propertyName The name of the model property to be used for sorting.
+     */
     @PropertySetter("sortBy")
     public void setSortComparator(String propertyName) {
         setSortComparator(new SmartComparator(propertyName));
     }
 
+    /**
+     * Returns the sort order. This may not reflect the current sort order. Rather, it specifies the
+     * ordering to be used when the <code>sort</code> method is invoked.
+     *
+     * @return The sort order.
+     */
     @PropertyGetter("sortOrder")
     public SortOrder getSortOrder() {
         return sortOrder;
     }
 
+    /**
+     * Sets the sort order. This does not affect the current sort order. Rather, it specifies the
+     * ordering to be used when the <code>sort</code> method is invoked.
+     *
+     * @param sortOrder The sort order.
+     */
     @PropertySetter("sortOrder")
     public void setSortOrder(SortOrder sortOrder) {
         this.sortOrder = sortOrder == null ? SortOrder.UNSORTED : sortOrder;
     }
 
+    /**
+     * Returns the type of sort toggle.
+     *
+     * @return The type of sort toggle.
+     */
     @PropertyGetter("sortToggle")
     public SortToggle getSortToggle() {
         return sortToggle;
     }
 
+    /**
+     * Sets the type of sort toggle.
+     *
+     * @param sortToggle The type of sort toggle.
+     */
     @PropertySetter("sortToggle")
     public void setSortToggle(SortToggle sortToggle) {
         this.sortToggle = sortToggle;
     }
 
+    /**
+     * Transitions the sort order to the next state (depending on the setting of the sort toggle)
+     * and performs the sort.
+     */
     public void toggleSort() {
         int i = sortOrder.ordinal() + 1;
         int max = sortToggle == SortToggle.TRISTATE ? 3 : 2;
@@ -98,6 +139,9 @@ public class Column extends BaseLabeledImageComponent<BaseLabeledComponent.Label
         sort();
     }
 
+    /**
+     * Sort the column according to the sort order property.
+     */
     public void sort() {
         if (!sortColumn) {
             setSortColumn(true);
@@ -114,27 +158,55 @@ public class Column extends BaseLabeledImageComponent<BaseLabeledComponent.Label
         }
     }
 
+    /**
+     * Returns the model from the associated grid rows.
+     *
+     * @return The model backing the associated grid rows. May be null.
+     */
     private IListModel<Object> getModel() {
         Grid grid = getAncestor(Grid.class);
         Rows rows = grid == null ? null : grid.getRows();
-        return rows == null ? null : rows.getModelAndView(Object.class).getModel();
+        return rows == null ? null : rows.getModel(Object.class);
     }
 
+    /**
+     * Handles a sort request from the client.
+     */
     @EventHandler(value = "sort", syncToClient = false)
     private void _sort() {
         toggleSort();
     }
 
+    /**
+     * Returns true if this is the currently sorted column. Note that this setting is mutually
+     * exclusive among columns within the same grid instance.
+     *
+     * @return True if this is the currently sorted column.
+     */
     @PropertyGetter("sortColumn")
     public boolean isSortColumn() {
         return sortColumn;
     }
 
+    /**
+     * When set to true, designates this column as the currently sorted column. Note that this
+     * setting is mutually exclusive among columns within the same grid instance.
+     *
+     * @param sortColumn Set to true to sort this column and designate it as the current sort
+     *            column. Doing so will set this property to false on all other columns.
+     */
     @PropertySetter("sortColumn")
     public void setSortColumn(boolean sortColumn) {
         _setSortColumn(sortColumn, true);
     }
 
+    /**
+     * Sets the sort column state. If set to true, the column is sorted and designated as the
+     * current sort column.
+     *
+     * @param sortColumn If true, this column is sorted and designated as the current sort column.
+     * @param notifyParent If true, update the sort column property of the parent.
+     */
     protected void _setSortColumn(boolean sortColumn, boolean notifyParent) {
         if (sortColumn != this.sortColumn) {
             this.sortColumn = sortColumn;

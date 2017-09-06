@@ -29,32 +29,42 @@ import java.util.Iterator;
  * @param <T> The element type.
  */
 public class ObservedCollection<T> extends ProxiedCollection<T> {
-
+    
     /**
      * Listener for changes to an observed collection.
      *
      * @param <T> The element type.
      */
     public interface IObservedCollectionListener<T> {
-
+        
+        /**
+         * Invoked when an element is added.
+         *
+         * @param element Added element.
+         */
         void onAddElement(T element);
-
+        
+        /**
+         * Invoked when an element is removed.
+         *
+         * @param element Removed element.
+         */
         void onRemoveElement(T element);
     }
-
+    
     public ObservedCollection(Collection<T> delegate, IObservedCollectionListener<T> listener) {
         super(delegate, new ProxiedCollection.IProxiedCollectionOperations<T>() {
-
+            
             @Override
             public boolean add(T element, Collection<T> delegate) {
                 if (delegate.add(element)) {
                     listener.onAddElement(element);
                     return true;
                 }
-
+                
                 return false;
             }
-
+            
             @SuppressWarnings("unchecked")
             @Override
             public boolean remove(Object element, Collection<T> delegate) {
@@ -62,17 +72,17 @@ public class ObservedCollection<T> extends ProxiedCollection<T> {
                     listener.onRemoveElement((T) element);
                     return true;
                 }
-
+                
                 return false;
             }
-
+            
             @Override
             public void remove(T element, Iterator<T> iterator) {
                 iterator.remove();
                 listener.onRemoveElement(element);
             }
-
+            
         });
     }
-
+    
 }

@@ -78,6 +78,9 @@ public class DateUtil {
     private static final long[] MS_LG = new long[] { 31557600000L, 2592000000L, 604800000L, 86400000L, 3600000L, 60000L,
             1000L, 1L };
     
+    /**
+     * Labels for time units. TODO: externalize these for localization support.
+     */
     public static String[][] TIME_UNIT = new String[][] { { "year", "years", "yr", "yrs" },
             { "month", "months", "mo", "mos" }, { "week", "weeks", "wk", "wks" }, { "day", "days", "day", "days" },
             { "hour", "hours", "hr", "hrs" }, { "minute", "minutes", "min", "mins" }, { "second", "seconds", "sec", "secs" },
@@ -88,7 +91,7 @@ public class DateUtil {
      */
     public enum TimeUnit {
         YEARS, MONTHS, WEEKS, DAYS, HOURS, MINUTES, SECONDS, MILLISECONDS
-    };
+    }
     
     /**
      * Enum representing common date formats.

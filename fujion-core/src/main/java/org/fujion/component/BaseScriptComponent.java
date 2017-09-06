@@ -27,49 +27,71 @@ import org.fujion.annotation.Component.PropertySetter;
  * Base for components that implement scripting support.
  */
 public class BaseScriptComponent extends BaseSourcedComponent {
-    
+
     protected BaseScriptComponent(boolean contentSynced) {
         super(contentSynced);
     }
-
+    
     protected BaseScriptComponent(String content, boolean contentSynced) {
         super(content, contentSynced);
     }
-
-    private boolean defer;
     
-    private String type;
+    private boolean defer;
 
+    private String type;
+    
+    /**
+     * Returns the defer flag. If true, script execution is deferred (the exact timing is
+     * implementation-dependent). Otherwise it is immediate.
+     *
+     * @return The defer flag.
+     */
     @PropertyGetter("defer")
     public boolean getDefer() {
         return defer;
     }
-    
+
+    /**
+     * Sets the defer flag. If true, script execution is deferred (the exact timing is
+     * implementation-dependent). Otherwise it is immediate.
+     *
+     * @param defer The defer flag.
+     */
     @PropertySetter("defer")
     public void setDefer(boolean defer) {
         if (defer != this.defer) {
             this.defer = defer;
-
+            
             if (isContentSynced()) {
                 sync("defer", defer);
             }
         }
     }
-    
+
+    /**
+     * Returns the type of script.
+     *
+     * @return The script type.
+     */
     @PropertyGetter("type")
     public String getType() {
         return type;
     }
-    
+
+    /**
+     * Sets the type of script.
+     *
+     * @param type The script type.
+     */
     @PropertySetter("type")
     public void setType(String type) {
         if (!areEqual(type = nullify(type), this.type)) {
             this.type = type;
-            
+
             if (isContentSynced()) {
                 sync("type", type);
             }
         }
     }
-    
+
 }

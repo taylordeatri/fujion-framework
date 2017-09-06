@@ -115,18 +115,18 @@ public class Caption extends BaseLabeledComponent<BaseLabeledComponent.LabelPosi
     }
     
     /**
-     * Returns the css class(es) associated with the label.
+     * Returns the CSS class(es) associated with the label.
      *
-     * @return The label css class(es).
+     * @return The label CSS class(es).
      */
     public String getLabelClass() {
         return labelClass;
     }
     
     /**
-     * Sets the css class(es) of the label.
+     * Sets the CSS class(es) of the label.
      *
-     * @param labelClass The label css class(es).
+     * @param labelClass The label CSS class(es).
      */
     public void setLabelClass(String labelClass) {
         if (!areEqual(labelClass = trimify(labelClass), this.labelClass)) {

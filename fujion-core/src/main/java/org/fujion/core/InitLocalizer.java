@@ -22,8 +22,8 @@ package org.fujion.core;
 
 import java.util.TimeZone;
 
-import org.fujion.common.Localizer;
 import org.fujion.client.ExecutionContext;
+import org.fujion.common.Localizer;
 import org.fujion.component.Page;
 import org.springframework.context.i18n.LocaleContextHolder;
 
@@ -31,28 +31,31 @@ import org.springframework.context.i18n.LocaleContextHolder;
  * Initializes the Localizer class with the locale and time zone resolvers.
  */
 public class InitLocalizer {
-    
+
+    /**
+     * Initialize the Localizer.
+     */
     public static void init() {
         Localizer.setLocaleResolver(() -> {
             return LocaleContextHolder.getLocale();
         });
-        
+
         Localizer.setTimeZoneResolver(() -> {
             TimeZone tz = null;
             Page page = ExecutionContext.getPage();
             Integer offset = page == null ? null : page.getBrowserInfo("timezoneOffset", Integer.class);
-            
+
             if (offset != null) {
                 String id = "GMT" + (offset < 0 ? "-" : "+") + "%02d:%02d";
                 offset = Math.abs(offset);
                 id = String.format(id, offset / 60, offset % 60);
                 tz = TimeZone.getTimeZone(id);
             }
-            
+
             return tz == null ? TimeZone.getDefault() : tz;
         });
     }
-    
+
     private InitLocalizer() {
     }
 }
