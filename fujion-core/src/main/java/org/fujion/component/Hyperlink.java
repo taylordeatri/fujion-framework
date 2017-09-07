@@ -29,15 +29,15 @@ import org.fujion.annotation.Component.PropertySetter;
  */
 @Component(tag = "link", widgetClass = "Hyperlink", parentTag = "*")
 public class Hyperlink extends BaseLabeledImageComponent<BaseLabeledComponent.LabelPositionHorz> {
-
+    
     private String href;
-
+    
     private String target;
-
+    
     public Hyperlink() {
         addClass("flavor:btn-link size:btn-sm");
     }
-
+    
     /**
      * Returns the position of the label relative to the contained elements. Defaults to 'left'.
      *
@@ -48,7 +48,7 @@ public class Hyperlink extends BaseLabeledImageComponent<BaseLabeledComponent.La
     public LabelPositionHorz getPosition() {
         return super.getPosition();
     }
-
+    
     /**
      * Sets the position of the label relative to the contained elements.
      *
@@ -59,29 +59,49 @@ public class Hyperlink extends BaseLabeledImageComponent<BaseLabeledComponent.La
     public void setPosition(LabelPositionHorz position) {
         super.setPosition(position);
     }
-
+    
+    /**
+     * Returns the URL of the link destination.
+     *
+     * @return URL of the link destination.
+     */
     @PropertyGetter("href")
     public String getHref() {
         return href;
     }
-
+    
+    /**
+     * Sets the URL of the link destination.
+     *
+     * @param href URL of the link destination.
+     */
     @PropertySetter("href")
     public void setHref(String href) {
         if (!areEqual(href = nullify(href), this.href)) {
             sync("href", this.href = href);
         }
     }
-
+    
+    /**
+     * Returns the target where the linked document will be opened.
+     *
+     * @return The target where the linked document will be opened.
+     */
     @PropertyGetter("target")
     public String getTarget() {
         return target;
     }
-
+    
+    /**
+     * Sets the target where the linked document will be opened.
+     *
+     * @param target The target where the linked document will be opened.
+     */
     @PropertySetter("target")
     public void setTarget(String target) {
         if (!areEqual(href = nullify(target), this.target)) {
             sync("target", this.target = target);
         }
     }
-
+    
 }

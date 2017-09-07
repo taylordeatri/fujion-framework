@@ -32,64 +32,101 @@ import org.fujion.event.EventUtil;
  */
 @Component(tag = "listitem", widgetClass = "Listitem", parentTag = "listbox")
 public class Listitem extends BaseLabeledComponent<BaseLabeledComponent.LabelPositionNone> {
-    
+
     private boolean selected;
-    
+
     private String value;
-    
+
     public Listitem() {
         super();
     }
-    
+
     public Listitem(String label) {
         super(label);
     }
-    
+
+    /**
+     * Sets the selection state.
+     *
+     * @param selected The selection state.
+     * @param notifyClient If true, notify the client of the state change.
+     * @param notifyParent If true, notify the parent of the state change.
+     */
     protected void _setSelected(boolean selected, boolean notifyClient, boolean notifyParent) {
         if (selected != this.selected) {
             this.selected = selected;
-            
+
             if (notifyClient) {
                 sync("selected", selected);
             }
-            
+
             if (notifyParent && getParent() != null) {
                 getListbox()._updateSelected(this);
             }
         }
     }
-    
+
+    /**
+     * Returns the list box that is the parent of this list item.
+     *
+     * @return The parent list box (may be null).
+     */
     public Listbox getListbox() {
         return (Listbox) getParent();
     }
-    
+
+    /**
+     * Returns the selection state.
+     *
+     * @return The selection state.
+     */
     @PropertyGetter("selected")
     public boolean isSelected() {
         return selected;
     }
-    
+
+    /**
+     * Sets the selection state.
+     *
+     * @param selected The selection state.
+     */
     @PropertySetter("selected")
     public void setSelected(boolean selected) {
         _setSelected(selected, true, true);
     }
-    
+
+    /**
+     * Returns the value associated with the list item.
+     *
+     * @return The value associated with the list item.
+     */
     @PropertyGetter("value")
     public String getValue() {
         return value;
     }
-    
+
+    /**
+     * Sets the value associated with the list item.
+     *
+     * @param value The value associated with the list item.
+     */
     @PropertySetter("value")
     public void setValue(String value) {
         if (!areEqual(value, this.value)) {
             sync("value", this.value = value);
         }
     }
-    
+
+    /**
+     * Handles change events from the client.
+     *
+     * @param event A change event.
+     */
     @EventHandler(value = "change", syncToClient = false)
     private void _onChange(ChangeEvent event) {
         _setSelected(defaultify(event.getValue(Boolean.class), true), false, true);
         event = new ChangeEvent(this.getParent(), event.getData(), this);
         EventUtil.send(event);
     }
-    
+
 }

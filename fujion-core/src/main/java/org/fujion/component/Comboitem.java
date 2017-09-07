@@ -32,64 +32,101 @@ import org.fujion.event.EventUtil;
  */
 @Component(tag = "comboitem", widgetClass = "Comboitem", parentTag = "combobox")
 public class Comboitem extends BaseLabeledComponent<BaseLabeledComponent.LabelPositionNone> {
-
+    
     private boolean selected;
-
+    
     private String value;
-
+    
     public Comboitem() {
         super();
     }
-
+    
     public Comboitem(String label) {
         super(label);
     }
-
+    
+    /**
+     * Returns the selection state.
+     *
+     * @return The selection state.
+     */
     @PropertyGetter("selected")
     public boolean isSelected() {
         return selected;
     }
-
+    
+    /**
+     * Sets the selection state.
+     *
+     * @param selected The selection state.
+     */
     @PropertySetter("selected")
     public void setSelected(boolean selected) {
         _setSelected(selected, true, true);
     }
-
+    
+    /**
+     * Returns the value associated with the combo item.
+     *
+     * @return The value associated with the combo item.
+     */
     @PropertyGetter("value")
     public String getValue() {
         return value;
     }
-
+    
+    /**
+     * Sets the value associated with the combo item.
+     *
+     * @param value The value associated with the combo item.
+     */
     @PropertySetter("value")
     public void setValue(String value) {
         if (!areEqual(value, this.value)) {
             sync("value", this.value = value);
         }
     }
-
+    
+    /**
+     * Sets the selection state.
+     *
+     * @param selected The selection state.
+     * @param notifyClient If true, notify the client of the state change.
+     * @param notifyParent If true, notify the parent of the state change.
+     */
     protected void _setSelected(boolean selected, boolean notifyClient, boolean notifyParent) {
         if (selected != this.selected) {
             this.selected = selected;
-
+            
             if (notifyClient) {
                 sync("selected", selected);
             }
-
+            
             if (notifyParent && getParent() != null) {
                 getCombobox()._updateSelected(selected ? this : null);
             }
         }
     }
-
+    
+    /**
+     * Returns the combo box that is the parent of this combo item.
+     *
+     * @return The parent combo box (may be null).
+     */
     public Combobox getCombobox() {
         return (Combobox) getParent();
     }
-
+    
+    /**
+     * Handles change events from the client.
+     *
+     * @param event A change event.
+     */
     @EventHandler(value = "change", syncToClient = false)
     private void _onChange(ChangeEvent event) {
         _setSelected(defaultify(event.getValue(Boolean.class), true), false, true);
         event = new ChangeEvent(this.getParent(), event.getData(), this);
         EventUtil.send(event);
     }
-    
+
 }
