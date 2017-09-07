@@ -7,15 +7,15 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  * #L%
  */
 package org.fujion.component;
@@ -31,25 +31,41 @@ import org.fujion.event.OpenEvent;
 /**
  * A component representing a drop down menu.
  */
-@Component(tag = "menu", widgetClass = "Menu", parentTag = "*", childTag = { @ChildTag("menuitem"),
-        @ChildTag("menuheader"), @ChildTag("menuseparator") })
+@Component(tag = "menu", widgetClass = "Menu", parentTag = "*", childTag = { @ChildTag("menuitem"), @ChildTag("menuheader"),
+        @ChildTag("menuseparator") })
 public class Menu extends BaseMenuComponent {
     
     private boolean open;
     
+    /**
+     * Opens the drop down menu. Shortcut for <code>setOpen(true)</code>
+     */
     public void open() {
         setOpen(true);
     }
     
+    /**
+     * Closes the drop down menu. Shortcut for <code>setOpen(false)</code>
+     */
     public void close() {
         setOpen(false);
     }
     
+    /**
+     * Returns the open state.
+     *
+     * @return The open state.
+     */
     @PropertyGetter("open")
     public boolean isOpen() {
         return open;
     }
     
+    /**
+     * Sets the open state.
+     *
+     * @param open The open state.
+     */
     @PropertySetter("open")
     public void setOpen(boolean open) {
         if (open != this.open) {
@@ -57,18 +73,14 @@ public class Menu extends BaseMenuComponent {
         }
     }
     
+    /**
+     * Handles open and close events from the client.
+     *
+     * @param event An open or close event.
+     */
     @EventHandler(value = { "open", "close" }, syncToClient = false)
     private void onOpenOrClose(Event event) {
         open = event instanceof OpenEvent;
     }
     
-    @EventHandler("open")
-    private void _onOpen() {
-        this.open = true;
-    }
-    
-    @EventHandler("close")
-    private void _onClose() {
-        this.open = false;
-    }
 }

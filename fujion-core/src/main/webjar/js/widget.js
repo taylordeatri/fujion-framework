@@ -2220,7 +2220,10 @@ define('fujion-widget', ['fujion-core', 'bootstrap', 'jquery-ui', 'jquery-scroll
 		/*------------------------------ Events ------------------------------*/
 			
 		handleClick: function(event) {
-			this._children.length ? this.toggle() : null;
+			if (this._children.length) {
+				this.toggle();
+				this.trigger(this.isOpen() ? 'open' : 'close');
+			}
 			return false;
 		},
 		
