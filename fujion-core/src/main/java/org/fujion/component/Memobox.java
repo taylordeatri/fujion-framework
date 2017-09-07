@@ -35,7 +35,15 @@ public class Memobox extends BaseInputboxComponent<String> {
      * Wrap mode for memo box.
      */
     public enum WrapMode {
-        HARD, SOFT
+        /**
+         * Text is wrapped (contains newlines) when submitted in a form. When HARD is specified, the
+         * cols property must also be specified.
+         */
+        HARD,
+        /**
+         * Text is not wrapped when submitted in a form.
+         */
+        SOFT
     }
 
     private boolean autoScroll;
@@ -43,6 +51,8 @@ public class Memobox extends BaseInputboxComponent<String> {
     private WrapMode wrap = WrapMode.SOFT;
 
     private int rows = 2;
+    
+    private int cols = 20;
 
     public Memobox() {
         super();
@@ -61,11 +71,23 @@ public class Memobox extends BaseInputboxComponent<String> {
         super.setSynchronized(synchronize);
     }
 
+    /**
+     * Returns the auto-scroll setting. If true, the control will ensure that the last line of input
+     * is always visible, scrolling if necessary.
+     *
+     * @return The auto-scroll setting.
+     */
     @PropertyGetter("autoScroll")
     public boolean isAutoScroll() {
         return autoScroll;
     }
 
+    /**
+     * Sets the auto-scroll setting. If true, the control will ensure that the last line of input is
+     * always visible, scrolling if necessary.
+     *
+     * @param autoScroll The auto-scroll setting.
+     */
     @PropertySetter("autoScroll")
     public void setAutoScroll(boolean autoScroll) {
         if (autoScroll != this.autoScroll) {
@@ -73,11 +95,23 @@ public class Memobox extends BaseInputboxComponent<String> {
         }
     }
 
+    /**
+     * Returns the wrap mode.
+     *
+     * @return The wrap mode.
+     * @see WrapMode
+     */
     @PropertyGetter("wrap")
     public WrapMode getWrap() {
         return wrap;
     }
     
+    /**
+     * Sets the wrap mode.
+     *
+     * @param wrap The wrap mode.
+     * @see WrapMode
+     */
     @PropertySetter("wrap")
     public void setWrap(WrapMode wrap) {
         wrap = defaultify(wrap, WrapMode.SOFT);
@@ -86,12 +120,47 @@ public class Memobox extends BaseInputboxComponent<String> {
             sync("wrap", this.wrap = wrap);
         }
     }
+
+    /**
+     * Returns the visible width of the input area in characters. The default is 20 characters. Also
+     * affects the line break position when the wrap mode is set to HARD.
+     *
+     * @return The visible width of the input area in characters.
+     */
+    @PropertyGetter("cols")
+    public int getCols() {
+        return cols;
+    }
     
+    /**
+     * Sets the visible width of the input area in characters. The default is 20 characters. Also
+     * affects the line break position when the wrap mode is set to HARD.
+     *
+     * @param cols The visible width of the input area in characters.
+     */
+    @PropertySetter("cols")
+    public void setCols(int cols) {
+        if (cols != this.cols) {
+            Assert.isTrue(cols > 0, "Cols must be greater than zero");
+            sync("cols", this.cols = cols);
+        }
+    }
+
+    /**
+     * Returns the visible number of rows in the input area. The default is 2 rows.
+     *
+     * @return The visible number of rows in the input area.
+     */
     @PropertyGetter("rows")
     public int getRows() {
         return rows;
     }
     
+    /**
+     * Sets the visible number of rows in the input area. The default is 2 rows.
+     *
+     * @param rows The visible number of rows in the input area.
+     */
     @PropertySetter("rows")
     public void setRows(int rows) {
         if (rows != this.rows) {

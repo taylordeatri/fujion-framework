@@ -2535,7 +2535,7 @@ define('fujion-widget', ['fujion-core', 'bootstrap', 'jquery-ui', 'jquery-scroll
 		
 		init: function() {
 			this._super();
-			this.initState({wrap: 'SOFT', rows: 2});
+			this.initState({wrap: 'SOFT', rows: 2, cols: 20});
 		},
 		
 		/*------------------------------ Other ------------------------------*/
@@ -2557,6 +2557,10 @@ define('fujion-widget', ['fujion-core', 'bootstrap', 'jquery-ui', 'jquery-scroll
 			if (v) {
 				this.scrollToBottom();
 			}
+		},
+		
+		cols: function(v) {
+			this.attr('cols', v, this.input$());
 		},
 		
 		rows: function(v) {

@@ -27,11 +27,24 @@ import org.fujion.client.ClientRequest;
  * Allows the implementer to receive notifications about session activity.
  */
 public interface ISessionListener {
-
+    
+    /**
+     * Called when a client request is received.
+     *
+     * @param request A client request.
+     */
     void onClientRequest(ClientRequest request);
-
+    
+    /**
+     * Called when a client invocation is sent.
+     *
+     * @param invocation A client invocation.
+     */
     void onClientInvocation(ClientInvocation invocation);
-
+    
+    /**
+     * Called when the session is destroyed.
+     */
     void onDestroy();
-
+    
 }
