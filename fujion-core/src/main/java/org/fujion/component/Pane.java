@@ -31,33 +31,53 @@ import org.fujion.annotation.Component.PropertySetter;
  */
 @Component(tag = "pane", widgetModule = "fujion-paneview", widgetClass = "Pane", content = ContentHandling.AS_CHILD, parentTag = "paneview", childTag = @ChildTag("*"))
 public class Pane extends BaseUIComponent {
-
+    
     private boolean splittable;
-
+    
     private String title;
-
+    
+    /**
+     * Returns whether the pane displays a splitter. A pane with a splitter can be manually resized.
+     *
+     * @return If true, the pane has an associated splitter and can be manually resized.
+     */
     @PropertyGetter("splittable")
     public boolean isSplittable() {
         return splittable;
     }
-
+    
+    /**
+     * Sets whether the pane displays a splitter. A pane with a splitter may be manually resized.
+     *
+     * @param splittable If true, the pane has an associated splitter and can be manually resized.
+     */
     @PropertySetter("splittable")
     public void setSplittable(boolean splittable) {
         if (splittable != this.splittable) {
             sync("splittable", this.splittable = splittable);
         }
     }
-
+    
+    /**
+     * Returns the title text.
+     *
+     * @return The title text.
+     */
     @PropertyGetter("title")
     public String getTitle() {
         return title;
     }
-
+    
+    /**
+     * Sets the title text.
+     *
+     * @param title The title text.
+     */
     @PropertySetter("title")
     public void setTitle(String title) {
         if (!areEqual(title = nullify(title), this.title)) {
             sync("title", this.title = title);
         }
     }
-
+    
 }

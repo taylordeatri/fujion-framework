@@ -27,67 +27,125 @@ import org.fujion.annotation.EventHandler;
 
 /**
  * A pane holding a single message in a message window.
+ *
+ * @see org.fujion.component.MessageWindow
  */
 @Component(tag = "messagepane", widgetClass = "Messagepane", content = ContentHandling.AS_CHILD, parentTag = "messagewindow", childTag = @ChildTag("*"))
 public class MessagePane extends BaseUIComponent {
-
+    
     private String title;
-
+    
     private int duration = 8000;
-
+    
     private String category;
-
+    
     private boolean actionable;
-
+    
     public MessagePane() {
-
+        
     }
-
+    
+    /**
+     * Create a message pane.
+     *
+     * @param title Title bar text.
+     * @param category Message category.
+     * @param duration Duration, in milliseconds, that the message will display.
+     * @param actionable True if the message is actionable.
+     */
     public MessagePane(String title, String category, int duration, boolean actionable) {
         setTitle(title);
         setCategory(category);
         setDuration(duration);
         setActionable(actionable);
     }
-
+    
+    /**
+     * Returns the title bar text.
+     *
+     * @return The title bar text.
+     */
     public String getTitle() {
         return title;
     }
-
+    
+    /**
+     * Sets the title bar text.
+     *
+     * @param title The title bar text.
+     */
     public void setTitle(String title) {
         if (!areEqual(title = nullify(title), this.title)) {
             sync("title", this.title = title);
         }
     }
-
+    
+    /**
+     * Returns the duration, in milliseconds, that the message will be displayed. The default is
+     * 8000 ms. A value of &lt;=0 means infinite duration.
+     *
+     * @return The duration, in milliseconds, that the message will be displayed.
+     */
     public int getDuration() {
         return duration;
     }
-
+    
+    /**
+     * Sets the duration, in milliseconds, that the message will be displayed. A value of &lt;=0
+     * means infinite duration.
+     *
+     * @param duration The duration, in milliseconds, that the message will be displayed.
+     */
     public void setDuration(int duration) {
         if (duration != this.duration) {
             sync("duration", this.duration = duration);
         }
     }
-
+    
+    /**
+     * Returns the category of the message. This allows messages to be cleared based on their
+     * category.
+     *
+     * @return The category of the message.
+     */
     public String getCategory() {
         return category;
     }
-
+    
+    /**
+     * Sets the category of the message. This allows messages to be cleared based on their category.
+     *
+     * @param category The category of the message.
+     */
     public void setCategory(String category) {
         this.category = nullify(category);
     }
-
+    
+    /**
+     * Returns true if the message is actionable. An actionable message has an action icon that,
+     * when clicked, triggers an action event.
+     *
+     * @return True if the message is actionable.
+     */
     public boolean isActionable() {
         return actionable;
     }
-
+    
+    /**
+     * Set to true to make the message actionable. An actionable message has an action icon that,
+     * when clicked, triggers an action event.
+     *
+     * @param actionable Set to true to make the message actionable.
+     */
     public void setActionable(boolean actionable) {
         if (actionable != this.actionable) {
             sync("actionable", this.actionable = actionable);
         }
     }
-
+    
+    /**
+     * Handles close events from the client.
+     */
     @EventHandler(value = "close", syncToClient = false)
     private void _close() {
         destroy();

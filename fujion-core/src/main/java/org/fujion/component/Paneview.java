@@ -35,16 +35,33 @@ public class Paneview extends BaseUIComponent {
      * Orientation of panes within a pane view.
      */
     public enum Orientation {
-        HORIZONTAL, VERTICAL
+        /**
+         * Panes are oriented horizontally in a single row.
+         */
+        HORIZONTAL,
+        /**
+         * Panes are orientated vertically in a single column.
+         */
+        VERTICAL
     }
 
     private Orientation orientation = Orientation.HORIZONTAL;
 
+    /**
+     * Returns the {@link Orientation orientation} of child panes.
+     *
+     * @return The {@link Orientation orientation} of child panes.
+     */
     @PropertyGetter("orientation")
     public Orientation getOrientation() {
         return orientation;
     }
 
+    /**
+     * Sets the {@link Orientation orientation} of child panes.
+     *
+     * @param orientation The {@link Orientation orientation} of child panes.
+     */
     @PropertySetter("orientation")
     public void setOrientation(Orientation orientation) {
         orientation = orientation == null ? Orientation.HORIZONTAL : orientation;

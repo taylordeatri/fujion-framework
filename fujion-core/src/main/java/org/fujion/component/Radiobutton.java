@@ -30,10 +30,20 @@ import org.fujion.event.EventUtil;
 @Component(tag = "radiobutton", widgetClass = "Radiobutton", parentTag = "*")
 public class Radiobutton extends Checkbox {
 
+    /**
+     * Returns the nearest enclosing radio group.
+     *
+     * @return The nearest enclosing radio group (may be null).
+     */
     public Radiogroup getGroup() {
         return getAncestor(Radiogroup.class);
     }
 
+    /**
+     * Augments change event handling by notifying the containing radio group, if any.
+     *
+     * @see org.fujion.component.Checkbox#_onChange(org.fujion.event.ChangeEvent)
+     */
     @Override
     protected void _onChange(ChangeEvent event) {
         super._onChange(event);

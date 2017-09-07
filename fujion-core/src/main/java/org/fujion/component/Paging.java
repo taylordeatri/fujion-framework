@@ -76,10 +76,20 @@ public class Paging extends BaseLabeledComponent<BaseLabeledComponent.LabelPosit
         super(label);
     }
     
+    /**
+     * Returns the paginator used by this component.
+     *
+     * @return The paginator used by this component.
+     */
     public IPaginator getPaginator() {
         return paginator;
     }
     
+    /**
+     * Sets the paginator used by this component.
+     *
+     * @param paginator The paginator used by this component.
+     */
     public void setPaginator(IPaginator paginator) {
         if (paginator != this.paginator) {
             if (this.paginator != null) {
@@ -92,11 +102,21 @@ public class Paging extends BaseLabeledComponent<BaseLabeledComponent.LabelPosit
         }
     }
 
+    /**
+     * Returns the number of the currently selected page.
+     *
+     * @return The number of the currently selected page.
+     */
     @PropertyGetter("currentPage")
     public int getCurrentPage() {
         return currentPage;
     }
 
+    /**
+     * Sets the number of the currently selected page.
+     *
+     * @param currentPage The number of the currently selected page.
+     */
     @PropertySetter("currentPage")
     public void setCurrentPage(int currentPage) {
         if (currentPage != this.currentPage) {
@@ -105,11 +125,21 @@ public class Paging extends BaseLabeledComponent<BaseLabeledComponent.LabelPosit
         }
     }
 
+    /**
+     * Returns the maximum number of items on a single page.
+     *
+     * @return The maximum number of items on a single page.
+     */
     @PropertyGetter("pageSize")
     public int getPageSize() {
         return pageSize;
     }
 
+    /**
+     * Sets the maximum number of items on a single page.
+     *
+     * @param pageSize The maximum number of items on a single page.
+     */
     @PropertySetter("pageSize")
     public void setPageSize(int pageSize) {
         if (pageSize != this.pageSize) {
@@ -118,6 +148,13 @@ public class Paging extends BaseLabeledComponent<BaseLabeledComponent.LabelPosit
         }
     }
     
+    /**
+     * Sets the component whose associated model will be manipulated by paging operations.
+     *
+     * @param comp A component that implements the {@link ISupportsModel} interface.
+     * @exception ComponentException Thrown if the specified component does not support the
+     *                {@link ISupportsModel} interface.
+     */
     @PropertySetter(value = "target", defer = true)
     private void setPagingTarget(BaseComponent comp) {
         if (comp == null) {
@@ -135,6 +172,9 @@ public class Paging extends BaseLabeledComponent<BaseLabeledComponent.LabelPosit
         }
     }
 
+    /**
+     * Sync settings from this component with those of the paginator.
+     */
     private void syncToPaginator() {
         if (paginator != null && !fromPaginator) {
             paginator.removeEventListener(pagingListener);
@@ -144,6 +184,11 @@ public class Paging extends BaseLabeledComponent<BaseLabeledComponent.LabelPosit
         }
     }
     
+    /**
+     * Handles change event from the client.
+     *
+     * @param event A change event.
+     */
     @EventHandler(value = "change", syncToClient = false)
     private void _onChange(ChangeEvent event) {
         currentPage = defaultify(event.getValue(Integer.class), currentPage);

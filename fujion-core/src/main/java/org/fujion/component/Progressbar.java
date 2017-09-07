@@ -29,33 +29,53 @@ import org.fujion.annotation.Component.PropertySetter;
  */
 @Component(tag = "progressbar", widgetClass = "Progressbar", parentTag = "*")
 public class Progressbar extends BaseLabeledComponent<BaseLabeledComponent.LabelPositionNone> {
-
+    
     private int value;
-
+    
     private int maxvalue = 100;
-
+    
+    /**
+     * Returns the current value of the slider.
+     *
+     * @return The current value of the slider.
+     */
     @PropertyGetter("value")
     public int getValue() {
         return value;
     }
-
+    
+    /**
+     * Sets the current value of the slider.
+     *
+     * @param value The current value of the slider.
+     */
     @PropertySetter("value")
     public void setValue(int value) {
         if (value != this.value) {
             sync("value", this.value = value);
         }
     }
-
+    
+    /**
+     * Returns the maximum value for the slider.
+     *
+     * @return The maximum value for the slider.
+     */
     @PropertyGetter("maxvalue")
     public int getMaxValue() {
         return maxvalue;
     }
-
+    
+    /**
+     * Sets the maximum value for the slider.
+     *
+     * @param maxvalue The maximum value for the slider.
+     */
     @PropertySetter("maxvalue")
     public void setMaxValue(int maxvalue) {
         if (maxvalue != this.maxvalue) {
             sync("maxvalue", this.maxvalue = maxvalue);
         }
     }
-
+    
 }

@@ -39,14 +39,25 @@ public class Popupbox extends Textbox {
 
     private boolean open;
 
+    /**
+     * Opens the popup box. Shortcut for <code>setOpen(true)</code>
+     */
     public void open() {
         setOpen(true);
     }
 
+    /**
+     * Closes the popup box. Shortcut for <code>setOpen(false)</code>
+     */
     public void close() {
         setOpen(false);
     }
 
+    /**
+     * If popup specified as a child, set it as the associated popup component.
+     *
+     * @see org.fujion.component.BaseComponent#afterAddChild(org.fujion.component.BaseComponent)
+     */
     @Override
     protected void afterAddChild(BaseComponent child) {
         super.afterAddChild(child);
@@ -56,6 +67,11 @@ public class Popupbox extends Textbox {
         }
     }
 
+    /**
+     * If popup specified as a child, set it as the associated popup component.
+     *
+     * @see org.fujion.component.BaseComponent#onAttach(org.fujion.component.Page)
+     */
     @Override
     protected void onAttach(Page page) {
         super.onAttach(page);
@@ -65,6 +81,9 @@ public class Popupbox extends Textbox {
         }
     }
 
+    /**
+     * Sets the popup associated with the popup box.
+     */
     @Override
     public void setPopup(Popup popup) {
         BaseComponent child = this.getFirstChild();
@@ -80,11 +99,21 @@ public class Popupbox extends Textbox {
         super.setPopup(popup);
     }
 
+    /**
+     * Returns true if the popup box is open.
+     *
+     * @return True if the popup box is open.
+     */
     @PropertyGetter("open")
     public boolean isOpen() {
         return open;
     }
 
+    /**
+     * Sets the open state of the popup box.
+     *
+     * @param open The open state of the popup box.
+     */
     @PropertySetter("open")
     public void setOpen(boolean open) {
         if (open != this.open) {
@@ -92,6 +121,11 @@ public class Popupbox extends Textbox {
         }
     }
 
+    /**
+     * Handles popup open and close events from the client.
+     *
+     * @param event A popup open or close event.
+     */
     @EventHandler(value = { "popupopen", "popupclose" })
     private void _onOpen(Event event) {
         boolean open = "popupopen".equals(event.getType());
