@@ -31,48 +31,86 @@ import org.fujion.annotation.Component.PropertySetter;
  */
 @Component(tag = "toolbar", widgetClass = "Toolbar", content = ContentHandling.AS_CHILD, parentTag = "*", childTag = @ChildTag("*"))
 public class Toolbar extends BaseUIComponent {
-
+    
     /**
-     * Alignment of children within the toolbar. Default is START.
+     * Alignment of children within the tool bar. Default is START.
      */
     public enum Alignment {
-        START, CENTER, END
+        /**
+         * Children are aligned to the left (if horizontal) or top (if vertical).
+         */
+        START,
+        /**
+         * Children are centered.
+         */
+        CENTER,
+        /**
+         * Children are aligned to the right (if horizontal) or bottom (if vertical).
+         */
+        END
     }
-
+    
     /**
-     * Orientation of the toolbar. Default is HORIZONTAL.
+     * Orientation of the tool bar. Default is HORIZONTAL.
      */
     public enum Orientation {
-        HORIZONTAL, VERTICAL
+        /**
+         * Tool bar is oriented horizontally.
+         */
+        HORIZONTAL,
+        /**
+         * Tool bar is oriented vertically.
+         */
+        VERTICAL
     }
-
+    
     private Alignment alignment = Alignment.START;
-
+    
     private Orientation orientation = Orientation.HORIZONTAL;
-
+    
+    /**
+     * Returns the {@link Alignment alignment} of children within the tool bar.
+     *
+     * @return The {@link Alignment alignment} of children within the tool bar.
+     */
     @PropertyGetter("alignment")
     public Alignment getAlignment() {
         return alignment;
     }
-
+    
+    /**
+     * Sets the {@link Alignment alignment} of children within the tool bar.
+     *
+     * @param alignment The {@link Alignment alignment} of children within the tool bar.
+     */
     @PropertySetter("alignment")
     public void setAlignment(Alignment alignment) {
         alignment = alignment == null ? Alignment.START : alignment;
-
+        
         if (alignment != this.alignment) {
             sync("alignment", this.alignment = alignment);
         }
     }
-
+    
+    /**
+     * Returns the {@link Orientation orientation} of the tool bar.
+     *
+     * @return The {@link Orientation orientation} of the tool bar.
+     */
     @PropertyGetter("orientation")
     public Orientation getOrientation() {
         return orientation;
     }
-
+    
+    /**
+     * Sets the {@link Orientation orientation} of the tool bar.
+     *
+     * @param orientation The {@link Orientation orientation} of the tool bar.
+     */
     @PropertySetter("orientation")
     public void setOrientation(Orientation orientation) {
         orientation = orientation == null ? Orientation.HORIZONTAL : orientation;
-
+        
         if (orientation != this.orientation) {
             sync("orientation", this.orientation = orientation);
         }

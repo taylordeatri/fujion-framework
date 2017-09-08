@@ -138,16 +138,33 @@ public class Treenode extends BaseLabeledImageComponent<BaseLabeledComponent.Lab
 
     private int badgeCounter;
 
+    /**
+     * Returns the selected state.
+     *
+     * @return The selected state.
+     */
     @PropertyGetter("selected")
     public boolean isSelected() {
         return selected;
     }
 
+    /**
+     * Sets the selected state.
+     *
+     * @param selected The selected state.
+     */
     @PropertySetter("selected")
     public void setSelected(boolean selected) {
         _setSelected(selected, true, true);
     }
 
+    /**
+     * Set the selected state of this node.
+     *
+     * @param selected The new selected state.
+     * @param notifyClient If true, notify the client of the state change.
+     * @param notifyParent If true, notify the parent tree view of the state change.
+     */
     /*package*/ void _setSelected(boolean selected, boolean notifyClient, boolean notifyParent) {
         if (selected != this.selected) {
             this.selected = selected;
@@ -178,10 +195,20 @@ public class Treenode extends BaseLabeledImageComponent<BaseLabeledComponent.Lab
         }
     }
 
+    /**
+     * Returns the parent tree view, if any.
+     *
+     * @return The parent tree view (may be null).
+     */
     public Treeview getTreeview() {
         return getAncestor(Treeview.class);
     }
 
+    /**
+     * If the added node is selected, update the parent tree view's selection state.
+     * 
+     * @see org.fujion.component.BaseComponent#afterAddChild(org.fujion.component.BaseComponent)
+     */
     @Override
     protected void afterAddChild(BaseComponent child) {
         if (((Treenode) child).isSelected()) {
@@ -189,6 +216,11 @@ public class Treenode extends BaseLabeledImageComponent<BaseLabeledComponent.Lab
         }
     }
 
+    /**
+     * If the removed node is selected, update the parent tree view's selection state.
+     * 
+     * @see org.fujion.component.BaseComponent#beforeRemoveChild(org.fujion.component.BaseComponent)
+     */
     @Override
     protected void beforeRemoveChild(BaseComponent child) {
         if (((Treenode) child).isSelected()) {
@@ -196,11 +228,21 @@ public class Treenode extends BaseLabeledImageComponent<BaseLabeledComponent.Lab
         }
     }
 
+    /**
+     * Return true if the node is collapsed (i.e., its children are hidden).
+     *
+     * @return True if the node is collapsed.
+     */
     @PropertyGetter("collapsed")
     public boolean isCollapsed() {
         return collapsed;
     }
 
+    /**
+     * Set to true to collapse the node, false to expand it.
+     *
+     * @param collapsed True to collapse the node, false to expand it
+     */
     @PropertySetter("collapsed")
     public void setCollapsed(boolean collapsed) {
         if (collapsed != this.collapsed) {
@@ -222,11 +264,19 @@ public class Treenode extends BaseLabeledImageComponent<BaseLabeledComponent.Lab
         scrollIntoView();
     }
 
+    /**
+     * Handles toggle events from the client.
+     */
     @EventHandler(value = "toggle", syncToClient = false)
     private void _onToggle() {
         collapsed = !collapsed;
     }
 
+    /**
+     * Handles change events from the client.
+     *
+     * @param event A change event.
+     */
     @EventHandler(value = "change", syncToClient = false)
     private void _onChange(ChangeEvent event) {
         _setSelected(defaultify(event.getValue(Boolean.class), false), false, true);
@@ -238,6 +288,11 @@ public class Treenode extends BaseLabeledImageComponent<BaseLabeledComponent.Lab
         }
     }
 
+    /**
+     * Handles badge update events from the client.
+     *
+     * @param event A badge update event.
+     */
     @EventHandler("badge")
     private void _onBadge(Event event) {
         int delta = (Integer) event.getData();
@@ -248,6 +303,11 @@ public class Treenode extends BaseLabeledImageComponent<BaseLabeledComponent.Lab
         }
     }
 
+    /**
+     * Returns an iterator of all children of this node.
+     *
+     * @see java.lang.Iterable#iterator()
+     */
     @Override
     public Iterator<Treenode> iterator() {
         return new TreenodeIterator(this);

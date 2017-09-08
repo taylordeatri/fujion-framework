@@ -53,11 +53,24 @@ public class Tab extends BaseLabeledImageComponent<BaseLabeledComponent.LabelPos
         super(label);
     }
 
+    /**
+     * Returns true if the tab is closable. A closable tab has an icon that, when clicked, removes
+     * and destroys the tab.
+     *
+     * @return True if the tab is closable.
+     */
     @PropertyGetter("closable")
     public boolean isClosable() {
         return closable;
     }
 
+    /**
+     * Set to true to make the tab closable. A tab that is closable has an icon that, when clicked,
+     * triggers a close event.
+     *
+     * @param closable If true, the tab is closable.
+     * @see #onCanClose
+     */
     @PropertySetter("closable")
     public void setClosable(boolean closable) {
         if (closable != this.closable) {
@@ -65,16 +78,31 @@ public class Tab extends BaseLabeledImageComponent<BaseLabeledComponent.LabelPos
         }
     }
 
+    /**
+     * Returns the selection status of the tab.
+     *
+     * @return The selection status of the tab.
+     */
     @PropertyGetter("selected")
     public boolean isSelected() {
         return selected;
     }
 
+    /**
+     * Sets the selection status of the tab.
+     *
+     * @param selected The selection status of the tab.
+     */
     @PropertySetter("selected")
     public void setSelected(boolean selected) {
         _setSelected(selected, true);
     }
 
+    /**
+     * Handles change events from the client.
+     *
+     * @param event A change event.
+     */
     @EventHandler(value = "change", syncToClient = false)
     private void _onChange(ChangeEvent event) {
         _setSelected(defaultify(event.getValue(Boolean.class), true), true);
@@ -82,11 +110,22 @@ public class Tab extends BaseLabeledImageComponent<BaseLabeledComponent.LabelPos
         EventUtil.send(event);
     }
 
+    /**
+     * Handles close events from the client.
+     *
+     * @param event A close event.
+     */
     @EventHandler(value = "close", syncToClient = false)
     private void _onClose(Event event) {
         close();
     }
 
+    /**
+     * Sets the tabs selected status.
+     *
+     * @param selected The new selected status.
+     * @param notifyParent If true, notify the parent tab view of the status change.
+     */
     protected void _setSelected(boolean selected, boolean notifyParent) {
         if (selected != this.selected) {
             sync("selected", this.selected = selected);
@@ -97,6 +136,12 @@ public class Tab extends BaseLabeledImageComponent<BaseLabeledComponent.LabelPos
         }
     }
 
+    /**
+     * Request the tab to be closed. Tab closure may be prevented if the onCanClose logic returns
+     * false.
+     *
+     * @return True if the tab was closed.
+     */
     public boolean close() {
         if (canClose()) {
             destroy();
@@ -106,6 +151,11 @@ public class Tab extends BaseLabeledImageComponent<BaseLabeledComponent.LabelPos
         return false;
     }
 
+    /**
+     * Invokes the {@link #getOnCanClose canClose} logic and returns the result.
+     *
+     * @return The result of invoking the {@link #getOnCanClose canClose} logic.
+     */
     public boolean canClose() {
         return onCanClose == null || onCanClose.getAsBoolean();
     }
@@ -114,14 +164,31 @@ public class Tab extends BaseLabeledImageComponent<BaseLabeledComponent.LabelPos
         return (Tabview) getParent();
     }
 
+    /**
+     * Returns the functional interface that determines whether tab closure is permitted.
+     *
+     * @return The functional interface that determines whether tab closure is permitted.
+     */
     public BooleanSupplier getOnCanClose() {
         return onCanClose;
     }
 
+    /**
+     * Sets whether tab closure is permitted using a simple Boolean value. This is a shortcut for
+     * calling {@link #setOnCanClose} with a functional interface that returns a fixed Boolean
+     * value.
+     *
+     * @param canClose If true, the tab may be closed.
+     */
     public void setOnCanClose(boolean canClose) {
         setOnCanClose(() -> canClose);
     }
 
+    /**
+     * Sets the functional interface that will determine if tab closure is permitted.
+     *
+     * @param onCanClose The functional interface that will determine if tab closure is permitted.
+     */
     public void setOnCanClose(BooleanSupplier onCanClose) {
         this.onCanClose = onCanClose;
     }
@@ -132,6 +199,11 @@ public class Tab extends BaseLabeledImageComponent<BaseLabeledComponent.LabelPos
         super.bringToFront();
     }
 
+    /**
+     * Handles badge update events from the client.
+     *
+     * @param event A badge update event.
+     */
     @EventHandler("badge")
     private void _onBadge(Event event) {
         int delta = (Integer) event.getData();
