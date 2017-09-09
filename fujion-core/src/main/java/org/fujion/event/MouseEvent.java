@@ -27,41 +27,71 @@ import org.fujion.component.BaseComponent;
  * Base class for mouse-related events.
  */
 public abstract class MouseEvent extends Event {
-
+    
     /**
      * Mouse button specifier.
      */
     public enum MouseButton {
-        UNSPECIFIED, LEFT, MIDDLE, RIGHT
+        /**
+         * The mouse button could not be determined.
+         */
+        UNSPECIFIED,
+        /**
+         * The left mouse button was depressed.
+         */
+        LEFT,
+        /**
+         * The middle mouse button was depressed.
+         */
+        MIDDLE,
+        /**
+         * The right mouse button was depressed.
+         */
+        RIGHT
     }
-
+    
     @EventParameter
     private int pageX;
-
+    
     @EventParameter
     private int pageY;
-
+    
     @EventParameter
     private int which;
-
+    
     protected MouseEvent(String type) {
         super(type);
     }
-
+    
     protected MouseEvent(String type, BaseComponent target, Object data) {
         super(type, target, data);
     }
-
+    
+    /**
+     * Returns the X (horizontal) coordinate in pixels of the event relative to the whole viewport.
+     *
+     * @return The X (horizontal) coordinate in pixels of the event relative to the whole viewport.
+     */
     public int getPageX() {
         return pageX;
     }
-
+    
+    /**
+     * Returns the Y (vertical) coordinate in pixels of the event relative to the whole viewport.
+     *
+     * @return The Y (vertical) coordinate in pixels of the event relative to the whole viewport.
+     */
     public int getPageY() {
         return pageY;
     }
-
+    
+    /**
+     * Returns which {@link MouseButton mouse button} was depressed at the time of the event.
+     *
+     * @return Which {@link MouseButton mouse button} was depressed at the time of the event.
+     */
     public MouseButton getMouseButton() {
         return MouseButton.values()[which];
     }
-
+    
 }

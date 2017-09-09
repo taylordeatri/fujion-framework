@@ -27,57 +27,87 @@ import org.fujion.component.BaseComponent;
  * Base class for key-related events.
  */
 public abstract class KeyEvent extends Event {
-
+    
     @EventParameter
     private int keyCode;
-
+    
     @EventParameter
     private char charCode;
-
+    
     @EventParameter
     private boolean shiftKey;
-
+    
     @EventParameter
     private boolean ctrlKey;
-
+    
     @EventParameter
     private boolean altKey;
-
+    
     @EventParameter
     private boolean metaKey;
-
+    
     protected KeyEvent(String type) {
         super(type);
     }
-
+    
     protected KeyEvent(String type, BaseComponent target, Object data) {
         super(type, target, data);
     }
-
+    
+    /**
+     * Returns true if the Alt key was depressed.
+     *
+     * @return True if the Alt key was depressed.
+     */
     public boolean isAltKey() {
         return altKey;
     }
-
+    
+    /**
+     * Returns true if the Control key was depressed.
+     *
+     * @return True if the Control key was depressed.
+     */
     public boolean isCtrlKey() {
         return ctrlKey;
     }
-
+    
+    /**
+     * Returns true if the Shift key was depressed.
+     *
+     * @return True if the Shift key was depressed.
+     */
     public boolean isShiftKey() {
         return shiftKey;
     }
-
+    
+    /**
+     * Returns true if the Meta key was depressed.
+     *
+     * @return True if the Meta key was depressed.
+     */
     public boolean isMetaKey() {
         return metaKey;
     }
-
+    
+    /**
+     * Returns the key code of the depressed key(s).
+     *
+     * @return The key code of the depressed key(s).
+     */
     public KeyCode getKeyCode() {
         return KeyCode.fromCode(keyCode);
     }
-
+    
+    /**
+     * Returns the character code of the depressed key(s).
+     *
+     * @return The character code of the depressed key(s).
+     */
     public char getCharCode() {
         return charCode;
     }
-
+    
     /**
      * Returns the key capture representation of the typed key.
      *
@@ -85,25 +115,25 @@ public abstract class KeyEvent extends Event {
      */
     public String getKeycapture() {
         StringBuilder sb = new StringBuilder();
-
+        
         if (isCtrlKey()) {
             sb.append('^');
         }
-
+        
         if (isAltKey()) {
             sb.append('@');
         }
-
+        
         if (isMetaKey()) {
             sb.append('~');
         }
-
+        
         if (isShiftKey()) {
             sb.append('$');
         }
-
+        
         sb.append("#").append(keyCode);
         return sb.toString();
     }
-
+    
 }

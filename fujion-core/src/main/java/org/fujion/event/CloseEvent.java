@@ -28,15 +28,18 @@ import org.fujion.component.BaseComponent;
  */
 @EventType(CloseEvent.TYPE)
 public class CloseEvent extends Event {
-
+    
+    /**
+     * The event type.
+     */
     public static final String TYPE = "close";
-
+    
     public CloseEvent() {
         super(TYPE);
     }
-
+    
     public CloseEvent(BaseComponent target, Object data) {
         super(TYPE, target, data);
     }
-
+    
 }

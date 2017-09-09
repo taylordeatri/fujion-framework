@@ -30,29 +30,44 @@ import org.fujion.component.BaseComponent;
  */
 @EventType(ChangeEvent.TYPE)
 public class ChangeEvent extends Event {
-
+    
+    /**
+     * The event type.
+     */
     public static final String TYPE = "change";
-
+    
     @EventParameter
     private Object value;
-
+    
     public ChangeEvent() {
         super(TYPE);
     }
-
+    
     public ChangeEvent(BaseComponent target, Object data) {
         super(TYPE, target, data);
     }
-
+    
     public ChangeEvent(BaseComponent target, Object data, Object value) {
         super(TYPE, target, data);
         this.value = value;
     }
-
+    
+    /**
+     * Returns the changed value.
+     *
+     * @return The changed value.
+     */
     public Object getValue() {
         return value;
     }
-
+    
+    /**
+     * Returns the changed value, coerced to the specified type.
+     * 
+     * @param <T> The desired return type.
+     * @param type The desired return type.
+     * @return The changed value, coerced to the specified type.
+     */
     public <T> T getValue(Class<T> type) {
         return ConvertUtil.convert(value, type);
     }

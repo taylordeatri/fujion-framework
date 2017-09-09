@@ -26,11 +26,14 @@ import org.fujion.annotation.OnFailure;
 import org.fujion.component.BaseComponent;
 
 /**
- * A load event.
+ * A document load event.
  */
 @EventType(LoadEvent.TYPE)
 public class LoadEvent extends Event {
 
+    /**
+     * The event type.
+     */
     public static final String TYPE = "load";
 
     @EventParameter(onFailure = OnFailure.IGNORE)
@@ -44,6 +47,12 @@ public class LoadEvent extends Event {
         super(TYPE, target, data);
     }
 
+    /**
+     * Returns the URL of the loaded document. If cross-domain security constraints prevent access,
+     * the URL will be null.
+     *
+     * @return The URL of the loaded document.
+     */
     public String getSrc() {
         return src;
     }

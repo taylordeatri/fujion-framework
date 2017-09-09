@@ -28,15 +28,18 @@ import org.fujion.component.BaseComponent;
  */
 @EventType(OpenEvent.TYPE)
 public class OpenEvent extends Event {
-
+    
+    /**
+     * The event type.
+     */
     public static final String TYPE = "open";
-
+    
     public OpenEvent() {
         super(TYPE);
     }
-
+    
     public OpenEvent(BaseComponent target, Object data) {
         super(TYPE, target, data);
     }
-
+    
 }

@@ -31,6 +31,9 @@ import org.fujion.annotation.OnFailure;
 @EventType(StatechangeEvent.TYPE)
 public class StatechangeEvent extends Event {
 
+    /**
+     * The event type.
+     */
     public static final String TYPE = "statechange";
 
     @EventParameter
@@ -43,10 +46,20 @@ public class StatechangeEvent extends Event {
         super(TYPE);
     }
 
+    /**
+     * Returns the name of the state (property) that changed.
+     *
+     * @return The name of the state (property) that changed.
+     */
     public String getState() {
         return state;
     }
 
+    /**
+     * Returns the new value of the state (property).
+     *
+     * @return The new value of the state (property).
+     */
     public Object getValue() {
         return value;
     }

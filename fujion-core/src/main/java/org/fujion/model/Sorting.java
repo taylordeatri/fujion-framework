@@ -24,21 +24,45 @@ package org.fujion.model;
  * Support for model sorting.
  */
 public class Sorting {
-
+    
     /**
      * Ordering specifier for sort operation.
      */
     public enum SortOrder {
-        ASCENDING, DESCENDING, NATIVE, UNSORTED;
+        /**
+         * Ascending collation order.
+         */
+        ASCENDING,
+        /**
+         * Descending collation order.
+         */
+        DESCENDING,
+        /**
+         * Native order as determined by the model.
+         */
+        NATIVE,
+        /**
+         * Indeterminate order.
+         */
+        UNSORTED;
     }
-
+    
     /**
      * Type of sort toggle.
      */
     public enum SortToggle {
-        BINARY, TRISTATE;
+        /**
+         * Toggle between {@link SortOrder#ASCENDING ascending} and {@link SortOrder#DESCENDING
+         * descending} sort order.
+         */
+        BINARY,
+        /**
+         * Toggle between {@link SortOrder#ASCENDING ascending}, {@link SortOrder#DESCENDING
+         * descending} and {@link SortOrder#NATIVE native} sort order.
+         */
+        TRISTATE;
     }
-
+    
     private Sorting() {
     }
 }

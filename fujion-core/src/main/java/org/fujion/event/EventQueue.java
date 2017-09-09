@@ -34,42 +34,63 @@ import org.fujion.websocket.Session;
  * target page.
  */
 public class EventQueue {
-
+    
     private final LinkedList<Event> queue = new LinkedList<>();
-
+    
     private final Page page;
-
+    
+    /**
+     * Create a dedicated event queue for the page.
+     * 
+     * @param page A page.
+     */
     public EventQueue(Page page) {
         this.page = page;
     }
-
+    
+    /**
+     * Queue an event.
+     *
+     * @param event Event to queue.
+     */
     public synchronized void queue(Event event) {
         if (event.getPage() != page) {
             throw new RuntimeException("Event does not belong to this queue's page");
         }
-
+        
         queue.add(event);
-
+        
         if (queue.size() == 1 && ExecutionContext.getPage() != page) {
             Session session = page.getSession();
-
+            
             if (session != null) {
                 session.ping("flush");
             }
         }
     }
-
+    
+    /**
+     * Process all queued events.
+     */
     public synchronized void processAll() {
         while (!queue.isEmpty()) {
             Event event = queue.removeFirst();
             EventUtil.send(event, event.getTarget() == null ? page : event.getTarget());
         }
     }
-
+    
+    /**
+     * Clear all queued events.
+     */
     public synchronized void clearAll() {
         queue.clear();
     }
-
+    
+    /**
+     * Returns true if the queue is empty.
+     *
+     * @return True if the queue is empty.
+     */
     public boolean isEmpty() {
         return queue.isEmpty();
     }

@@ -22,7 +22,7 @@
 package org.fujion.highcharts;
 
 /**
- * Vertical alignment options.
+ * Options for vertical alignment.
  */
 public enum AlignVertical {
     top, middle, bottom

@@ -30,6 +30,9 @@ import org.fujion.component.BaseComponent;
 @EventType(TimerEvent.TYPE)
 public class TimerEvent extends Event {
 
+    /**
+     * The event type.
+     */
     public static final String TYPE = "timer";
 
     @EventParameter
@@ -46,10 +49,20 @@ public class TimerEvent extends Event {
         super(TYPE, target, data);
     }
 
+    /**
+     * Returns the number of times the timer has fired.
+     *
+     * @return The number of times the timer has fired.
+     */
     public int getCount() {
         return count;
     }
 
+    /**
+     * Returns true if the timer is running.
+     *
+     * @return True if the timer is running.
+     */
     public boolean isRunning() {
         return running;
     }

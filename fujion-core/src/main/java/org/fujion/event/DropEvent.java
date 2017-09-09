@@ -30,6 +30,9 @@ import org.fujion.component.BaseComponent;
 @EventType(DropEvent.TYPE)
 public class DropEvent extends Event {
 
+    /**
+     * The event type.
+     */
     public static final String TYPE = "drop";
 
     @EventParameter
@@ -48,6 +51,11 @@ public class DropEvent extends Event {
         this.draggable = draggable;
     }
     
+    /**
+     * Returns the component that was dragged.
+     *
+     * @return The component that was dragged.
+     */
     public BaseComponent getDraggable() {
         return draggable;
     }

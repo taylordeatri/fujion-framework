@@ -31,7 +31,7 @@ import org.fujion.page.PageDefinitionCache;
  * first loaded in order to complete the initialization of the page.
  */
 public class InitRequestHandler implements IRequestHandler {
-    
+
     @Override
     public void handleRequest(ClientRequest request) {
         Page page = request.getPage();
@@ -40,7 +40,7 @@ public class InitRequestHandler implements IRequestHandler {
         synchronizer.startQueueing();
         Page._init(page, request, synchronizer);
         Sessions.getInstance().notifyLifecycleListeners(request.getSession(), true);
-        
+
         try {
             pageDefinition.materialize(page);
             page.invoke("afterInitialize");
@@ -52,10 +52,10 @@ public class InitRequestHandler implements IRequestHandler {
             synchronizer.stopQueueing();
         }
     }
-    
+
     @Override
     public String getRequestType() {
         return "init";
     }
-    
+
 }

@@ -57,22 +57,55 @@ public class Event {
     public Event() {
     }
 
+    /**
+     * Create an event of the specified type with no target and no data.
+     *
+     * @param type The event type.
+     */
     public Event(String type) {
         this(type, null, null);
     }
 
+    /**
+     * Create an event of the specified type and target with no data.
+     *
+     * @param type The event type.
+     * @param target The target of the event.
+     */
     public Event(String type, BaseComponent target) {
         this(type, target, null);
     }
 
+    /**
+     * Create an event of the specified type, target, and data.
+     *
+     * @param type The event type.
+     * @param target The target of the event.
+     * @param data Arbitrary data to associate with the event.
+     */
     public Event(String type, BaseComponent target, Object data) {
         this(type, target, null, data);
     }
 
+    /**
+     * Create an event of the specified type, target, and related target with no data.
+     *
+     * @param type The event type.
+     * @param target The target of the event.
+     * @param relatedTarget The related target that participated in the event.
+     */
     public Event(String type, BaseComponent target, BaseComponent relatedTarget) {
         this(type, target, relatedTarget, null);
     }
 
+    /**
+     * Create an event of the specified type, target, related target, and data.
+     *
+     * @param type The event type.
+     * @param target The target of the event.
+     * @param relatedTarget The related target that participated in the event.
+     * @param data Arbitrary data to associate with the event.
+     */
     public Event(String type, BaseComponent target, BaseComponent relatedTarget, Object data) {
         this.type = type;
         this.target = target;
@@ -84,10 +117,21 @@ public class Event {
         this.page = this.page == null ? ExecutionContext.getPage() : this.page;
     }
 
+    /**
+     * Copy constructor.
+     *
+     * @param source Source event to copy.
+     */
     public Event(Event source) {
         this(source.type, source);
     }
 
+    /**
+     * Copy constructor, but with explicit type.
+     *
+     * @param type Type for new event.
+     * @param source Source event to copy.
+     */
     public Event(String type, Event source) {
         this.type = type;
         this.target = source.target;
@@ -98,38 +142,84 @@ public class Event {
         this.page = source.page;
     }
 
+    /**
+     * Returns the page associated with the event.
+     *
+     * @return The page associated with the event.
+     */
     public Page getPage() {
         return page;
     }
 
+    /**
+     * Returns the type of event.
+     *
+     * @return The type of event.
+     */
     public String getType() {
         return type;
     }
 
+    /**
+     * Returns the event's target (the component on which the event occurred).
+     *
+     * @return The event's target.
+     */
     public BaseComponent getTarget() {
         return target != null ? target : currentTarget;
     }
 
+    /**
+     * Returns the event's current target (the component that handled the event).
+     *
+     * @return The event's current target.
+     */
     public BaseComponent getCurrentTarget() {
         return currentTarget != null ? currentTarget : target;
     }
 
+    /**
+     * Returns the event's related target, if any. A related target is a secondary component that
+     * had some role in or relationship to the event. For example, for a <code>mouseenter</code>
+     * event, the target is the component entered; the related target is the component exited.
+     *
+     * @return The event's related target
+     */
     public BaseComponent getRelatedTarget() {
         return relatedTarget;
     }
 
+    /**
+     * Returns the id of the DOM element that was the actual target of the event. This may be the
+     * same as the target's component id, but could also be a sub-element of the target.
+     *
+     * @return The target id.
+     */
     public String getTargetId() {
         return targetId;
     }
 
+    /**
+     * Returns arbitrary data associated with the event, if any.
+     *
+     * @return Arbitrary data associated with the event
+     */
     public Object getData() {
         return data;
     }
 
+    /**
+     * Flags the event to prevent further propagation in the event handler chain.
+     */
     public void stopPropagation() {
         stopPropagation = true;
     }
 
+    /**
+     * Returns true if propagation has been stopped.
+     *
+     * @return True if propagation has been stopped.
+     */
     public boolean isStopped() {
         return stopPropagation;
     }

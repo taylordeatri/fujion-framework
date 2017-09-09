@@ -34,7 +34,7 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
  *        http://www.springframework.org/schema/beans
  *        http://www.springframework.org/schema/beans/spring-beans.xsd
  *        http://www.fujion.org/schema/component
- *        http://www.fujion.org/schema/extensions/component-extensions.xsd">
+ *        http://www.fujion.org/schema/component-extensions.xsd">
  *
  *    <!-- Scan by package -->
  *    <ffc:component-scan package="org.acme.foo" />
@@ -45,7 +45,7 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
  * </pre>
  */
 public class ComponentXmlParser extends AbstractXmlParser {
-    
+
     @Override
     protected void setTargetObject(BeanDefinitionBuilder builder) {
         builder.addPropertyReference("targetObject", "fujion_ComponentScanner");

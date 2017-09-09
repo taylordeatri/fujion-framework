@@ -24,6 +24,11 @@ package org.fujion.event;
  * Listener callback for an event.
  */
 public interface IEventListener {
-
+    
+    /**
+     * Callback for an event.
+     *
+     * @param event The event.
+     */
     void onEvent(Event event);
 }

@@ -28,15 +28,18 @@ import org.fujion.component.BaseComponent;
  */
 @EventType(KeypressEvent.TYPE)
 public class KeypressEvent extends KeyEvent {
-
+    
+    /**
+     * The event type.
+     */
     public static final String TYPE = "keypress";
-
+    
     public KeypressEvent() {
         super(TYPE);
     }
-
+    
     public KeypressEvent(BaseComponent target, Object data) {
         super(TYPE, target, data);
     }
-
+    
 }

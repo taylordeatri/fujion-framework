@@ -34,7 +34,7 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
  *        http://www.springframework.org/schema/beans
  *        http://www.springframework.org/schema/beans/spring-beans.xsd
  *        http://www.fujion.org/schema/eventtype
- *        http://www.fujion.org/schema/extensions/eventtype-extensions.xsd">
+ *        http://www.fujion.org/schema/eventtype-extensions.xsd">
  *
  *    <!-- Scan by package -->
  *    <ffe:eventtype-scan package="org.fujion.event" />
@@ -45,7 +45,7 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
  * </pre>
  */
 public class EventTypeXmlParser extends AbstractXmlParser {
-    
+
     @Override
     protected void setTargetObject(BeanDefinitionBuilder builder) {
         builder.addPropertyReference("targetObject", "fujion_EventTypeScanner");

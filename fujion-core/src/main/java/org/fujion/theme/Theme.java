@@ -26,32 +26,53 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  * Theme implementation that can pull from multiple sources.
  */
 public class Theme {
-
+    
     private final String name;
-
+    
     private final ObjectNode config;
-
+    
     private volatile String init;
-
+    
+    /**
+     * Create a theme.
+     *
+     * @param name The unique theme name.
+     * @param config The SystemJS configuration that will override the default theme.
+     */
     public Theme(String name, ObjectNode config) {
         this.name = name;
         this.config = config;
     }
-    
+
+    /**
+     * Returns the unique theme name.
+     *
+     * @return The unique theme name.
+     */
     public String getName() {
         return name;
     }
-
+    
+    /**
+     * Returns the SystemJS configuration that will override the default theme.
+     *
+     * @return The SystemJS configuration that will override the default theme.
+     */
     protected ObjectNode getConfig() {
         return config;
     }
-    
+
+    /**
+     * Returns the web jar initialization string as overridden by this theme.
+     *
+     * @return The web jar initialization string as overridden by this theme.
+     */
     public String getWebJarInit() {
         return init == null ? _getWebJarInit() : init;
     }
-
+    
     private synchronized String _getWebJarInit() {
         return init == null ? init = config.toString() : init;
     }
-
+    
 }

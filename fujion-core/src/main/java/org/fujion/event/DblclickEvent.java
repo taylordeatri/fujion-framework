@@ -28,15 +28,18 @@ import org.fujion.component.BaseComponent;
  */
 @EventType(DblclickEvent.TYPE)
 public class DblclickEvent extends MouseEvent {
-
+    
+    /**
+     * The event type.
+     */
     public static final String TYPE = "dblclick";
-
+    
     public DblclickEvent() {
         super(TYPE);
     }
-
+    
     public DblclickEvent(BaseComponent target, Object data) {
         super(TYPE, target, data);
     }
-
+    
 }

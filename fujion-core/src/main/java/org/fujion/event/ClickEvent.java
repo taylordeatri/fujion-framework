@@ -28,15 +28,18 @@ import org.fujion.component.BaseComponent;
  */
 @EventType(ClickEvent.TYPE)
 public class ClickEvent extends MouseEvent {
-
+    
+    /**
+     * The event type.
+     */
     public static final String TYPE = "click";
-
+    
     public ClickEvent() {
         super(TYPE);
     }
-
+    
     public ClickEvent(BaseComponent target, Object data) {
         super(TYPE, target, data);
     }
-
+    
 }

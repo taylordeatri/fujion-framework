@@ -30,6 +30,9 @@ import org.fujion.component.BaseComponent;
 @EventType(ResizeEvent.TYPE)
 public class ResizeEvent extends Event {
 
+    /**
+     * The event type.
+     */
     public static final String TYPE = "resize";
 
     @EventParameter
@@ -52,18 +55,38 @@ public class ResizeEvent extends Event {
         super(TYPE, target, data);
     }
 
+    /**
+     * Returns the new height in pixels.
+     *
+     * @return The new height in pixels.
+     */
     public double getHeight() {
         return height;
     }
 
+    /**
+     * Returns the new width in pixels.
+     *
+     * @return The new width in pixels.
+     */
     public double getWidth() {
         return width;
     }
 
+    /**
+     * Returns the new top position in pixels.
+     *
+     * @return The new top position in pixels.
+     */
     public double getTop() {
         return top;
     }
 
+    /**
+     * Returns the new bottom position in pixels.
+     *
+     * @return The new bottom position in pixels.
+     */
     public double getBottom() {
         return bottom;
     }
