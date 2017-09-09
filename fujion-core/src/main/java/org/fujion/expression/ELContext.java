@@ -29,22 +29,28 @@ import org.fujion.page.PageElement;
  * This serves as the context root for an EL expression evaluation.
  */
 public class ELContext {
-    
-    private final BaseComponent component;
-    
-    private final BaseComponent parent;
-    
-    private final PageElement element;
 
-    private final Map<String, Object> args;
+    private final BaseComponent component;
+
+    private final BaseComponent parent;
+
+    private final PageElement element;
     
+    private final Map<String, Object> args;
+
     public ELContext(BaseComponent component, BaseComponent parent, PageElement element, Map<String, Object> args) {
         this.component = component;
         this.parent = parent;
         this.element = element;
         this.args = args;
     }
-    
+
+    /**
+     * Returns a value for the named object.
+     *
+     * @param name The object name.
+     * @return The value of the named object, or null if not found.
+     */
     public Object getValue(String name) {
         Object result = "self".equals(name) ? component : element.getTagLibrary(name);
         result = result != null ? result : args == null ? null : args.get(name);

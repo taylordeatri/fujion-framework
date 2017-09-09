@@ -14,6 +14,14 @@
 			<div>${@msg.test.message}</div>
 		</row>
 		<row>
+			<div>This demonstrates external label text with an embedded label reference</div>
+			<div>${@msg.test.message._2}</div>
+		</row>
+		<row>
+			<div>This demonstrates external label text with an infinitely recursive reference</div>
+			<div>${@msg.test.message._3}</div>
+		</row>
+		<row>
 			<div>This should evaluate to 20</div>
 			<div>${(1+4)*4}</div>
 		</row>
