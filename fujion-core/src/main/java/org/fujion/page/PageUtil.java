@@ -113,7 +113,7 @@ public class PageUtil {
      * @return A list of the top level components that were created.
      */
     public static List<BaseComponent> createPageFromContent(String content, BaseComponent parent, Map<String, Object> args) {
-        ByteArrayResource resource = new ByteArrayResource(content.getBytes());
+        ByteArrayResource resource = new ByteArrayResource(content.getBytes(), "<content>");
         return createPage(PageParser.getInstance().parse(resource), parent, args);
     }
     

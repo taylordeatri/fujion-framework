@@ -20,6 +20,7 @@
  */
 package org.fujion.page;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -28,7 +29,6 @@ import org.apache.commons.io.IOUtils;
 import org.fujion.ancillary.ComponentException;
 import org.fujion.ancillary.ComponentRegistry;
 import org.fujion.annotation.ComponentDefinition;
-import org.fujion.common.MiscUtil;
 import org.fujion.common.RegistryMap;
 import org.fujion.common.RegistryMap.DuplicateAction;
 import org.fujion.core.WebUtil;
@@ -81,12 +81,13 @@ public class PageParser {
      * @return The resulting page definition.
      */
     public PageDefinition parse(Resource resource) {
+        String source = resource.getFilename();
+        source = source == null ? resource.getDescription() : source;
+        
         try {
-            PageDefinition def = parse(resource.getInputStream());
-            def.setSource(resource.getFilename());
-            return def;
-        } catch (Exception e) {
-            throw new ComponentException(e, "Exception parsing resource '" + resource.getFilename() + "'");
+            return parse(resource.getInputStream(), source);
+        } catch (IOException e) {
+            throw new ComponentException(e, "Exception reading resource '" + source + "'");
         }
     }
     
@@ -97,13 +98,25 @@ public class PageParser {
      * @return The resulting page definition.
      */
     public PageDefinition parse(InputStream stream) {
+        return parse(stream, "<unknown>");
+    }
+    
+    /**
+     * Parses a Fujion Server Page into a page definition.
+     *
+     * @param stream An input stream referencing the FSP.
+     * @param source Source of the page definition.
+     * @return The resulting page definition.
+     */
+    protected PageDefinition parse(InputStream stream, String source) {
         try {
             Document document = documentBuilderFactory.newDocumentBuilder().parse(stream);
             PageDefinition pageDefinition = new PageDefinition();
+            pageDefinition.setSource(source);
             parseNode(document, pageDefinition.getRootElement());
             return pageDefinition;
         } catch (Exception e) {
-            throw MiscUtil.toUnchecked(e);
+            throw new ComponentException(e, "Exception parsing resource '" + source + "'");
         } finally {
             IOUtils.closeQuietly(stream);
         }
