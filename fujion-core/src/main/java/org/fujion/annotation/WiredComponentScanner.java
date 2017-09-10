@@ -29,10 +29,10 @@ import org.fujion.component.BaseComponent;
  * BaseComponent are eligible for wiring.
  */
 public class WiredComponentScanner {
-
+    
     private WiredComponentScanner() {
     }
-
+    
     /**
      * Wire an object instance using the root component to resolve component names.
      *
@@ -41,49 +41,49 @@ public class WiredComponentScanner {
      */
     public static void wire(Object instance, BaseComponent root) {
         Class<?> clazz = instance.getClass();
-
+        
         while (clazz != Object.class) {
             wire(instance, root, clazz);
             clazz = clazz.getSuperclass();
         }
     }
-
+    
     private static void wire(Object instance, BaseComponent root, Class<?> clazz) {
         for (Field field : clazz.getDeclaredFields()) {
             field.setAccessible(true);
             WiredComponent annot = field.getAnnotation(WiredComponent.class);
-
+            
             if (annot == null) {
                 continue;
             }
-
+            
             OnFailure onFailure = annot.onFailure();
-
+            
             if (!BaseComponent.class.isAssignableFrom(field.getType())) {
                 onFailure.doAction("Field \"%s\" is not a component type", field.getName());
                 return;
             }
-
+            
             try {
-                if (field.get(instance) != null) {
+                if (!annot.overwrite() && field.get(instance) != null) {
                     onFailure.doAction("Field \"%s\" is already assigned a value", field.getName());
                     continue;
                 }
-
+                
                 String name = annot.value();
                 name = name.isEmpty() ? field.getName() : name;
                 BaseComponent component = root.findByName(name);
-
+                
                 if (component == null) {
                     onFailure.doAction("No component matching name \"%s\"", name);
                     continue;
                 }
-
+                
                 field.set(instance, component);
             } catch (Exception e) {
                 onFailure.doAction(e);
             }
         }
     }
-
+    
 }
