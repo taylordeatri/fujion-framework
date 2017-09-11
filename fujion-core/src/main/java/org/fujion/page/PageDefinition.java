@@ -92,12 +92,19 @@ public class PageDefinition {
         try {
             List<DeferredSetter> deferrals = new ArrayList<>();
             List<BaseComponent> created = new ArrayList<>();
-            materialize(root.getChildren(), parent, deferrals, args, created);
+            List<PageElement> children = root.getChildren();
+            
+            if (!(parent instanceof Page) && children.size() == 1
+                    && children.get(0).getDefinition().getComponentClass() == Page.class) {
+                children = children.get(0).getChildren();
+            }
 
+            materialize(children, parent, deferrals, args, created);
+            
             for (DeferredSetter deferral : deferrals) {
                 deferral.execute();
             }
-
+            
             return created;
         } catch (Exception e) {
             throw new ComponentException(e, "Exception materializing page definition '%s'", source);
@@ -125,7 +132,6 @@ public class PageDefinition {
                                       Map<String, Object> args) {
         ComponentDefinition def = element.getDefinition();
         boolean merge = parent instanceof Page && def.getComponentClass() == Page.class;
-        boolean skip = def.getComponentClass() == Page.class && parent != null;
         Map<String, String> attributes;
         BaseComponent component;
 
@@ -133,10 +139,6 @@ public class PageDefinition {
             component = parent;
             parent = null;
             attributes = element.getAttributes();
-        } else if (skip) {
-            component = parent;
-            parent = null;
-            attributes = null;
         } else {
             attributes = element.getAttributes();
             component = def.getFactory().create(attributes);
