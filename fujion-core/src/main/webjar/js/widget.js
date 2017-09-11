@@ -949,7 +949,7 @@ define('fujion-widget', ['fujion-core', 'bootstrap', 'jquery-ui', 'jquery-scroll
 				}
 				inline$.text(this.resolveEL(v, '#'));
 			} else if (inline$) {
-				inline$.destroy();
+				inline$.remove();
 				delete this._ancillaries.inline$;
 			}
 		},
