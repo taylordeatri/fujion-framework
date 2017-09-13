@@ -125,7 +125,7 @@ public class Comboitem extends BaseLabeledComponent<BaseLabeledComponent.LabelPo
     @EventHandler(value = "change", syncToClient = false)
     private void _onChange(ChangeEvent event) {
         _setSelected(defaultify(event.getValue(Boolean.class), true), false, true);
-        event = new ChangeEvent(this.getParent(), event.getData(), this);
+        event = new ChangeEvent(this.getParent(), event.getData(), getLabel());
         EventUtil.send(event);
     }
 
