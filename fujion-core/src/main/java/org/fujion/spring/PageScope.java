@@ -25,8 +25,6 @@
  */
 package org.fujion.spring;
 
-import java.util.Map;
-
 import org.fujion.client.ExecutionContext;
 import org.fujion.websocket.ISessionLifecycle;
 import org.fujion.websocket.Session;
@@ -62,11 +60,9 @@ public class PageScope extends AbstractScope {
          */
         @Override
         public void onSessionDestroy(Session session) {
-            Map<String, Object> attrs = session.getAttributes();
-            ScopeContainer container = (ScopeContainer) attrs.get(SCOPE_ATTR);
+            ScopeContainer container = (ScopeContainer) session.getAttributes().remove(SCOPE_ATTR);
             
             if (container != null) {
-                attrs.remove(SCOPE_ATTR);
                 container.destroy();
             }
         }
