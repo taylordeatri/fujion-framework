@@ -123,4 +123,14 @@
 		</property>
 	</bean>
 
+	<bean class="org.springframework.beans.factory.config.CustomScopeConfigurer">
+		<property name="scopes">
+			<map>
+				<entry key="page">
+					<bean class="org.fujion.spring.PageScope" />
+				</entry>
+			</map>
+		</property>
+	</bean>
+	
 </beans>
