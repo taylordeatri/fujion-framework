@@ -83,7 +83,6 @@ caption:empty {
     margin-top: -6px;
     margin-left: -1px;
     -webkit-border-radius: 0 6px 6px 6px;
-    -moz-border-radius: 0 6px 6px;
     border-radius: 0 6px 6px 6px;
 }
 
@@ -117,7 +116,6 @@ caption:empty {
     left: -100%;
     margin-left: 10px;
     -webkit-border-radius: 6px 0 6px 6px;
-    -moz-border-radius: 6px 0 6px 6px;
     border-radius: 6px 0 6px 6px;
 }
 
@@ -167,6 +165,21 @@ caption:empty {
 	display: flex;
 	flex-direction: row;
 }
+
+/* Dividers */
+
+.fujion-divider-vertical {
+    display: inline-block;
+    border-left: 1px solid lightgray;
+    margin: 0 2px 0 2px;
+    min-height: 20px;
+}
+
+.fujion-divider-horizontal {
+    display: block;
+    border-top: 1px solid lightgray;
+    margin: 2px 0 4px 0;
+}			
 
 /* Root */
 
@@ -253,7 +266,6 @@ caption:empty {
 	background: white;
 	padding: 5px;
     -webkit-border-radius: 6px 6px 6px 6px;
-    -moz-border-radius: 6px 6px 6px;
     border-radius: 6px 6px 6px 6px;
 }
 
@@ -626,7 +638,7 @@ caption:empty {
 .fujion_groupbox > fieldset {
 	border-width: 2px;
     border-style: groove;
-    border-color: threedface;
+    border-color: lightgray;
     border-image: initial;
     border-radius: 5px;
 	padding: .35em .625em .75em;
@@ -655,17 +667,17 @@ caption:empty {
 .fujion_messagepane > div:first-child {
     border-bottom: 1px solid;
     min-height: 18px;
-    zoom: 0.8;
+    font-size: 80%;
 }
 
 .fujion_messagepane > div:first-child > .fujion_titled-icons {
-    zoom: .5;
+    font-size: 70%;
+}
+
+.fujion_messagepane > div:first-child .glyphicon {
+    padding-top: 3px;
 }
 
 .fujion_messagepane-title {
 	padding-left: 4px;
 }
-
-
-
-
