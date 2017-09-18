@@ -476,7 +476,19 @@ public enum KeyCode {
     
     /**
      * Normalizes a key capture string by ordering prefixes and converting symbolic names to key
-     * code values.
+     * code values. A key capture string consists of zero or more <b>key modifiers</b> followed by a
+     * <b>key code specifier</b>. Key modifiers are:
+     * <ul>
+     * <li>^ = Control key</li>
+     * <li>@ = Alt key</li>
+     * <li>~ = Meta key</li>
+     * <li>$ = Shift key</li>
+     * </ul>
+     * A key code specifier may be one of:
+     * <ul>
+     * <li># followed by a numeric key code.</li>
+     * <li>A {@link KeyCode key mnemonic} (with or without the VK_ prefix).</li>
+     * </ul>
      *
      * @param keycapture One or more key capture strings delimited by spaces.
      * @return The normalized string.
