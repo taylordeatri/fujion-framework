@@ -1344,6 +1344,7 @@ define('fujion-widget', ['fujion-core', 'bootstrap', 'jquery-ui', 'jquery-scroll
 			}
 			
 			this._super();
+			this.initState({closable: true});
 			fujion.widget._page = this;
 		},
 			
@@ -1358,6 +1359,10 @@ define('fujion-widget', ['fujion-core', 'bootstrap', 'jquery-ui', 'jquery-scroll
 		},
 		
 		/*------------------------------ State ------------------------------*/
+		
+		closable: function(v) {
+			fujion._canClose = v;
+		},
 		
 		title: function(v) {
 			$('head>title').text(v);

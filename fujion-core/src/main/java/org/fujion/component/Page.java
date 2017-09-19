@@ -67,6 +67,8 @@ public final class Page extends BaseComponent implements INamespace {
 
     private String title;
 
+    private boolean closable = true;
+    
     private final String src;
 
     /**
@@ -227,7 +229,7 @@ public final class Page extends BaseComponent implements INamespace {
 
     /**
      * Cleanup page resources.
-     * 
+     *
      * @see org.fujion.component.BaseComponent#onDestroy()
      */
     @Override
@@ -272,6 +274,31 @@ public final class Page extends BaseComponent implements INamespace {
     public BaseComponent findById(String id) {
         int i = id.indexOf('-');
         return ids.get(i == -1 ? id : id.substring(0, i));
+    }
+
+    /**
+     * Returns true if the browser window may be closed without challenge. If false, the browser
+     * will present a confirmation dialog before allowing the window to be closed.
+     *
+     * @return True if the page is closable.
+     */
+    @PropertyGetter("closable")
+    public boolean isClosable() {
+        return closable;
+    }
+
+    /**
+     * When set to true (the default value), the browser window may be closed without challenge.
+     * When set to false, the browser will present a confirmation dialog before allowing the window
+     * to be closed.
+     *
+     * @param closable If true, the page is closable.
+     */
+    @PropertySetter("closable")
+    public void setClosable(boolean closable) {
+        if (closable != this.closable) {
+            sync("closable", this.closable = closable);
+        }
     }
 
     /**

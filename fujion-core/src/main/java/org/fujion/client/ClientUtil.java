@@ -28,7 +28,7 @@ import org.fujion.websocket.WebSocketHandler;
  * Static convenience methods for client-side operations.
  */
 public class ClientUtil {
-
+    
     /**
      * Invoke a function on the client.
      *
@@ -39,7 +39,7 @@ public class ClientUtil {
         ClientInvocation invocation = new ClientInvocation((String) null, function, args);
         WebSocketHandler.send(invocation);
     }
-
+    
     /**
      * Redirects the client.
      *
@@ -48,7 +48,7 @@ public class ClientUtil {
     public static void redirect(String target) {
         redirect(target, null);
     }
-
+    
     /**
      * Redirects the client.
      *
@@ -59,7 +59,7 @@ public class ClientUtil {
     public static void redirect(String target, String window) {
         invoke("fujion.redirect", target, window);
     }
-
+    
     /**
      * Invokes a JavaScript expression on the client.
      *
@@ -68,7 +68,7 @@ public class ClientUtil {
     public static void eval(String expression) {
         invoke("fujion.eval", expression);
     }
-
+    
     /**
      * Submits a form.
      *
@@ -77,7 +77,7 @@ public class ClientUtil {
     public static void submit(BaseComponent form) {
         invoke("fujion.submit", form);
     }
-
+    
     /**
      * Creates a busy message covering the specified target. A busy message consists of a mask the
      * covers and prevents interaction with the target component and a message centered within the
@@ -93,18 +93,7 @@ public class ClientUtil {
             target.addMask(message);
         }
     }
-
-    /**
-     * Sets the canClose parameter on the client. When set to true (the default value), the browser
-     * window may be closed without interference. When set to false, the browser will present a
-     * confirmation dialog before allowing the window to be closed.
-     *
-     * @param value The value for the canClose parameter.
-     */
-    public static void canClose(boolean value) {
-        invoke("fujion.canClose", value);
-    }
-
+    
     /**
      * Saves content as a file on the client machine.
      *
@@ -115,7 +104,7 @@ public class ClientUtil {
     public static void saveToFile(String content, String mimeType, String fileName) {
         invoke("fujion.saveToFile", content, mimeType, fileName);
     }
-
+    
     private ClientUtil() {
     }
 }

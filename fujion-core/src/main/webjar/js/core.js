@@ -689,13 +689,6 @@ define('fujion-core', ['jquery', 'jquery-ui', 'lodash'], function($) {
 	},
 	
 	/**
-	 * Enables or disables close confirmation.
-	 */
-	canClose: function(value) {
-		fujion._canClose = value;
-	},
-	
-	/**
 	 * Performs an eval operation in the fujion context.
 	 */
 	eval: function(value) {
