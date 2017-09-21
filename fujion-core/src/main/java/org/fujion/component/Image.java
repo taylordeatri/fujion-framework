@@ -30,27 +30,27 @@ import org.fujion.annotation.Component.PropertySetter;
  */
 @Component(tag = "image", widgetClass = "Image", parentTag = "*")
 public class Image extends BaseUIComponent {
-    
+
     private String src;
-    
+
     private String alt;
-    
+
     public Image() {
     }
-    
+
     public Image(String src) {
         setSrc(src);
     }
-    
+
     public Image(String src, String alt) {
         setSrc(src);
         setAlt(alt);
     }
-    
+
     public Image(MimeContent content) {
         setContent(content);
     }
-    
+
     /**
      * Returns the URL of the image resource.
      *
@@ -60,7 +60,7 @@ public class Image extends BaseUIComponent {
     public String getSrc() {
         return src;
     }
-    
+
     /**
      * Sets the URL of the image resource.
      *
@@ -68,11 +68,9 @@ public class Image extends BaseUIComponent {
      */
     @PropertySetter("src")
     public void setSrc(String src) {
-        if (!areEqual(src = nullify(src), this.src)) {
-            propertyChange("src", this.src, this.src = src, true);
-        }
+        _propertyChange("src", this.src, this.src = nullify(src), true);
     }
-    
+
     /**
      * Directly sets the image content.
      *
@@ -81,7 +79,7 @@ public class Image extends BaseUIComponent {
     public void setContent(MimeContent content) {
         setSrc(content == null ? null : content.getSrc());
     }
-    
+
     /**
      * Returns the alternate text for the image.
      *
@@ -91,7 +89,7 @@ public class Image extends BaseUIComponent {
     public String getAlt() {
         return alt;
     }
-    
+
     /**
      * Sets the alternate text for the image.
      *
@@ -99,8 +97,6 @@ public class Image extends BaseUIComponent {
      */
     @PropertySetter("alt")
     public void setAlt(String alt) {
-        if (!areEqual(alt = nullify(alt), this.alt)) {
-            propertyChange("alt", this.alt, this.alt = alt, true);
-        }
+        _propertyChange("alt", this.alt, this.alt = nullify(alt), true);
     }
 }

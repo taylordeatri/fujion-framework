@@ -31,17 +31,17 @@ import org.fujion.annotation.Component.PropertySetter;
 @Component(tag = "grid", widgetModule = "fujion-grid", widgetClass = "Grid", parentTag = "*", childTag = {
         @ChildTag(value = "rows", maximum = 1), @ChildTag(value = "columns", maximum = 1) })
 public class Grid extends BaseUIComponent {
-
+    
     private Columns columns;
-
+    
     private Rows rows;
-
+    
     private String title;
-
+    
     public Grid() {
         addClass("table");
     }
-
+    
     /**
      * Updates the rows and columns properties as these are added.
      *
@@ -50,16 +50,16 @@ public class Grid extends BaseUIComponent {
     @Override
     protected void afterAddChild(BaseComponent child) {
         super.afterAddChild(child);
-
+        
         if (child instanceof Rows) {
             rows = (Rows) child;
         }
-
+        
         if (child instanceof Columns) {
             columns = (Columns) child;
         }
     }
-
+    
     /**
      * Updates the rows and columns properties as these are removed.
      *
@@ -68,14 +68,14 @@ public class Grid extends BaseUIComponent {
     @Override
     protected void afterRemoveChild(BaseComponent child) {
         super.afterRemoveChild(child);
-
+        
         if (child == rows) {
             rows = null;
         } else if (child == columns) {
             columns = null;
         }
     }
-
+    
     /**
      * Returns the Columns child.
      *
@@ -84,7 +84,7 @@ public class Grid extends BaseUIComponent {
     public Columns getColumns() {
         return columns;
     }
-
+    
     /**
      * Returns the Rows child.
      *
@@ -93,7 +93,7 @@ public class Grid extends BaseUIComponent {
     public Rows getRows() {
         return rows;
     }
-    
+
     /**
      * Returns the title text.
      *
@@ -103,7 +103,7 @@ public class Grid extends BaseUIComponent {
     public String getTitle() {
         return title;
     }
-    
+
     /**
      * Sets the title text.
      *
@@ -111,8 +111,6 @@ public class Grid extends BaseUIComponent {
      */
     @PropertySetter("title")
     public void setTitle(String title) {
-        if (!areEqual(title = nullify(title), this.title)) {
-            propertyChange("title", this.title, this.title = title, true);
-        }
+        _propertyChange("title", this.title, this.title = nullify(title), true);
     }
 }

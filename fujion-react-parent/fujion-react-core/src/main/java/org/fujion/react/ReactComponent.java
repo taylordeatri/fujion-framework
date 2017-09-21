@@ -30,9 +30,9 @@ import org.fujion.component.BaseUIComponent;
  */
 @Component(tag = "react", widgetModule = "fujion-react-widget", widgetClass = "ReactWidget", parentTag = "*")
 public class ReactComponent extends BaseUIComponent {
-    
-    private String src;
 
+    private String src;
+    
     /**
      * Returns the name of the module containing the React component.
      *
@@ -42,7 +42,7 @@ public class ReactComponent extends BaseUIComponent {
     public String getSrc() {
         return src;
     }
-
+    
     /**
      * Sets the module containing the React component.
      *
@@ -50,11 +50,9 @@ public class ReactComponent extends BaseUIComponent {
      */
     @PropertySetter("src")
     public void setSrc(String src) {
-        if (!areEqual(src = trimify(src), this.src)) {
-            propertyChange("src", this.src, this.src = src, true);
-        }
+        _propertyChange("src", this.src, this.src = trimify(src), true);
     }
-
+    
     /**
      * Invokes a published method on the module containing the React component.
      *
@@ -64,5 +62,5 @@ public class ReactComponent extends BaseUIComponent {
     public void rxInvoke(String functionName, Object... args) {
         invoke("rxInvoke", functionName, args);
     }
-
+    
 }

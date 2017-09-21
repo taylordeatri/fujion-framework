@@ -38,7 +38,7 @@ import org.fujion.model.ModelAndView;
  */
 @Component(tag = "rows", widgetModule = "fujion-grid", widgetClass = "Rows", parentTag = "grid", childTag = @ChildTag("row"))
 public class Rows extends BaseUIComponent implements ISupportsModel<Row> {
-
+    
     /**
      * Specifies the selection mode for rows.
      */
@@ -56,24 +56,24 @@ public class Rows extends BaseUIComponent implements ISupportsModel<Row> {
          */
         MULTIPLE
     }
-
+    
     private Selectable selectable = Selectable.NO;
-
+    
     private final Set<Row> selected = new LinkedHashSet<>();
-
+    
     private final ModelAndView<Row, Object> modelAndView = new ModelAndView<>(this);
-
+    
     @Override
     public void destroy() {
         super.destroy();
         modelAndView.destroy();
     }
-
+    
     @Override
     public IModelAndView<Row, ?> getModelAndView() {
         return modelAndView;
     }
-
+    
     /**
      * Returns the {@link Selectable selectable} setting.
      *
@@ -83,7 +83,7 @@ public class Rows extends BaseUIComponent implements ISupportsModel<Row> {
     public Selectable getSelectable() {
         return selectable;
     }
-
+    
     /**
      * Sets the {@link Selectable selectable} setting.
      *
@@ -91,15 +91,13 @@ public class Rows extends BaseUIComponent implements ISupportsModel<Row> {
      */
     @PropertySetter("selectable")
     public void setSelectable(Selectable selectable) {
-        if ((selectable = defaultify(selectable, Selectable.NO)) != this.selectable) {
-            propertyChange("selectable", this.selectable, this.selectable = selectable, true);
-
+        if (_propertyChange("selectable", this.selectable, this.selectable = defaultify(selectable, Selectable.NO), true)) {
             if (selectable != Selectable.MULTIPLE && !selected.isEmpty()) {
                 unselect(selectable == Selectable.NO ? null : getSelectedRow());
             }
         }
     }
-
+    
     /**
      * Returns the currently selected row, or null if none. If multiple rows are selected, only the
      * first will be returned.
@@ -109,7 +107,7 @@ public class Rows extends BaseUIComponent implements ISupportsModel<Row> {
     public Row getSelectedRow() {
         return selected.isEmpty() ? null : selected.iterator().next();
     }
-
+    
     /**
      * Returns an immutable set of currently selected rows.
      *
@@ -118,27 +116,27 @@ public class Rows extends BaseUIComponent implements ISupportsModel<Row> {
     public Set<Row> getSelected() {
         return Collections.unmodifiableSet(selected);
     }
-
+    
     /**
      * Clears all selections.
      */
     public void clearSelected() {
         unselect(null);
     }
-
+    
     private void unselect(Row excluded) {
         Iterator<Row> iter = selected.iterator();
-
+        
         while (iter.hasNext()) {
             Row row = iter.next();
-
+            
             if (row != excluded) {
                 row._setSelected(false, true, false);
                 iter.remove();
             }
         }
     }
-    
+
     /**
      * Returns the number of selected rows.
      *
@@ -147,7 +145,7 @@ public class Rows extends BaseUIComponent implements ISupportsModel<Row> {
     public int getSelectedCount() {
         return selected.size();
     }
-
+    
     /**
      * Updates the selection state of a row.
      *
@@ -156,7 +154,7 @@ public class Rows extends BaseUIComponent implements ISupportsModel<Row> {
     protected void _updateSelected(Row row) {
         if (row.isSelected()) {
             selected.add(row);
-
+            
             if (selectable != Selectable.MULTIPLE) {
                 unselect(selectable == Selectable.NO ? null : row);
             }
@@ -164,7 +162,7 @@ public class Rows extends BaseUIComponent implements ISupportsModel<Row> {
             selected.remove(row);
         }
     }
-
+    
     /**
      * If the removed child row was selected, remove it from the set.
      *
@@ -175,7 +173,7 @@ public class Rows extends BaseUIComponent implements ISupportsModel<Row> {
         super.afterRemoveChild(child);
         selected.remove(child);
     }
-
+    
     /**
      * if the added child row is selected, add it to the set.
      *
@@ -185,7 +183,7 @@ public class Rows extends BaseUIComponent implements ISupportsModel<Row> {
     protected void afterAddChild(BaseComponent child) {
         super.afterAddChild(child);
         Row row = (Row) child;
-
+        
         if (row.isSelected()) {
             _updateSelected(row);
         }

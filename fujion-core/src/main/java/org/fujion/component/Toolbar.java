@@ -31,7 +31,7 @@ import org.fujion.annotation.Component.PropertySetter;
  */
 @Component(tag = "toolbar", widgetClass = "Toolbar", content = ContentHandling.AS_CHILD, parentTag = "*", childTag = @ChildTag("*"))
 public class Toolbar extends BaseUIComponent {
-
+    
     /**
      * Alignment of children within the tool bar. Default is START.
      */
@@ -49,7 +49,7 @@ public class Toolbar extends BaseUIComponent {
          */
         END
     }
-
+    
     /**
      * Orientation of the tool bar. Default is HORIZONTAL.
      */
@@ -63,11 +63,11 @@ public class Toolbar extends BaseUIComponent {
          */
         VERTICAL
     }
-
+    
     private Alignment alignment = Alignment.START;
-
+    
     private Orientation orientation = Orientation.HORIZONTAL;
-
+    
     /**
      * Returns the {@link Alignment alignment} of children within the tool bar.
      *
@@ -77,7 +77,7 @@ public class Toolbar extends BaseUIComponent {
     public Alignment getAlignment() {
         return alignment;
     }
-
+    
     /**
      * Sets the {@link Alignment alignment} of children within the tool bar.
      *
@@ -85,13 +85,9 @@ public class Toolbar extends BaseUIComponent {
      */
     @PropertySetter("alignment")
     public void setAlignment(Alignment alignment) {
-        alignment = defaultify(alignment, Alignment.START);
-
-        if (alignment != this.alignment) {
-            propertyChange("alignment", this.alignment, this.alignment = alignment, true);
-        }
+        _propertyChange("alignment", this.alignment, this.alignment = defaultify(alignment, Alignment.START), true);
     }
-
+    
     /**
      * Returns the {@link Orientation orientation} of the tool bar.
      *
@@ -101,7 +97,7 @@ public class Toolbar extends BaseUIComponent {
     public Orientation getOrientation() {
         return orientation;
     }
-
+    
     /**
      * Sets the {@link Orientation orientation} of the tool bar.
      *
@@ -109,10 +105,7 @@ public class Toolbar extends BaseUIComponent {
      */
     @PropertySetter("orientation")
     public void setOrientation(Orientation orientation) {
-        orientation = defaultify(orientation, Orientation.HORIZONTAL);
-
-        if (orientation != this.orientation) {
-            propertyChange("orientation", this.orientation, this.orientation = orientation, true);
-        }
+        _propertyChange("orientation", this.orientation, this.orientation = defaultify(orientation, Orientation.HORIZONTAL),
+            true);
     }
 }

@@ -279,7 +279,7 @@ public abstract class BaseComponent implements IElementIdentifier {
         if (!areEqual(name = nullify(name), this.name)) {
             validateName(name);
             nameIndex.remove(this);
-            propertyChange("name", this.name, this.name = name, true);
+            _propertyChange("name", this.name, this.name = name, true);
             nameIndex.add(this);
         }
     }
@@ -1724,9 +1724,7 @@ public abstract class BaseComponent implements IElementIdentifier {
      */
     @PropertySetter("#text")
     protected void setContent(String content) {
-        if (!areEqual(content = nullify(content), this.content)) {
-            propertyChange("content", this.content, this.content = content, contentSynced);
-        }
+        _propertyChange("content", this.content, this.content = nullify(content), contentSynced);
     }
     
     /**
@@ -1764,18 +1762,32 @@ public abstract class BaseComponent implements IElementIdentifier {
             Object oldValue = field.get(this);
             Object newValue = ConvertUtil.convert(event.getValue(), field.getType(), this);
             field.set(this, newValue);
-            propertyChange(state, oldValue, newValue, false);
+            _propertyChange(state, oldValue, newValue, false);
         } catch (Exception e) {
             throw new ComponentException(e, "Error updating state: " + state);
         }
     }
     
-    protected void propertyChange(String name, Object oldValue, Object newValue, boolean syncToClient) {
+    /**
+     * Notify subscribers of a property change.
+     *
+     * @param name The property name.
+     * @param oldValue The old value.
+     * @param newValue The new value.
+     * @param syncToClient If true, notify client of change.
+     * @return True if property value changed.
+     */
+    protected boolean _propertyChange(String name, Object oldValue, Object newValue, boolean syncToClient) {
+        if (areEqual(oldValue, newValue)) {
+            return false;
+        }
+        
         if (syncToClient) {
             _sync(name, newValue);
         }
 
-        pcs.firePropertyChange(name, oldValue, newValue);
+        pcs.firePropertyChange(name.startsWith("_") ? name.substring(1) : name, oldValue, newValue);
+        return true;
     }
 
     /**

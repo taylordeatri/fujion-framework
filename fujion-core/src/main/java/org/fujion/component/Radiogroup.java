@@ -33,7 +33,7 @@ import org.fujion.annotation.Component.PropertySetter;
  */
 @Component(tag = "radiogroup", widgetClass = "Radiogroup", content = ContentHandling.AS_CHILD, parentTag = "*", childTag = @ChildTag("*"))
 public class Radiogroup extends BaseUIComponent {
-
+    
     /**
      * Orientation of radio buttons within this group.
      */
@@ -47,9 +47,9 @@ public class Radiogroup extends BaseUIComponent {
          */
         VERTICAL
     }
-
+    
     private Orientation orientation = Orientation.HORIZONTAL;
-
+    
     /**
      * Returns the currently selected radio button in this group, if any.
      *
@@ -58,25 +58,25 @@ public class Radiogroup extends BaseUIComponent {
     public Radiobutton getSelected() {
         return getSelected(this);
     }
-
+    
     private Radiobutton getSelected(BaseComponent parent) {
         for (BaseComponent child : parent.getChildren()) {
             if (child instanceof Radiobutton && ((Radiobutton) child).isChecked()) {
                 return (Radiobutton) child;
             }
         }
-
+        
         for (BaseComponent child : parent.getChildren()) {
             Radiobutton rb = child instanceof Radiogroup ? null : getSelected(child);
-
+            
             if (rb != null) {
                 return rb;
             }
         }
-
+        
         return null;
     }
-
+    
     /**
      * Returns the {@link Orientation orientation} of radio buttons belonging to this group.
      *
@@ -86,7 +86,7 @@ public class Radiogroup extends BaseUIComponent {
     public Orientation getOrientation() {
         return orientation;
     }
-
+    
     /**
      * Sets the {@link Orientation orientation} of radio buttons belonging to this group.
      *
@@ -95,10 +95,7 @@ public class Radiogroup extends BaseUIComponent {
      */
     @PropertySetter("orientation")
     public void setOrientation(Orientation orientation) {
-        orientation = defaultify(orientation, Orientation.HORIZONTAL);
-
-        if (orientation != this.orientation) {
-            propertyChange("orientation", this.orientation, this.orientation = orientation, true);
-        }
+        _propertyChange("orientation", this.orientation, this.orientation = defaultify(orientation, Orientation.HORIZONTAL),
+            true);
     }
 }

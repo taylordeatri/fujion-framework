@@ -37,15 +37,15 @@ import org.fujion.model.ModelAndView;
  */
 @Component(tag = "listbox", widgetClass = "Listbox", parentTag = "*", childTag = @ChildTag("listitem"))
 public class Listbox extends BaseUIComponent implements ISupportsModel<Listitem> {
-
+    
     private boolean multiple;
-
+    
     private int size;
-
+    
     private final ModelAndView<Listitem, ?> modelAndView = new ModelAndView<>(this);
-
+    
     private final Set<Listitem> selected = new LinkedHashSet<>();
-
+    
     /**
      * Returns the multiple selection flag. If true, multiple list items may be selected at once.
      *
@@ -55,7 +55,7 @@ public class Listbox extends BaseUIComponent implements ISupportsModel<Listitem>
     public boolean isMultiple() {
         return multiple;
     }
-
+    
     /**
      * Sets the multiple selection flag. If true, multiple list items may be selected at once.
      *
@@ -63,15 +63,13 @@ public class Listbox extends BaseUIComponent implements ISupportsModel<Listitem>
      */
     @PropertySetter("multiple")
     public void setMultiple(boolean multiple) {
-        if (multiple != this.multiple) {
+        if (_propertyChange("multiple", this.multiple, this.multiple = multiple, true)) {
             if (!multiple && selected.size() > 1) {
                 unselect(null);
             }
-
-            propertyChange("multiple", this.multiple, this.multiple = multiple, true);
         }
     }
-
+    
     /**
      * Returns the number of visible list items.
      *
@@ -81,7 +79,7 @@ public class Listbox extends BaseUIComponent implements ISupportsModel<Listitem>
     public int getSize() {
         return size;
     }
-
+    
     /**
      * Sets the number of visible list items.
      *
@@ -89,11 +87,9 @@ public class Listbox extends BaseUIComponent implements ISupportsModel<Listitem>
      */
     @PropertySetter("size")
     public void setSize(int size) {
-        if (size != this.size) {
-            propertyChange("size", this.size, this.size = size, true);
-        }
+        _propertyChange("size", this.size, this.size = size, true);
     }
-
+    
     /**
      * Returns the set of selected list items.
      *
@@ -102,7 +98,7 @@ public class Listbox extends BaseUIComponent implements ISupportsModel<Listitem>
     public Set<Listitem> getSelected() {
         return Collections.unmodifiableSet(selected);
     }
-
+    
     /**
      * Returns the number of selected list items.
      *
@@ -111,7 +107,7 @@ public class Listbox extends BaseUIComponent implements ISupportsModel<Listitem>
     public int getSelectedCount() {
         return selected.size();
     }
-
+    
     /**
      * Returns the selected list item, if any. If there are multiple selections, only the first will
      * be returned.
@@ -121,7 +117,7 @@ public class Listbox extends BaseUIComponent implements ISupportsModel<Listitem>
     public Listitem getSelectedItem() {
         return selected.isEmpty() ? null : selected.iterator().next();
     }
-
+    
     /**
      * Sets the selected list item. Any existing selections are cleared.
      *
@@ -130,12 +126,12 @@ public class Listbox extends BaseUIComponent implements ISupportsModel<Listitem>
     public void setSelectedItem(Listitem item) {
         validateIsChild(item);
         unselect(item);
-
+        
         if (item != null) {
             item.setSelected(true);
         }
     }
-
+    
     /**
      * Returns the index of the selected list item. If there are multiple selections, the index of
      * the first selected item will be returned.
@@ -146,7 +142,7 @@ public class Listbox extends BaseUIComponent implements ISupportsModel<Listitem>
         Listitem item = getSelectedItem();
         return item == null ? -1 : item.getIndex();
     }
-
+    
     /**
      * Sets the selected list item by its index. Any existing selections are cleared.
      *
@@ -155,7 +151,7 @@ public class Listbox extends BaseUIComponent implements ISupportsModel<Listitem>
     public void setSelectedIndex(int index) {
         setSelectedItem((Listitem) getChildAt(index));
     }
-
+    
     /**
      * Updates the selection status of a list item.
      *
@@ -166,7 +162,7 @@ public class Listbox extends BaseUIComponent implements ISupportsModel<Listitem>
             if (!multiple) {
                 unselect(null);
             }
-
+            
             if (item.isSelected()) {
                 selected.add(item);
             } else {
@@ -174,14 +170,14 @@ public class Listbox extends BaseUIComponent implements ISupportsModel<Listitem>
             }
         }
     }
-
+    
     /**
      * Clears any existing selection.
      */
     public void clearSelected() {
         unselect(null);
     }
-
+    
     /**
      * Unselect all selected list items.
      *
@@ -193,10 +189,10 @@ public class Listbox extends BaseUIComponent implements ISupportsModel<Listitem>
                 item._setSelected(false, true, false);
             }
         }
-
+        
         selected.clear();
     }
-
+    
     /**
      * If the added list item is marked as selected, add it to the set of selected items.
      *
@@ -206,7 +202,7 @@ public class Listbox extends BaseUIComponent implements ISupportsModel<Listitem>
     protected void afterAddChild(BaseComponent child) {
         _updateSelected((Listitem) child);
     }
-
+    
     /**
      * If the removed list item is marked as selected, remove it from the set of selected items.
      *
@@ -218,16 +214,16 @@ public class Listbox extends BaseUIComponent implements ISupportsModel<Listitem>
             ((Listitem) child)._setSelected(false, true, false);
         }
     }
-
+    
     @Override
     public void destroy() {
         super.destroy();
         modelAndView.destroy();
     }
-
+    
     @Override
     public IModelAndView<Listitem, ?> getModelAndView() {
         return modelAndView;
     }
-
+    
 }

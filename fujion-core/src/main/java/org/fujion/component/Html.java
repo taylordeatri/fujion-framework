@@ -30,18 +30,18 @@ import org.fujion.annotation.Component.PropertySetter;
  */
 @Component(tag = "html", widgetClass = "Html", content = ContentHandling.AS_ATTRIBUTE, parentTag = "*")
 public class Html extends BaseUIComponent {
-
-    private String src;
     
+    private String src;
+
     public Html() {
         super();
     }
-
+    
     public Html(String content) {
         super();
         setContent(content);
     }
-
+    
     /**
      * Sets the HTML content.
      *
@@ -51,14 +51,14 @@ public class Html extends BaseUIComponent {
     @Override
     public void setContent(String content) {
         content = nullify(content);
-        
+
         if (content != null) {
             setSrc(null);
         }
-        
+
         super.setContent(content);
     }
-
+    
     /**
      * Returns the URL of external HTML content.
      *
@@ -68,7 +68,7 @@ public class Html extends BaseUIComponent {
     public String getSrc() {
         return src;
     }
-    
+
     /**
      * Sets the URL of external HTML content.
      *
@@ -77,14 +77,12 @@ public class Html extends BaseUIComponent {
     @PropertySetter(value = "src")
     public void setSrc(String src) {
         src = nullify(src);
-        
+
         if (src != null) {
             super.setContent(null);
         }
         
-        if (!areEqual(src, this.src)) {
-            propertyChange("src", this.src, this.src = src, isContentSynced());
-        }
+        _propertyChange("src", this.src, this.src = src, isContentSynced());
     }
-
+    
 }

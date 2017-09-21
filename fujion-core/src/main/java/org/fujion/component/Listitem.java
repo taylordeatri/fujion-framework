@@ -32,19 +32,19 @@ import org.fujion.event.EventUtil;
  */
 @Component(tag = "listitem", widgetClass = "Listitem", parentTag = "listbox")
 public class Listitem extends BaseLabeledComponent<BaseLabeledComponent.LabelPositionNone> {
-    
+
     private boolean selected;
-    
+
     private String value;
-    
+
     public Listitem() {
         super();
     }
-    
+
     public Listitem(String label) {
         super(label);
     }
-    
+
     /**
      * Sets the selection state.
      *
@@ -53,15 +53,13 @@ public class Listitem extends BaseLabeledComponent<BaseLabeledComponent.LabelPos
      * @param notifyParent If true, notify the parent of the state change.
      */
     protected void _setSelected(boolean selected, boolean notifyClient, boolean notifyParent) {
-        if (selected != this.selected) {
-            propertyChange("selected", this.selected, this.selected = selected, notifyClient);
-            
+        if (_propertyChange("selected", this.selected, this.selected = selected, notifyClient)) {
             if (notifyParent && getParent() != null) {
                 getListbox()._updateSelected(this);
             }
         }
     }
-    
+
     /**
      * Returns the list box that is the parent of this list item.
      *
@@ -70,7 +68,7 @@ public class Listitem extends BaseLabeledComponent<BaseLabeledComponent.LabelPos
     public Listbox getListbox() {
         return (Listbox) getParent();
     }
-    
+
     /**
      * Returns the selection state.
      *
@@ -80,7 +78,7 @@ public class Listitem extends BaseLabeledComponent<BaseLabeledComponent.LabelPos
     public boolean isSelected() {
         return selected;
     }
-    
+
     /**
      * Sets the selection state.
      *
@@ -90,7 +88,7 @@ public class Listitem extends BaseLabeledComponent<BaseLabeledComponent.LabelPos
     public void setSelected(boolean selected) {
         _setSelected(selected, true, true);
     }
-    
+
     /**
      * Returns the value associated with the list item.
      *
@@ -100,7 +98,7 @@ public class Listitem extends BaseLabeledComponent<BaseLabeledComponent.LabelPos
     public String getValue() {
         return value;
     }
-    
+
     /**
      * Sets the value associated with the list item.
      *
@@ -108,11 +106,9 @@ public class Listitem extends BaseLabeledComponent<BaseLabeledComponent.LabelPos
      */
     @PropertySetter("value")
     public void setValue(String value) {
-        if (!areEqual(value, this.value)) {
-            propertyChange("value", this.value, this.value = value, true);
-        }
+        _propertyChange("value", this.value, this.value = value, true);
     }
-    
+
     /**
      * Handles change events from the client.
      *
@@ -124,5 +120,5 @@ public class Listitem extends BaseLabeledComponent<BaseLabeledComponent.LabelPos
         event = new ChangeEvent(this.getParent(), event.getData(), this);
         EventUtil.send(event);
     }
-    
+
 }

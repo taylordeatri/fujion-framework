@@ -30,7 +30,7 @@ import org.fujion.annotation.Component.PropertySetter;
  */
 @Component(tag = "tabview", widgetModule = "fujion-tabview", widgetClass = "Tabview", parentTag = "*", childTag = @ChildTag("tab"))
 public class Tabview extends BaseUIComponent {
-
+    
     /**
      * Placement of tabs in a tab view. Default is top.
      */
@@ -52,11 +52,11 @@ public class Tabview extends BaseUIComponent {
          */
         RIGHT
     }
-
+    
     private Tab selectedTab;
-
+    
     private TabPosition tabPosition = TabPosition.TOP;
-
+    
     /**
      * Returns the currently selected tab, if any.
      *
@@ -65,7 +65,7 @@ public class Tabview extends BaseUIComponent {
     public Tab getSelectedTab() {
         return selectedTab;
     }
-
+    
     /**
      * Sets the currently selected tab.
      *
@@ -73,18 +73,18 @@ public class Tabview extends BaseUIComponent {
      */
     public void setSelectedTab(Tab selectedTab) {
         validateIsChild(selectedTab);
-
+        
         if (this.selectedTab != null) {
             this.selectedTab._setSelected(false, false);
         }
-
+        
         this.selectedTab = selectedTab;
-
+        
         if (selectedTab != null) {
             selectedTab._setSelected(true, false);
         }
     }
-
+    
     /**
      * If the added tab is marked as selected, update the selected tab.
      *
@@ -96,7 +96,7 @@ public class Tabview extends BaseUIComponent {
             setSelectedTab((Tab) child);
         }
     }
-
+    
     /**
      * If the removed tab is selected, clear the selection.
      *
@@ -108,7 +108,7 @@ public class Tabview extends BaseUIComponent {
             selectedTab = null;
         }
     }
-
+    
     /**
      * Returns the tab {@link TabPosition position}.
      *
@@ -118,7 +118,7 @@ public class Tabview extends BaseUIComponent {
     public TabPosition getTabPosition() {
         return tabPosition;
     }
-
+    
     /**
      * Sets the tab {@link TabPosition position}.
      *
@@ -126,11 +126,7 @@ public class Tabview extends BaseUIComponent {
      */
     @PropertySetter("tabPosition")
     public void setTabPosition(TabPosition tabPosition) {
-        tabPosition = defaultify(tabPosition, TabPosition.TOP);
-
-        if (tabPosition != this.tabPosition) {
-            propertyChange("tabPosition", this.tabPosition, this.tabPosition = tabPosition, true);
-        }
+        _propertyChange("tabPosition", this.tabPosition, this.tabPosition = defaultify(tabPosition, TabPosition.TOP), true);
     }
-
+    
 }

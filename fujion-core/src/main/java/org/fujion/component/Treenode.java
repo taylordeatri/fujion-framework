@@ -166,18 +166,14 @@ public class Treenode extends BaseLabeledImageComponent<BaseLabeledComponent.Lab
      * @param notifyParent If true, notify the parent tree view of the state change.
      */
     /*package*/ void _setSelected(boolean selected, boolean notifyClient, boolean notifyParent) {
-        if (selected != this.selected) {
-            propertyChange("selected", this.selected, this.selected = selected, notifyClient);
+        if (_propertyChange("selected", this.selected, this.selected = selected, notifyClient) && notifyParent) {
+            Treeview treeview = getTreeview();
 
-            if (notifyParent) {
-                Treeview treeview = getTreeview();
-
-                if (treeview != null) {
-                    if (selected) {
-                        treeview.setSelectedNode(this);
-                    } else if (treeview.getSelectedNode() == this) {
-                        treeview.setSelectedNode(null);
-                    }
+            if (treeview != null) {
+                if (selected) {
+                    treeview.setSelectedNode(this);
+                } else if (treeview.getSelectedNode() == this) {
+                    treeview.setSelectedNode(null);
                 }
             }
         }
@@ -241,9 +237,7 @@ public class Treenode extends BaseLabeledImageComponent<BaseLabeledComponent.Lab
      */
     @PropertySetter("collapsed")
     public void setCollapsed(boolean collapsed) {
-        if (collapsed != this.collapsed) {
-            propertyChange("collapsed", this.collapsed, this.collapsed = collapsed, true);
-        }
+        _propertyChange("collapsed", this.collapsed, this.collapsed = collapsed, true);
     }
 
     /**

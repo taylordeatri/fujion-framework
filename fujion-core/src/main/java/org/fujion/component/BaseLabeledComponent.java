@@ -30,56 +30,54 @@ import org.fujion.annotation.Component.PropertySetter;
  * @param <P> The type of label positioning that is supported.
  */
 public abstract class BaseLabeledComponent<P extends BaseLabeledComponent.ILabelPosition> extends BaseUIComponent implements ILabeled {
-    
+
     /**
      * Position specifier for label.
      */
     public interface ILabelPosition {};
-    
+
     /**
      * Horizontal position specifier.
      */
     public enum LabelPositionHorz implements ILabelPosition {
         RIGHT, LEFT
     }
-    
+
     /**
      * Specifier for all label positions.
      */
     public enum LabelPositionAll implements ILabelPosition {
         RIGHT, LEFT, TOP, BOTTOM
     }
-    
+
     /**
      * Specifier for fixed label position.
      */
     public enum LabelPositionNone implements ILabelPosition {}
-    
+
     private String label;
-    
+
     private P position;
-    
+
     public BaseLabeledComponent() {
     }
-    
+
     public BaseLabeledComponent(String label) {
         setLabel(label);
     }
-    
+
     @Override
     @PropertyGetter("label")
     public String getLabel() {
         return label;
     }
-    
+
     @Override
     @PropertySetter("label")
     public void setLabel(String label) {
-        if (!areEqual(label = nullify(label), this.label)) {
-            propertyChange("label", this.label, this.label = label, true);
-        }
+        _propertyChange("label", this.label, this.label = nullify(label), true);
     }
-    
+
     /**
      * Returns the label position.
      *
@@ -88,16 +86,14 @@ public abstract class BaseLabeledComponent<P extends BaseLabeledComponent.ILabel
     protected P getPosition() {
         return position;
     }
-    
+
     /**
      * Sets the label position.
      *
      * @param position The label position.
      */
     protected void setPosition(P position) {
-        if (position != this.position) {
-            propertyChange("position", this.position, this.position = position, true);
-        }
+        _propertyChange("position", this.position, this.position = position, true);
     }
-    
+
 }

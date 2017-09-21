@@ -28,17 +28,17 @@ import org.fujion.annotation.Component.PropertySetter;
  * @param <T> The item type.
  */
 public abstract class BasePickerItem<T> extends BaseComponent {
-    
+
     private T value;
-    
+
     public BasePickerItem() {
-        
+
     }
-    
+
     public BasePickerItem(T item) {
         setRawValue(item);
     }
-    
+
     /**
      * Returns the value associated with the item.
      *
@@ -47,7 +47,7 @@ public abstract class BasePickerItem<T> extends BaseComponent {
     public T getValue() {
         return value;
     }
-    
+
     /**
      * Sets the value associated with the item.
      *
@@ -57,19 +57,18 @@ public abstract class BasePickerItem<T> extends BaseComponent {
     public void setValue(String text) {
         setRawValue(_toValue(text));
     }
-    
+
     /**
      * Sets the raw value associated with the item.
      *
      * @param value The new value.
      */
     public void setRawValue(T value) {
-        if (!areEqual(value, this.value)) {
+        if (_propertyChange("value", this.value, this.value = value, false)) {
             _sync("value", _toString(value));
-            propertyChange("value", this.value, this.value = value, false);
         }
     }
-    
+
     /**
      * Converts the raw value to its text representation.
      *
@@ -77,7 +76,7 @@ public abstract class BasePickerItem<T> extends BaseComponent {
      * @return The text representation.
      */
     protected abstract String _toString(T value);
-    
+
     /**
      * Converts the text representation to its raw value.
      *

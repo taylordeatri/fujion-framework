@@ -30,13 +30,13 @@ import org.fujion.common.MiscUtil;
  * @param <T> The type of item within the collection of choices.
  */
 public abstract class BasePickerComponent<T> extends BaseInputboxComponent<T> {
-    
+
     private boolean showText;
-    
+
     private boolean showHints;
-    
+
     private BasePickerItem<T> converter;
-    
+
     protected BasePickerComponent(Class<? extends BasePickerItem<T>> itemClass) {
         try {
             converter = itemClass.newInstance();
@@ -44,7 +44,7 @@ public abstract class BasePickerComponent<T> extends BaseInputboxComponent<T> {
             throw MiscUtil.toUnchecked(e);
         }
     }
-    
+
     /**
      * Returns showText property.
      *
@@ -54,7 +54,7 @@ public abstract class BasePickerComponent<T> extends BaseInputboxComponent<T> {
     public boolean getShowText() {
         return showText;
     }
-    
+
     /**
      * Sets showText property.
      *
@@ -62,11 +62,9 @@ public abstract class BasePickerComponent<T> extends BaseInputboxComponent<T> {
      */
     @PropertySetter("showText")
     public void setShowText(boolean showText) {
-        if (showText != this.showText) {
-            propertyChange("showText", this.showText, this.showText = showText, true);
-        }
+        _propertyChange("showText", this.showText, this.showText = showText, true);
     }
-    
+
     /**
      * Returns the showHints property.
      *
@@ -77,7 +75,7 @@ public abstract class BasePickerComponent<T> extends BaseInputboxComponent<T> {
     public boolean getShowHints() {
         return showHints;
     }
-    
+
     /**
      * Sets the showHints property.
      *
@@ -86,19 +84,17 @@ public abstract class BasePickerComponent<T> extends BaseInputboxComponent<T> {
      */
     @PropertySetter("showHints")
     public void setShowHints(boolean showHints) {
-        if (showHints != this.showHints) {
-            propertyChange("showHints", this.showHints, this.showHints = showHints, true);
-        }
+        _propertyChange("showHints", this.showHints, this.showHints = showHints, true);
     }
-    
+
     @Override
     protected T _toValue(String text) {
         return converter._toValue(text);
     }
-    
+
     @Override
     protected String _toString(T value) {
         return converter._toString(value);
     }
-    
+
 }

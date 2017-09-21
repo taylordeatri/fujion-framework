@@ -82,9 +82,7 @@ public class Comboitem extends BaseLabeledComponent<BaseLabeledComponent.LabelPo
      */
     @PropertySetter("value")
     public void setValue(String value) {
-        if (!areEqual(value, this.value)) {
-            propertyChange("value", this.value, this.value = value, true);
-        }
+        _propertyChange("value", this.value, this.value = value, true);
     }
 
     /**
@@ -95,9 +93,7 @@ public class Comboitem extends BaseLabeledComponent<BaseLabeledComponent.LabelPo
      * @param notifyParent If true, notify the parent of the state change.
      */
     protected void _setSelected(boolean selected, boolean notifyClient, boolean notifyParent) {
-        if (selected != this.selected) {
-            propertyChange("selected", this.selected, this.selected = selected, notifyClient);
-
+        if (_propertyChange("selected", this.selected, this.selected = selected, notifyClient)) {
             if (notifyParent && getParent() != null) {
                 getCombobox()._updateSelected(selected ? this : null);
             }

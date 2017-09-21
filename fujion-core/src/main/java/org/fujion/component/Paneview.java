@@ -30,7 +30,7 @@ import org.fujion.annotation.Component.PropertySetter;
  */
 @Component(tag = "paneview", widgetModule = "fujion-paneview", widgetClass = "Paneview", parentTag = "*", childTag = @ChildTag("pane"))
 public class Paneview extends BaseUIComponent {
-    
+
     /**
      * Orientation of panes within a pane view.
      */
@@ -44,9 +44,9 @@ public class Paneview extends BaseUIComponent {
          */
         VERTICAL
     }
-    
+
     private Orientation orientation = Orientation.HORIZONTAL;
-    
+
     /**
      * Returns the {@link Orientation orientation} of child panes.
      *
@@ -56,7 +56,7 @@ public class Paneview extends BaseUIComponent {
     public Orientation getOrientation() {
         return orientation;
     }
-    
+
     /**
      * Sets the {@link Orientation orientation} of child panes.
      *
@@ -64,11 +64,8 @@ public class Paneview extends BaseUIComponent {
      */
     @PropertySetter("orientation")
     public void setOrientation(Orientation orientation) {
-        orientation = defaultify(orientation, Orientation.HORIZONTAL);
-        
-        if (orientation != this.orientation) {
-            propertyChange("orientation", this.orientation, this.orientation = orientation, true);
-        }
+        _propertyChange("orientation", this.orientation, this.orientation = defaultify(orientation, Orientation.HORIZONTAL),
+            true);
     }
-    
+
 }

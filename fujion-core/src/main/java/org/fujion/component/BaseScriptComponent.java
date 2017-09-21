@@ -27,19 +27,19 @@ import org.fujion.annotation.Component.PropertySetter;
  * Base for components that implement scripting support.
  */
 public class BaseScriptComponent extends BaseSourcedComponent {
-
+    
     protected BaseScriptComponent(boolean contentSynced) {
         super(contentSynced);
     }
-    
+
     protected BaseScriptComponent(String content, boolean contentSynced) {
         super(content, contentSynced);
     }
-    
-    private boolean defer;
 
-    private String type;
+    private boolean defer;
     
+    private String type;
+
     /**
      * Returns the defer flag. If true, script execution is deferred (the exact timing is
      * implementation-dependent). Otherwise it is immediate.
@@ -50,7 +50,7 @@ public class BaseScriptComponent extends BaseSourcedComponent {
     public boolean getDefer() {
         return defer;
     }
-
+    
     /**
      * Sets the defer flag. If true, script execution is deferred (the exact timing is
      * implementation-dependent). Otherwise it is immediate.
@@ -59,11 +59,9 @@ public class BaseScriptComponent extends BaseSourcedComponent {
      */
     @PropertySetter("defer")
     public void setDefer(boolean defer) {
-        if (defer != this.defer) {
-            propertyChange("defer", this.defer, this.defer = defer, isContentSynced());
-        }
+        _propertyChange("defer", this.defer, this.defer = defer, isContentSynced());
     }
-
+    
     /**
      * Returns the type of script.
      *
@@ -73,7 +71,7 @@ public class BaseScriptComponent extends BaseSourcedComponent {
     public String getType() {
         return type;
     }
-
+    
     /**
      * Sets the type of script.
      *
@@ -81,9 +79,7 @@ public class BaseScriptComponent extends BaseSourcedComponent {
      */
     @PropertySetter("type")
     public void setType(String type) {
-        if (!areEqual(type = nullify(type), this.type)) {
-            propertyChange("type", this.type, this.type = type, isContentSynced());
-        }
+        _propertyChange("type", this.type, this.type = nullify(type), isContentSynced());
     }
-
+    
 }
