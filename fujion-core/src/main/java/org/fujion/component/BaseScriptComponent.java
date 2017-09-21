@@ -60,11 +60,7 @@ public class BaseScriptComponent extends BaseSourcedComponent {
     @PropertySetter("defer")
     public void setDefer(boolean defer) {
         if (defer != this.defer) {
-            this.defer = defer;
-            
-            if (isContentSynced()) {
-                sync("defer", defer);
-            }
+            propertyChange("defer", this.defer, this.defer = defer, isContentSynced());
         }
     }
 
@@ -86,11 +82,7 @@ public class BaseScriptComponent extends BaseSourcedComponent {
     @PropertySetter("type")
     public void setType(String type) {
         if (!areEqual(type = nullify(type), this.type)) {
-            this.type = type;
-
-            if (isContentSynced()) {
-                sync("type", type);
-            }
+            propertyChange("type", this.type, this.type = type, isContentSynced());
         }
     }
 

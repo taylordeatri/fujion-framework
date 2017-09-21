@@ -30,7 +30,7 @@ import org.springframework.util.Assert;
  */
 @Component(tag = "memobox", widgetClass = "Memobox", parentTag = "*")
 public class Memobox extends BaseInputboxComponent<String> {
-
+    
     /**
      * Wrap mode for memo box.
      */
@@ -45,32 +45,32 @@ public class Memobox extends BaseInputboxComponent<String> {
          */
         SOFT
     }
-
-    private boolean autoScroll;
-
-    private WrapMode wrap = WrapMode.SOFT;
-
-    private int rows = 2;
     
-    private int cols = 20;
+    private boolean autoScroll;
+    
+    private WrapMode wrap = WrapMode.SOFT;
+    
+    private int rows = 2;
 
+    private int cols = 20;
+    
     public Memobox() {
         super();
         addStyle("resize", "none");
     }
-
+    
     @Override
     @PropertyGetter("synchronized")
     public boolean getSynchronized() {
         return super.getSynchronized();
     }
-
+    
     @Override
     @PropertySetter("synchronized")
     public void setSynchronized(boolean synchronize) {
         super.setSynchronized(synchronize);
     }
-
+    
     /**
      * Returns the auto-scroll setting. If true, the control will ensure that the last line of input
      * is always visible, scrolling if necessary.
@@ -81,7 +81,7 @@ public class Memobox extends BaseInputboxComponent<String> {
     public boolean isAutoScroll() {
         return autoScroll;
     }
-
+    
     /**
      * Sets the auto-scroll setting. If true, the control will ensure that the last line of input is
      * always visible, scrolling if necessary.
@@ -91,10 +91,10 @@ public class Memobox extends BaseInputboxComponent<String> {
     @PropertySetter("autoScroll")
     public void setAutoScroll(boolean autoScroll) {
         if (autoScroll != this.autoScroll) {
-            sync("autoScroll", this.autoScroll = autoScroll);
+            propertyChange("autoScroll", this.autoScroll, this.autoScroll = autoScroll, true);
         }
     }
-
+    
     /**
      * Returns the wrap mode.
      *
@@ -105,7 +105,7 @@ public class Memobox extends BaseInputboxComponent<String> {
     public WrapMode getWrap() {
         return wrap;
     }
-    
+
     /**
      * Sets the wrap mode.
      *
@@ -115,12 +115,12 @@ public class Memobox extends BaseInputboxComponent<String> {
     @PropertySetter("wrap")
     public void setWrap(WrapMode wrap) {
         wrap = defaultify(wrap, WrapMode.SOFT);
-
+        
         if (wrap != this.wrap) {
-            sync("wrap", this.wrap = wrap);
+            propertyChange("wrap", this.wrap, this.wrap = wrap, true);
         }
     }
-
+    
     /**
      * Returns the visible width of the input area in characters. The default is 20 characters. Also
      * affects the line break position when the wrap mode is set to HARD.
@@ -131,7 +131,7 @@ public class Memobox extends BaseInputboxComponent<String> {
     public int getCols() {
         return cols;
     }
-    
+
     /**
      * Sets the visible width of the input area in characters. The default is 20 characters. Also
      * affects the line break position when the wrap mode is set to HARD.
@@ -142,10 +142,10 @@ public class Memobox extends BaseInputboxComponent<String> {
     public void setCols(int cols) {
         if (cols != this.cols) {
             Assert.isTrue(cols > 0, "Cols must be greater than zero");
-            sync("cols", this.cols = cols);
+            propertyChange("cols", this.cols, this.cols = cols, true);
         }
     }
-
+    
     /**
      * Returns the visible number of rows in the input area. The default is 2 rows.
      *
@@ -155,7 +155,7 @@ public class Memobox extends BaseInputboxComponent<String> {
     public int getRows() {
         return rows;
     }
-    
+
     /**
      * Sets the visible number of rows in the input area. The default is 2 rows.
      *
@@ -165,18 +165,18 @@ public class Memobox extends BaseInputboxComponent<String> {
     public void setRows(int rows) {
         if (rows != this.rows) {
             Assert.isTrue(rows > 0, "Rows must be greater than zero");
-            sync("rows", this.rows = rows);
+            propertyChange("rows", this.rows, this.rows = rows, true);
         }
     }
-
+    
     @Override
     protected String _toValue(String value) {
         return value;
     }
-
+    
     @Override
     protected String _toString(String value) {
         return value;
     }
-    
+
 }

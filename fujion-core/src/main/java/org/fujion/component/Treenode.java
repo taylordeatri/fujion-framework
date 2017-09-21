@@ -167,11 +167,7 @@ public class Treenode extends BaseLabeledImageComponent<BaseLabeledComponent.Lab
      */
     /*package*/ void _setSelected(boolean selected, boolean notifyClient, boolean notifyParent) {
         if (selected != this.selected) {
-            this.selected = selected;
-
-            if (notifyClient) {
-                sync("selected", selected);
-            }
+            propertyChange("selected", this.selected, this.selected = selected, notifyClient);
 
             if (notifyParent) {
                 Treeview treeview = getTreeview();
@@ -206,7 +202,7 @@ public class Treenode extends BaseLabeledImageComponent<BaseLabeledComponent.Lab
 
     /**
      * If the added node is selected, update the parent tree view's selection state.
-     * 
+     *
      * @see org.fujion.component.BaseComponent#afterAddChild(org.fujion.component.BaseComponent)
      */
     @Override
@@ -218,7 +214,7 @@ public class Treenode extends BaseLabeledImageComponent<BaseLabeledComponent.Lab
 
     /**
      * If the removed node is selected, update the parent tree view's selection state.
-     * 
+     *
      * @see org.fujion.component.BaseComponent#beforeRemoveChild(org.fujion.component.BaseComponent)
      */
     @Override
@@ -246,7 +242,7 @@ public class Treenode extends BaseLabeledImageComponent<BaseLabeledComponent.Lab
     @PropertySetter("collapsed")
     public void setCollapsed(boolean collapsed) {
         if (collapsed != this.collapsed) {
-            sync("collapsed", this.collapsed = collapsed);
+            propertyChange("collapsed", this.collapsed, this.collapsed = collapsed, true);
         }
     }
 
@@ -289,7 +285,7 @@ public class Treenode extends BaseLabeledImageComponent<BaseLabeledComponent.Lab
     }
 
     /**
-     * Handles badge update events from the client.
+     * Handles badge update events.
      *
      * @param event A badge update event.
      */
@@ -299,7 +295,7 @@ public class Treenode extends BaseLabeledImageComponent<BaseLabeledComponent.Lab
 
         if (delta != 0) {
             badgeCounter += delta;
-            sync("badge", badgeCounter);
+            _sync("badge", badgeCounter);
         }
     }
 

@@ -31,11 +31,11 @@ import org.fujion.annotation.Component.PropertySetter;
  */
 @Component(tag = "pane", widgetModule = "fujion-paneview", widgetClass = "Pane", content = ContentHandling.AS_CHILD, parentTag = "paneview", childTag = @ChildTag("*"))
 public class Pane extends BaseUIComponent {
-    
+
     private boolean splittable;
-    
+
     private String title;
-    
+
     /**
      * Returns whether the pane displays a splitter. A pane with a splitter can be manually resized.
      *
@@ -45,7 +45,7 @@ public class Pane extends BaseUIComponent {
     public boolean isSplittable() {
         return splittable;
     }
-    
+
     /**
      * Sets whether the pane displays a splitter. A pane with a splitter may be manually resized.
      *
@@ -54,10 +54,10 @@ public class Pane extends BaseUIComponent {
     @PropertySetter("splittable")
     public void setSplittable(boolean splittable) {
         if (splittable != this.splittable) {
-            sync("splittable", this.splittable = splittable);
+            propertyChange("splittable", this.splittable, this.splittable = splittable, true);
         }
     }
-    
+
     /**
      * Returns the title text.
      *
@@ -67,7 +67,7 @@ public class Pane extends BaseUIComponent {
     public String getTitle() {
         return title;
     }
-    
+
     /**
      * Sets the title text.
      *
@@ -76,8 +76,8 @@ public class Pane extends BaseUIComponent {
     @PropertySetter("title")
     public void setTitle(String title) {
         if (!areEqual(title = nullify(title), this.title)) {
-            sync("title", this.title = title);
+            propertyChange("title", this.title, this.title = title, true);
         }
     }
-    
+
 }

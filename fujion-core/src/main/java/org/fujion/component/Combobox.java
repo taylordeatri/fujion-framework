@@ -33,13 +33,13 @@ import org.fujion.model.ModelAndView;
  */
 @Component(tag = "combobox", widgetClass = "Combobox", parentTag = "*", childTag = @ChildTag("comboitem"))
 public class Combobox extends BaseInputboxComponent<String> implements ISupportsModel<Comboitem> {
-
+    
     private Comboitem selected;
-
+    
     private boolean autoFilter;
-
+    
     private final ModelAndView<Comboitem, Object> modelAndView = new ModelAndView<>(this);
-
+    
     /**
      * Returns the currently selected item, if any.
      *
@@ -48,7 +48,7 @@ public class Combobox extends BaseInputboxComponent<String> implements ISupports
     public Comboitem getSelectedItem() {
         return selected;
     }
-
+    
     /**
      * Sets the currently selected item.
      *
@@ -56,14 +56,14 @@ public class Combobox extends BaseInputboxComponent<String> implements ISupports
      */
     public void setSelectedItem(Comboitem item) {
         validateIsChild(item);
-
+        
         if (item == null) {
             _updateSelected(item);
         } else {
             item.setSelected(true);
         }
     }
-
+    
     /**
      * Returns the index of the currently selected item.
      *
@@ -73,7 +73,7 @@ public class Combobox extends BaseInputboxComponent<String> implements ISupports
         Comboitem item = getSelectedItem();
         return item == null ? -1 : item.getIndex();
     }
-
+    
     /**
      * Sets the item at the specified index as selected.
      *
@@ -82,7 +82,7 @@ public class Combobox extends BaseInputboxComponent<String> implements ISupports
     public void setSelectedIndex(int index) {
         setSelectedItem((Comboitem) getChildAt(index));
     }
-
+    
     /**
      * Update the selected item to the specified value.
      *
@@ -92,28 +92,28 @@ public class Combobox extends BaseInputboxComponent<String> implements ISupports
         if (selected != null) {
             selected._setSelected(false, true, false);
         }
-
+        
         selected = item;
         setValue(selected == null ? null : selected.getLabel());
     }
-
+    
     /**
      * If the added item is marked as selected, set it as the selected item.
-     * 
+     *
      * @see org.fujion.component.BaseComponent#afterAddChild(org.fujion.component.BaseComponent)
      */
     @Override
     protected void afterAddChild(BaseComponent child) {
         Comboitem item = (Comboitem) child;
-
+        
         if (item.isSelected()) {
             _updateSelected(item);
         }
     }
-
+    
     /**
      * If the removed item is selected, set the selected item to null.
-     * 
+     *
      * @see org.fujion.component.BaseUIComponent#afterRemoveChild(org.fujion.component.BaseComponent)
      */
     @Override
@@ -122,38 +122,38 @@ public class Combobox extends BaseInputboxComponent<String> implements ISupports
             selected = null;
         }
     }
-
+    
     @PropertyGetter("autoFilter")
     public boolean getAutoFilter() {
         return autoFilter;
     }
-
+    
     @PropertySetter("autoFilter")
     public void setAutoFilter(boolean autoFilter) {
         if (autoFilter != this.autoFilter) {
-            sync("autoFilter", this.autoFilter = autoFilter);
+            propertyChange("autoFilter", this.autoFilter, this.autoFilter = autoFilter, true);
         }
     }
-
+    
     @Override
     protected String _toValue(String value) {
         return value;
     }
-
+    
     @Override
     protected String _toString(String value) {
         return value;
     }
-
+    
     @Override
     public void destroy() {
         super.destroy();
         modelAndView.destroy();
     }
-
+    
     @Override
     public IModelAndView<Comboitem, ?> getModelAndView() {
         return modelAndView;
     }
-
+    
 }

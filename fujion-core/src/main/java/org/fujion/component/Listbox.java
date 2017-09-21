@@ -68,7 +68,7 @@ public class Listbox extends BaseUIComponent implements ISupportsModel<Listitem>
                 unselect(null);
             }
 
-            sync("multiple", this.multiple = multiple);
+            propertyChange("multiple", this.multiple, this.multiple = multiple, true);
         }
     }
 
@@ -90,7 +90,7 @@ public class Listbox extends BaseUIComponent implements ISupportsModel<Listitem>
     @PropertySetter("size")
     public void setSize(int size) {
         if (size != this.size) {
-            sync("size", this.size = size);
+            propertyChange("size", this.size, this.size = size, true);
         }
     }
 
@@ -199,7 +199,7 @@ public class Listbox extends BaseUIComponent implements ISupportsModel<Listitem>
 
     /**
      * If the added list item is marked as selected, add it to the set of selected items.
-     * 
+     *
      * @see org.fujion.component.BaseComponent#afterAddChild(org.fujion.component.BaseComponent)
      */
     @Override
@@ -209,7 +209,7 @@ public class Listbox extends BaseUIComponent implements ISupportsModel<Listitem>
 
     /**
      * If the removed list item is marked as selected, remove it from the set of selected items.
-     * 
+     *
      * @see org.fujion.component.BaseComponent#afterRemoveChild(org.fujion.component.BaseComponent)
      */
     @Override

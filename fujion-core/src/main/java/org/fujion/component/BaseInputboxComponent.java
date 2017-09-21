@@ -30,23 +30,23 @@ import org.fujion.common.NumUtil;
  * @param <T> The value type for the input box.
  */
 public abstract class BaseInputboxComponent<T> extends BaseInputComponent<T> {
-
+    
     private T minvalue;
-
+    
     private T maxvalue;
-
+    
     private String pattern;
-
+    
     private String placeholder;
-
+    
     private int maxLength;
-
+    
     private boolean readonly;
-
+    
     private boolean required;
-
+    
     private boolean synced;
-
+    
     /**
      * Returns the synchronization flag. A true value means that the client will notify the server
      * as the value of the input box changes. A false value means that the client will notify the
@@ -57,7 +57,7 @@ public abstract class BaseInputboxComponent<T> extends BaseInputComponent<T> {
     protected boolean getSynchronized() {
         return synced;
     }
-
+    
     /**
      * Sets the synchronization flag. A true value means that the client will notify the server as
      * the value of the input box changes. A false value means that the client will notify the
@@ -67,10 +67,10 @@ public abstract class BaseInputboxComponent<T> extends BaseInputComponent<T> {
      */
     protected void setSynchronized(boolean synchronize) {
         if (synchronize != this.synced) {
-            sync("synced", this.synced = synchronize);
+            propertyChange("synced", this.synced, this.synced = synchronize, true);
         }
     }
-
+    
     /**
      * Returns the minimum allowable value, if any.
      *
@@ -80,12 +80,12 @@ public abstract class BaseInputboxComponent<T> extends BaseInputComponent<T> {
     public T getMinValue() {
         return minvalue;
     }
-
+    
     @PropertySetter("minvalue")
     private void _setMinValue(String minvalue) {
         setMinValue(_toValue(minvalue));
     }
-
+    
     /**
      * Sets the minimum allowable value.
      *
@@ -93,11 +93,11 @@ public abstract class BaseInputboxComponent<T> extends BaseInputComponent<T> {
      */
     public void setMinValue(T minvalue) {
         if (!areEqual(minvalue, this.minvalue)) {
-            this.minvalue = minvalue;
-            sync("minvalue", _toString(minvalue));
+            _sync("minvalue", _toString(minvalue));
+            propertyChange("minvalue", this.minvalue, this.minvalue = minvalue, false);
         }
     }
-
+    
     /**
      * Returns the maximum allowable value, if any.
      *
@@ -107,12 +107,12 @@ public abstract class BaseInputboxComponent<T> extends BaseInputComponent<T> {
     public T getMaxValue() {
         return maxvalue;
     }
-
+    
     @PropertySetter("maxvalue")
     private void _setMaxValue(String maxvalue) {
         setMaxValue(_toValue(maxvalue));
     }
-
+    
     /**
      * Sets the maximum allowable value.
      *
@@ -120,11 +120,11 @@ public abstract class BaseInputboxComponent<T> extends BaseInputComponent<T> {
      */
     public void setMaxValue(T maxvalue) {
         if (!areEqual(maxvalue, this.maxvalue)) {
-            this.maxvalue = maxvalue;
-            sync("maxvalue", this._toString(maxvalue));
+            _sync("maxvalue", _toString(maxvalue));
+            propertyChange("maxvalue", this.maxvalue, this.maxvalue = maxvalue, false);
         }
     }
-
+    
     /**
      * Returns the regular expression that constrains the input format.
      *
@@ -134,7 +134,7 @@ public abstract class BaseInputboxComponent<T> extends BaseInputComponent<T> {
     public String getPattern() {
         return pattern;
     }
-
+    
     /**
      * Sets the regular expression that constrains the input format.
      *
@@ -143,10 +143,10 @@ public abstract class BaseInputboxComponent<T> extends BaseInputComponent<T> {
     @PropertySetter("pattern")
     public void setPattern(String pattern) {
         if (!areEqual(pattern = nullify(pattern), this.pattern)) {
-            sync("pattern", this.pattern = pattern);
+            propertyChange("pattern", this.pattern, this.pattern = pattern, true);
         }
     }
-
+    
     /**
      * Returns the placeholder message that is displayed when the input box is empty.
      *
@@ -156,7 +156,7 @@ public abstract class BaseInputboxComponent<T> extends BaseInputComponent<T> {
     public String getPlaceholder() {
         return placeholder;
     }
-
+    
     /**
      * Sets the placeholder message that is displayed when the input box is empty.
      *
@@ -165,10 +165,10 @@ public abstract class BaseInputboxComponent<T> extends BaseInputComponent<T> {
     @PropertySetter("placeholder")
     public void setPlaceholder(String placeholder) {
         if (!areEqual(placeholder = nullify(placeholder), this.placeholder)) {
-            sync("placeholder", this.placeholder = placeholder);
+            propertyChange("placeholder", this.placeholder, this.placeholder = placeholder, true);
         }
     }
-
+    
     /**
      * Returns the maximum character length of input.
      *
@@ -178,7 +178,7 @@ public abstract class BaseInputboxComponent<T> extends BaseInputComponent<T> {
     public int getMaxLength() {
         return maxLength;
     }
-
+    
     /**
      * Sets the maximum character length of input.
      *
@@ -187,12 +187,12 @@ public abstract class BaseInputboxComponent<T> extends BaseInputComponent<T> {
     @PropertySetter("maxlength")
     public void setMaxLength(int maxLength) {
         maxLength = NumUtil.enforceRange(maxLength, 0, 524288);
-
+        
         if (maxLength != this.maxLength) {
-            sync("maxlength", this.maxLength = maxLength);
+            propertyChange("maxlength", this.maxLength, this.maxLength = maxLength, true);
         }
     }
-
+    
     /**
      * Returns true if the input box is read-only.
      *
@@ -202,7 +202,7 @@ public abstract class BaseInputboxComponent<T> extends BaseInputComponent<T> {
     public boolean isReadonly() {
         return readonly;
     }
-
+    
     /**
      * Sets the read-only state of the input box.
      *
@@ -211,10 +211,10 @@ public abstract class BaseInputboxComponent<T> extends BaseInputComponent<T> {
     @PropertySetter("readonly")
     public void setReadonly(boolean readonly) {
         if (readonly != this.readonly) {
-            sync("readonly", this.readonly = readonly);
+            propertyChange("readonly", this.readonly, this.readonly = readonly, true);
         }
     }
-
+    
     /**
      * Returns true if input is required for this component.
      *
@@ -224,7 +224,7 @@ public abstract class BaseInputboxComponent<T> extends BaseInputComponent<T> {
     public boolean isRequired() {
         return required;
     }
-
+    
     /**
      * Sets the required state of the input box.
      *
@@ -233,17 +233,17 @@ public abstract class BaseInputboxComponent<T> extends BaseInputComponent<T> {
     @PropertySetter("required")
     public void setRequired(boolean required) {
         if (required != this.required) {
-            sync("required", this.required = required);
+            propertyChange("required", this.required, this.required = required, true);
         }
     }
-
+    
     /**
      * Selects the entire contents of the input box.
      */
     public void selectAll() {
         invoke("selectAll");
     }
-
+    
     /**
      * Selects a range of characters in the input box.
      *

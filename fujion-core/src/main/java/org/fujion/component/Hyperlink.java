@@ -78,7 +78,7 @@ public class Hyperlink extends BaseLabeledImageComponent<BaseLabeledComponent.La
     @PropertySetter("href")
     public void setHref(String href) {
         if (!areEqual(href = nullify(href), this.href)) {
-            sync("href", this.href = href);
+            propertyChange("href", this.href, this.href = href, true);
         }
     }
     
@@ -100,7 +100,7 @@ public class Hyperlink extends BaseLabeledImageComponent<BaseLabeledComponent.La
     @PropertySetter("target")
     public void setTarget(String target) {
         if (!areEqual(href = nullify(target), this.target)) {
-            sync("target", this.target = target);
+            propertyChange("target", this.target, this.target = target, true);
         }
     }
     

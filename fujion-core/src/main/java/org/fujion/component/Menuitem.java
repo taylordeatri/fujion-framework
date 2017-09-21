@@ -31,11 +31,11 @@ import org.fujion.annotation.Component.PropertySetter;
 @Component(tag = "menuitem", widgetClass = "Menuitem", parentTag = { "menu", "menupopup", "menuitem" }, childTag = {
         @ChildTag("menuitem"), @ChildTag("menuheader"), @ChildTag("menuseparator") })
 public class Menuitem extends BaseMenuComponent {
-
+    
     private boolean checkable;
-
+    
     private boolean checked;
-
+    
     /**
      * Returns true if the menu item has an associated check box.
      *
@@ -45,7 +45,7 @@ public class Menuitem extends BaseMenuComponent {
     public boolean isCheckable() {
         return checkable;
     }
-
+    
     /**
      * Set to true to associate a check box with the menu item.
      *
@@ -54,10 +54,10 @@ public class Menuitem extends BaseMenuComponent {
     @PropertySetter("checkable")
     public void setCheckable(boolean checkable) {
         if (checkable != this.checkable) {
-            sync("checkable", this.checkable = checkable);
+            propertyChange("checkable", this.checkable, this.checkable = checkable, true);
         }
     }
-
+    
     /**
      * Returns the checked state of the menu item. If the checkable property is set to true, this
      * state will be reflected in the associated check box.
@@ -68,7 +68,7 @@ public class Menuitem extends BaseMenuComponent {
     public boolean isChecked() {
         return checked;
     }
-
+    
     /**
      * Sets the checked state of the menu item. If the checkable property is set to true, this state
      * will be reflected in the associated check box.
@@ -78,8 +78,8 @@ public class Menuitem extends BaseMenuComponent {
     @PropertySetter("checked")
     public void setChecked(boolean checked) {
         if (checked != this.checked) {
-            sync("checked", this.checked = checked);
+            propertyChange("checked", this.checked, this.checked = checked, true);
         }
     }
-
+    
 }

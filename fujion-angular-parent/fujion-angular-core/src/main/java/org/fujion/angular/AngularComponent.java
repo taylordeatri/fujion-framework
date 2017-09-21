@@ -30,9 +30,9 @@ import org.fujion.component.BaseUIComponent;
  */
 @Component(tag = "angular", widgetModule = "fujion-angular-widget", widgetClass = "AngularWidget", parentTag = "*")
 public class AngularComponent extends BaseUIComponent {
-    
-    private String src;
 
+    private String src;
+    
     /**
      * Returns the name of the module containing the Angular component.
      *
@@ -42,7 +42,7 @@ public class AngularComponent extends BaseUIComponent {
     public String getSrc() {
         return src;
     }
-
+    
     /**
      * Sets the module containing the Angular component.
      *
@@ -51,10 +51,10 @@ public class AngularComponent extends BaseUIComponent {
     @PropertySetter("src")
     public void setSrc(String src) {
         if (!areEqual(src = trimify(src), this.src)) {
-            sync("src", this.src = src);
+            propertyChange("src", this.src, this.src = src, true);
         }
     }
-
+    
     /**
      * Invokes a published method on the module containing the Angular component.
      *
@@ -64,5 +64,5 @@ public class AngularComponent extends BaseUIComponent {
     public void ngInvoke(String functionName, Object... args) {
         invoke("ngInvoke", functionName, args);
     }
-
+    
 }

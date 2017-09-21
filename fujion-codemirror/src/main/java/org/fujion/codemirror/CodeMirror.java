@@ -30,22 +30,22 @@ import org.fujion.component.BaseInputComponent;
  */
 @Component(tag = "codemirror", widgetModule = "fujion-codemirror", widgetClass = "CodeMirror", parentTag = "*")
 public class CodeMirror extends BaseInputComponent<String> {
-
+    
     private String mode;
-
+    
     private boolean lineNumbers;
-
+    
     private String placeholder;
-
+    
     private boolean readonly;
-
+    
     /**
      * Invokes the CodeMirror format method.
      */
     public void format() {
         invoke("format");
     }
-
+    
     /**
      * Returns true if the editor is set to read-only.
      *
@@ -55,7 +55,7 @@ public class CodeMirror extends BaseInputComponent<String> {
     public boolean isReadonly() {
         return readonly;
     }
-
+    
     /**
      * Set the read-only state of the editor.
      *
@@ -64,10 +64,10 @@ public class CodeMirror extends BaseInputComponent<String> {
     @PropertySetter("readonly")
     public void setReadonly(boolean readonly) {
         if (readonly != this.readonly) {
-            sync("readonly", this.readonly = readonly);
+            propertyChange("readonly", this.readonly, this.readonly = readonly, true);
         }
     }
-
+    
     /**
      * Returns the placeholder value.
      *
@@ -77,7 +77,7 @@ public class CodeMirror extends BaseInputComponent<String> {
     public String getPlaceholder() {
         return placeholder;
     }
-
+    
     /**
      * Sets the placeholder value.
      *
@@ -86,10 +86,10 @@ public class CodeMirror extends BaseInputComponent<String> {
     @PropertySetter("placeholder")
     public void setPlaceholder(String placeholder) {
         if (!areEqual(placeholder = nullify(placeholder), this.placeholder)) {
-            sync("placeholder", this.placeholder = placeholder);
+            propertyChange("placeholder", this.placeholder, this.placeholder = placeholder, true);
         }
     }
-
+    
     /**
      * Returns the CodeMirror mode parameter.
      *
@@ -99,7 +99,7 @@ public class CodeMirror extends BaseInputComponent<String> {
     public String getMode() {
         return mode;
     }
-
+    
     /**
      * Sets the CodeMirror mode parameter.
      *
@@ -108,10 +108,10 @@ public class CodeMirror extends BaseInputComponent<String> {
     @PropertySetter("mode")
     public void setMode(String mode) {
         if (!areEqual(mode = trimify(mode), this.mode)) {
-            sync("mode", this.mode = mode);
+            propertyChange("mode", this.mode, this.mode = mode, true);
         }
     }
-
+    
     /**
      * Returns the CodeMirror lineNumbers parameter.
      *
@@ -121,7 +121,7 @@ public class CodeMirror extends BaseInputComponent<String> {
     public boolean getLineNumbers() {
         return lineNumbers;
     }
-
+    
     /**
      * Sets the CodeMirror lineNumbers parameter.
      *
@@ -130,15 +130,15 @@ public class CodeMirror extends BaseInputComponent<String> {
     @PropertySetter("lineNumbers")
     public void setLineNumbers(boolean lineNumbers) {
         if (lineNumbers != this.lineNumbers) {
-            sync("lineNumbers", this.lineNumbers = lineNumbers);
+            propertyChange("lineNumbers", this.lineNumbers, this.lineNumbers = lineNumbers, true);
         }
     }
-
+    
     @Override
     protected String _toValue(String value) {
         return value;
     }
-
+    
     @Override
     protected String _toString(String value) {
         return value;

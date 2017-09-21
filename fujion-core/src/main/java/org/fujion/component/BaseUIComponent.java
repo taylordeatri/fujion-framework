@@ -135,10 +135,11 @@ public abstract class BaseUIComponent extends BaseComponent implements IDisable 
      * Syncs style properties with stored styles and with the client.
      */
     protected void _syncStyles() {
+        String oldStyles = styles.toString();
         height = _syncStyle("height", height);
         width = _syncStyle("width", width);
         flex = _syncStyle("flex", flex);
-        sync("style", styles.toString());
+        propertyChange("style", oldStyles, styles.toString(), true);
     }
     
     /**
@@ -202,15 +203,18 @@ public abstract class BaseUIComponent extends BaseComponent implements IDisable 
      *            {@link org.fujion.ancillary.CssClasses});
      */
     public void setClasses(String classes) {
+        String oldClasses = classes.toString();
         this.classes.parse(classes);
-        _syncClasses();
+        _syncClasses(oldClasses);
     }
     
     /**
      * Synchronize class settings with the client.
+     *
+     * @param oldClasses Previous value for classes.
      */
-    protected void _syncClasses() {
-        sync("clazz", classes.toString(true));
+    protected void _syncClasses(String oldClasses) {
+        propertyChange("clazz", oldClasses, classes.toString(true), true);
     }
     
     /**
@@ -221,8 +225,10 @@ public abstract class BaseUIComponent extends BaseComponent implements IDisable 
      */
     @PropertySetter("class")
     public void addClass(String value) {
+        String oldClasses = classes.toString();
+        
         if (classes.add(value)) {
-            _syncClasses();
+            _syncClasses(oldClasses);
         }
     }
     
@@ -233,8 +239,10 @@ public abstract class BaseUIComponent extends BaseComponent implements IDisable 
      *            {@link org.fujion.ancillary.CssClasses});
      */
     public void removeClass(String value) {
+        String oldClasses = classes.toString();
+        
         if (classes.remove(value)) {
-            _syncClasses();
+            _syncClasses(oldClasses);
         }
     }
     
@@ -247,8 +255,10 @@ public abstract class BaseUIComponent extends BaseComponent implements IDisable 
      * @param condition The condition value.
      */
     public void toggleClass(String yesValue, String noValue, boolean condition) {
+        String oldClasses = classes.toString();
+
         if (classes.toggle(yesValue, noValue, condition)) {
-            _syncClasses();
+            _syncClasses(oldClasses);
         }
     }
     
@@ -393,7 +403,7 @@ public abstract class BaseUIComponent extends BaseComponent implements IDisable 
     @PropertySetter("css")
     public void setCss(String css) {
         if (!areEqual(css = nullify(css), this.css)) {
-            sync("css", this.css = css);
+            propertyChange("css", this.css, this.css = css, true);
         }
     }
     
@@ -415,7 +425,7 @@ public abstract class BaseUIComponent extends BaseComponent implements IDisable 
     @PropertySetter("hint")
     public void setHint(String hint) {
         if (!areEqual(hint = nullify(hint), this.hint)) {
-            sync("hint", this.hint = hint);
+            propertyChange("hint", this.hint, this.hint = hint, true);
         }
     }
     
@@ -437,7 +447,7 @@ public abstract class BaseUIComponent extends BaseComponent implements IDisable 
     @PropertySetter("balloon")
     public void setBalloon(String balloon) {
         if (!areEqual(balloon, this.balloon)) {
-            sync("balloon", this.balloon = balloon);
+            propertyChange("balloon", this.balloon, this.balloon = balloon, true);
         }
     }
     
@@ -451,7 +461,7 @@ public abstract class BaseUIComponent extends BaseComponent implements IDisable 
     @PropertySetter("disabled")
     public void setDisabled(boolean disabled) {
         if (disabled != this.disabled) {
-            sync("disabled", this.disabled = disabled);
+            propertyChange("disabled", this.disabled, this.disabled = disabled, true);
         }
     }
     
@@ -473,7 +483,7 @@ public abstract class BaseUIComponent extends BaseComponent implements IDisable 
     @PropertySetter("visible")
     public void setVisible(boolean visible) {
         if (visible != this.visible) {
-            sync("visible", this.visible = visible);
+            propertyChange("visible", this.visible, this.visible = visible, true);
         }
     }
     
@@ -497,7 +507,7 @@ public abstract class BaseUIComponent extends BaseComponent implements IDisable 
         tabindex = tabindex < 0 ? 0 : tabindex;
         
         if (tabindex != this.tabindex) {
-            sync("tabindex", this.tabindex = tabindex);
+            propertyChange("tabindex", this.tabindex, this.tabindex = tabindex, true);
         }
     }
     
@@ -527,7 +537,7 @@ public abstract class BaseUIComponent extends BaseComponent implements IDisable 
         dragid = trimify(dragid);
         
         if (!areEqual(dragid, this.dragid)) {
-            sync("dragid", this.dragid = dragid);
+            propertyChange("dragid", this.dragid, this.dragid = dragid, true);
         }
     }
     
@@ -558,7 +568,7 @@ public abstract class BaseUIComponent extends BaseComponent implements IDisable 
         dropid = trimify(dropid);
         
         if (!areEqual(dropid, this.dropid)) {
-            sync("dropid", this.dropid = dropid);
+            propertyChange("dropid", this.dropid, this.dropid = dropid, true);
         }
     }
     
@@ -570,8 +580,7 @@ public abstract class BaseUIComponent extends BaseComponent implements IDisable 
     @PropertyGetter("context")
     public Popup getContext() {
         if (context != null && context.isDead()) {
-            context = null;
-            sync("context", context);
+            propertyChange("context", context, context = null, true);
         }
         
         return context;
@@ -596,7 +605,7 @@ public abstract class BaseUIComponent extends BaseComponent implements IDisable 
     public void setContext(Popup context) {
         if (context != getContext()) {
             validate(context);
-            sync("context", this.context = context);
+            propertyChange("context", this.context, this.context = context, true);
         }
     }
     
@@ -608,8 +617,7 @@ public abstract class BaseUIComponent extends BaseComponent implements IDisable 
     @PropertyGetter("popup")
     public Popup getPopup() {
         if (popup != null && popup.isDead()) {
-            popup = null;
-            sync("popup", popup);
+            propertyChange("popup", popup, popup = null, true);
         }
         
         return popup;
@@ -624,7 +632,7 @@ public abstract class BaseUIComponent extends BaseComponent implements IDisable 
     public void setPopup(Popup popup) {
         if (popup != getPopup()) {
             validate(popup);
-            sync("popup", this.popup = popup);
+            propertyChange("popup", this.popup, this.popup = popup, true);
         }
     }
     
@@ -664,8 +672,8 @@ public abstract class BaseUIComponent extends BaseComponent implements IDisable 
     @PropertySetter("keycapture")
     public void setKeycapture(String keycapture) {
         if (!areEqual(keycapture = nullify(keycapture), this.keycapture)) {
-            sync("keycapture", KeyCode.normalizeKeyCapture(keycapture));
-            this.keycapture = keycapture;
+            _sync("keycapture", KeyCode.normalizeKeyCapture(keycapture));
+            propertyChange("keycapture", this.keycapture, this.keycapture = keycapture, false);
         }
     }
     

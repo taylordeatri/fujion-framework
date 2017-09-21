@@ -34,17 +34,17 @@ import org.fujion.event.OpenEvent;
  */
 @Component(tag = "detail", widgetModule = "fujion-detail", widgetClass = "Detail", content = ContentHandling.AS_CHILD, parentTag = "*", childTag = @ChildTag("*"))
 public class Detail extends BaseLabeledComponent<BaseLabeledComponent.LabelPositionNone> {
-
+    
     private boolean open;
-
+    
     public Detail() {
         this(null);
     }
-
+    
     public Detail(String label) {
         super(label);
     }
-    
+
     /**
      * Returns true if the detail view is open.
      *
@@ -54,7 +54,7 @@ public class Detail extends BaseLabeledComponent<BaseLabeledComponent.LabelPosit
     public boolean isOpen() {
         return open;
     }
-    
+
     /**
      * Set the detail view open state.
      *
@@ -63,10 +63,10 @@ public class Detail extends BaseLabeledComponent<BaseLabeledComponent.LabelPosit
     @PropertySetter("open")
     public void setOpen(boolean open) {
         if (open != this.open) {
-            sync("open", this.open = open);
+            propertyChange("open", this.open, this.open = open, true);
         }
     }
-
+    
     /**
      * Handles an open event from the client.
      *
@@ -76,7 +76,7 @@ public class Detail extends BaseLabeledComponent<BaseLabeledComponent.LabelPosit
     private void _onOpen(OpenEvent event) {
         open = true;
     }
-    
+
     /**
      * Handles an close event from the client.
      *

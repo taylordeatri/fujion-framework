@@ -76,7 +76,7 @@ public class MessagePane extends BaseUIComponent {
      */
     public void setTitle(String title) {
         if (!areEqual(title = nullify(title), this.title)) {
-            sync("title", this.title = title);
+            propertyChange("title", this.title, this.title = title, true);
         }
     }
     
@@ -98,7 +98,7 @@ public class MessagePane extends BaseUIComponent {
      */
     public void setDuration(int duration) {
         if (duration != this.duration) {
-            sync("duration", this.duration = duration);
+            propertyChange("duration", this.duration, this.duration = duration, true);
         }
     }
     
@@ -139,7 +139,7 @@ public class MessagePane extends BaseUIComponent {
      */
     public void setActionable(boolean actionable) {
         if (actionable != this.actionable) {
-            sync("actionable", this.actionable = actionable);
+            propertyChange("actionable", this.actionable, this.actionable = actionable, true);
         }
     }
     

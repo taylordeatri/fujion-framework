@@ -29,21 +29,21 @@ import org.fujion.annotation.Component.PropertySetter;
  */
 @Component(tag = "textbox", widgetClass = "Textbox", parentTag = "*")
 public class Textbox extends BaseInputboxComponent<String> {
-
+    
     private boolean masked;
-
+    
     @Override
     @PropertyGetter("synchronized")
     public boolean getSynchronized() {
         return super.getSynchronized();
     }
-
+    
     @Override
     @PropertySetter("synchronized")
     public void setSynchronized(boolean synchronize) {
         super.setSynchronized(synchronize);
     }
-
+    
     /**
      * Returns true if input is to be obscured by a mask.
      *
@@ -53,7 +53,7 @@ public class Textbox extends BaseInputboxComponent<String> {
     public boolean isMasked() {
         return masked;
     }
-
+    
     /**
      * Set to true if input is to be obscured by a mask.
      *
@@ -62,18 +62,18 @@ public class Textbox extends BaseInputboxComponent<String> {
     @PropertySetter("masked")
     public void setMasked(boolean masked) {
         if (masked != this.masked) {
-            sync("masked", this.masked = masked);
+            propertyChange("masked", this.masked, this.masked = masked, true);
         }
     }
-
+    
     @Override
     protected String _toValue(String value) {
         return value;
     }
-
+    
     @Override
     protected String _toString(String value) {
         return value;
     }
-
+    
 }

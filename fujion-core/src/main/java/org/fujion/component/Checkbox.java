@@ -31,18 +31,18 @@ import org.fujion.event.ChangeEvent;
  */
 @Component(tag = "checkbox", widgetClass = "Checkbox", parentTag = "*")
 public class Checkbox extends BaseLabeledComponent<BaseLabeledComponent.LabelPositionHorz> {
-
+    
     private boolean checked;
-
+    
     public Checkbox() {
         this(null);
     }
-
+    
     public Checkbox(String label) {
         super(label);
         setPosition(LabelPositionHorz.RIGHT);
     }
-
+    
     /**
      * Returns the checked state of the check box.
      *
@@ -52,7 +52,7 @@ public class Checkbox extends BaseLabeledComponent<BaseLabeledComponent.LabelPos
     public boolean isChecked() {
         return checked;
     }
-
+    
     /**
      * Sets the checked state of the check box.
      *
@@ -61,10 +61,10 @@ public class Checkbox extends BaseLabeledComponent<BaseLabeledComponent.LabelPos
     @PropertySetter("checked")
     public void setChecked(boolean checked) {
         if (checked != this.checked) {
-            sync("checked", this.checked = checked);
+            propertyChange("checked", this.checked, this.checked = checked, true);
         }
     }
-
+    
     /**
      * Returns the position of the label relative to the contained elements. Defaults to 'left'.
      *
@@ -75,7 +75,7 @@ public class Checkbox extends BaseLabeledComponent<BaseLabeledComponent.LabelPos
     public LabelPositionHorz getPosition() {
         return super.getPosition();
     }
-
+    
     /**
      * Sets the position of the label relative to the contained elements.
      *
@@ -86,7 +86,7 @@ public class Checkbox extends BaseLabeledComponent<BaseLabeledComponent.LabelPos
     public void setPosition(LabelPositionHorz position) {
         super.setPosition(position);
     }
-
+    
     /**
      * Handler for change events sent from the client.
      *
@@ -96,5 +96,5 @@ public class Checkbox extends BaseLabeledComponent<BaseLabeledComponent.LabelPos
     protected void _onChange(ChangeEvent event) {
         checked = defaultify(event.getValue(Boolean.class), true);
     }
-
+    
 }
