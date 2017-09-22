@@ -30,35 +30,35 @@ import org.fujion.annotation.OnFailure;
  */
 @EventType(StatechangeEvent.TYPE)
 public class StatechangeEvent extends Event {
-
+    
     /**
      * The event type.
      */
     public static final String TYPE = "statechange";
-
+    
     @EventParameter
     private String state;
-
+    
     @EventParameter(onFailure = OnFailure.IGNORE)
     private Object value;
-
+    
     public StatechangeEvent() {
         super(TYPE);
     }
-
+    
     /**
-     * Returns the name of the state (property) that changed.
+     * Returns the name of the client state that changed.
      *
-     * @return The name of the state (property) that changed.
+     * @return The name of the client state that changed.
      */
     public String getState() {
         return state;
     }
-
+    
     /**
-     * Returns the new value of the state (property).
+     * Returns the new value of the state.
      *
-     * @return The new value of the state (property).
+     * @return The new value of the state.
      */
     public Object getValue() {
         return value;
