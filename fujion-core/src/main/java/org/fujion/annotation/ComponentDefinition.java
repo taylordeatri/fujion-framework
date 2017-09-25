@@ -33,6 +33,7 @@ import org.apache.commons.beanutils.ConstructorUtils;
 import org.fujion.ancillary.ComponentException;
 import org.fujion.ancillary.ComponentFactory;
 import org.fujion.ancillary.ConvertUtil;
+import org.fujion.ancillary.DeferredExecution;
 import org.fujion.annotation.Component.ChildTag;
 import org.fujion.annotation.Component.ContentHandling;
 import org.fujion.annotation.Component.FactoryParameter;
@@ -104,38 +105,6 @@ public class ComponentDefinition {
          */
         public boolean isValid(int count) {
             return count >= minimum && count <= maximum;
-        }
-    }
-
-    /**
-     * Stores a method invocation to be executed at a later time.
-     */
-    public static class DeferredSetter {
-
-        private final Object instance;
-
-        private final Method method;
-
-        private final Object value;
-
-        /**
-         * Create a deferred setter.
-         *
-         * @param instance Instance containing the setter.
-         * @param method The setter method.
-         * @param value The value to pass to the setter.
-         */
-        DeferredSetter(Object instance, Method method, Object value) {
-            this.instance = instance;
-            this.method = method;
-            this.value = value;
-        }
-
-        /**
-         * Invoke the deferred setter.
-         */
-        public void execute() {
-            ConvertUtil.invokeSetter(instance, method, value);
         }
     }
 
@@ -213,9 +182,9 @@ public class ComponentDefinition {
      * @param name Name of property or attribute. If prefixed with "@", is interpreted as an
      *            attribute name; otherwise as a property name.
      * @param value The value to set.
-     * @return Null if the operation occurred, or a DeferredSetter object if deferred.
+     * @return Null if the operation occurred, or a DeferredExecution object if deferred.
      */
-    public DeferredSetter setProperty(BaseComponent instance, String name, Object value) {
+    public DeferredExecution<?> setProperty(BaseComponent instance, String name, Object value) {
         if (name.startsWith("@")) {
             instance.setAttribute(name.substring(1), value);
             return null;
@@ -233,10 +202,10 @@ public class ComponentDefinition {
         }
 
         if (deferred.contains(name)) {
-            return new DeferredSetter(instance, method, value);
+            return new DeferredExecution<>(instance, method, value);
         }
 
-        ConvertUtil.invokeSetter(instance, method, value);
+        ConvertUtil.invokeMethod(instance, method, value);
         return null;
     }
 

@@ -26,8 +26,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.fujion.ancillary.ComponentException;
+import org.fujion.ancillary.DeferredExecution;
 import org.fujion.annotation.ComponentDefinition;
-import org.fujion.annotation.ComponentDefinition.DeferredSetter;
 import org.fujion.component.BaseComponent;
 import org.fujion.component.Page;
 import org.fujion.expression.ELContext;
@@ -38,11 +38,11 @@ import org.fujion.expression.ELEvaluator;
  * tree of page elements, rooted at the root element.
  */
 public class PageDefinition {
-
+    
     private final PageElement root = new PageElement(null, null);
-
+    
     private String source;
-
+    
     /**
      * The root of all page elements in this definition.
      *
@@ -51,7 +51,7 @@ public class PageDefinition {
     public PageElement getRootElement() {
         return root;
     }
-
+    
     /**
      * Returns the source from which this page definition was derived.
      *
@@ -60,7 +60,7 @@ public class PageDefinition {
     public String getSource() {
         return source;
     }
-
+    
     /**
      * Sets the source from which this page definition was derived.
      *
@@ -69,7 +69,7 @@ public class PageDefinition {
     /*package*/ void setSource(String source) {
         this.source = source;
     }
-
+    
     /**
      * Materializes this page definition under the given parent component.
      *
@@ -79,7 +79,7 @@ public class PageDefinition {
     public List<BaseComponent> materialize(BaseComponent parent) {
         return materialize(parent, null);
     }
-
+    
     /**
      * Materializes this page definition under the given parent component.
      *
@@ -90,51 +90,51 @@ public class PageDefinition {
      */
     public List<BaseComponent> materialize(BaseComponent parent, Map<String, Object> args) {
         try {
-            List<DeferredSetter> deferrals = new ArrayList<>();
+            List<DeferredExecution<?>> deferrals = new ArrayList<>();
             List<BaseComponent> created = new ArrayList<>();
             List<PageElement> children = root.getChildren();
-            
+
             if (!(parent instanceof Page) && children.size() == 1
                     && children.get(0).getDefinition().getComponentClass() == Page.class) {
                 children = children.get(0).getChildren();
             }
-
-            materialize(children, parent, deferrals, args, created);
             
-            for (DeferredSetter deferral : deferrals) {
+            materialize(children, parent, deferrals, args, created);
+
+            for (DeferredExecution<?> deferral : deferrals) {
                 deferral.execute();
             }
-            
+
             return created;
         } catch (Exception e) {
             throw new ComponentException(e, "Exception materializing page definition '%s'", source);
         }
     }
-
-    private void materialize(Iterable<PageElement> children, BaseComponent parent, List<DeferredSetter> deferrals,
+    
+    private void materialize(Iterable<PageElement> children, BaseComponent parent, List<DeferredExecution<?>> deferrals,
                              Map<String, Object> args, List<BaseComponent> created) {
         if (children != null) {
             for (PageElement child : children) {
                 BaseComponent component = materialize(child, parent, deferrals, args);
-
+                
                 if (created != null) {
                     if (args != null && !args.isEmpty()) {
                         component.getAttributes().putAll(args);
                     }
-                    
+
                     created.add(component);
                 }
             }
         }
     }
-
-    private BaseComponent materialize(PageElement element, BaseComponent parent, List<DeferredSetter> deferrals,
+    
+    private BaseComponent materialize(PageElement element, BaseComponent parent, List<DeferredExecution<?>> deferrals,
                                       Map<String, Object> args) {
         ComponentDefinition def = element.getDefinition();
         boolean merge = parent instanceof Page && def.getComponentClass() == Page.class;
         Map<String, String> attributes;
         BaseComponent component;
-
+        
         if (merge) {
             component = parent;
             parent = null;
@@ -142,31 +142,31 @@ public class PageDefinition {
         } else {
             attributes = element.getAttributes();
             component = def.getFactory().create(attributes);
-
+            
             if (component == null) {
                 return null;
             }
         }
-
+        
         if (attributes != null) {
             ELContext elContext = new ELContext(component, parent, element, args);
-
+            
             for (Entry<String, String> attribute : attributes.entrySet()) {
                 Object value = ELEvaluator.getInstance().evaluate(attribute.getValue(), elContext);
-                DeferredSetter deferral = def.setProperty(component, attribute.getKey(), value);
-
+                DeferredExecution<?> deferral = def.setProperty(component, attribute.getKey(), value);
+                
                 if (deferral != null) {
                     deferrals.add(deferral);
                 }
             }
         }
-
+        
         materialize(element.getChildren(), component, deferrals, args, null);
-
+        
         if (parent != null) {
             parent.addChild(component);
         }
-
+        
         return component;
     }
 }

@@ -167,30 +167,33 @@ public class ConvertUtil {
     }
     
     /**
-     * Invokes a setter with the provided value(s), performing type conversion as necessary.
+     * Invokes a method with the provided value(s), performing type conversion as necessary.
      *
-     * @param instance Instance to receive the value (may be null for static methods).
-     * @param setter The method to receive the value.
-     * @param args Arguments to be passed to method. Argument values will be coerced to the expected
-     *            type if possible.
+     * @param instance Instance that is the target of the invocation (may be null for static
+     *            methods).
+     * @param method The method to invoke.
+     * @param args Arguments to be passed to method (may be null if no arguments). Argument values
+     *            will be coerced to the expected type if possible.
+     * @return Return value of the method, if any.
      */
-    public static void invokeSetter(Object instance, Method setter, Object... args) {
+    public static Object invokeMethod(Object instance, Method method, Object... args) {
         try {
-            Class<?>[] parameterTypes = setter.getParameterTypes();
-            
+            Class<?>[] parameterTypes = method.getParameterTypes();
+            args = args == null ? new Object[0] : args;
+
             if (args.length != parameterTypes.length) {
                 throw new IllegalArgumentException(StrUtil.formatMessage(
-                    "Attempted to invoke setter method \"%s\" with the incorrect number of arguments (provided %d but expected %d)",
-                    setter.getName(), args.length, parameterTypes.length));
+                    "Attempted to invoke method \"%s\" with the incorrect number of arguments (provided %d but expected %d)",
+                    method.getName(), args.length, parameterTypes.length));
             }
             
             for (int i = 0; i < parameterTypes.length; i++) {
                 args[i] = convert(args[i], parameterTypes[i], instance);
             }
             
-            setter.invoke(instance, args);
+            return method.invoke(instance, args);
         } catch (Exception e) {
-            throw new ComponentException(e, "Exception invoking setter method '%s' on component '%s'", setter.getName(),
+            throw new ComponentException(e, "Exception invoking method '%s' on component '%s'", method.getName(),
                     instance.getClass().getName());
         }
     }
