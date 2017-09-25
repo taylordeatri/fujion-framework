@@ -26,7 +26,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.fujion.ancillary.ComponentException;
-import org.fujion.ancillary.DeferredExecution;
+import org.fujion.ancillary.DeferredInvocation;
 import org.fujion.annotation.ComponentDefinition;
 import org.fujion.component.BaseComponent;
 import org.fujion.component.Page;
@@ -90,7 +90,7 @@ public class PageDefinition {
      */
     public List<BaseComponent> materialize(BaseComponent parent, Map<String, Object> args) {
         try {
-            List<DeferredExecution<?>> deferrals = new ArrayList<>();
+            List<DeferredInvocation<?>> deferrals = new ArrayList<>();
             List<BaseComponent> created = new ArrayList<>();
             List<PageElement> children = root.getChildren();
 
@@ -101,7 +101,7 @@ public class PageDefinition {
             
             materialize(children, parent, deferrals, args, created);
 
-            for (DeferredExecution<?> deferral : deferrals) {
+            for (DeferredInvocation<?> deferral : deferrals) {
                 deferral.execute();
             }
 
@@ -111,7 +111,7 @@ public class PageDefinition {
         }
     }
     
-    private void materialize(Iterable<PageElement> children, BaseComponent parent, List<DeferredExecution<?>> deferrals,
+    private void materialize(Iterable<PageElement> children, BaseComponent parent, List<DeferredInvocation<?>> deferrals,
                              Map<String, Object> args, List<BaseComponent> created) {
         if (children != null) {
             for (PageElement child : children) {
@@ -128,7 +128,7 @@ public class PageDefinition {
         }
     }
     
-    private BaseComponent materialize(PageElement element, BaseComponent parent, List<DeferredExecution<?>> deferrals,
+    private BaseComponent materialize(PageElement element, BaseComponent parent, List<DeferredInvocation<?>> deferrals,
                                       Map<String, Object> args) {
         ComponentDefinition def = element.getDefinition();
         boolean merge = parent instanceof Page && def.getComponentClass() == Page.class;
@@ -153,7 +153,7 @@ public class PageDefinition {
             
             for (Entry<String, String> attribute : attributes.entrySet()) {
                 Object value = ELEvaluator.getInstance().evaluate(attribute.getValue(), elContext);
-                DeferredExecution<?> deferral = def.setProperty(component, attribute.getKey(), value);
+                DeferredInvocation<?> deferral = def.setProperty(component, attribute.getKey(), value);
                 
                 if (deferral != null) {
                     deferrals.add(deferral);

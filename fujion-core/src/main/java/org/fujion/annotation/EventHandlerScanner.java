@@ -23,13 +23,18 @@ package org.fujion.annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.lang.reflect.FieldUtils;
+import org.fujion.ancillary.ComponentException;
 import org.fujion.common.MiscUtil;
 import org.fujion.component.BaseComponent;
 import org.fujion.event.Event;
+import org.fujion.event.EventUtil;
 import org.fujion.event.IEventListener;
+import org.springframework.util.ReflectionUtils;
 
 /**
  * Wires {@literal @EventHandler}-annotated methods.
@@ -104,6 +109,31 @@ public class EventHandlerScanner {
     }
 
     /**
+     * Wires onEvent style event handlers.
+     *
+     * @param instance Controller to be wired.
+     * @param component The component that triggers the event.
+     * @param onHandlers The map of onEvent style handlers.
+     */
+    public static void wire(Object instance, BaseComponent component, Map<String, String> onHandlers) {
+        for (Entry<String, String> entry : onHandlers.entrySet()) {
+            String eventType = entry.getKey();
+            String methodName = entry.getValue();
+            Class<? extends Event> eventClass = EventUtil.getEventClass(eventType);
+            Method handler = ReflectionUtils.findMethod(instance.getClass(), methodName, eventClass);
+            handler = handler == null ? ReflectionUtils.findMethod(instance.getClass(), methodName) : handler;
+
+            if (handler == null) {
+                throw new ComponentException("A suitable event handler named \"" + methodName + "\"could not be found");
+
+            }
+
+            EventListener eventListener = new EventListener(instance, handler);
+            component.addEventListener(eventType, eventListener);
+        }
+    }
+
+    /**
      * Scans the specified class for {@literal @EventHandler}-annotated methods.
      *
      * @param instance Controller to be wired.
@@ -116,14 +146,12 @@ public class EventHandlerScanner {
             EventHandler[] annotations = method.getAnnotationsByType(EventHandler.class);
 
             for (EventHandler annot : annotations) {
-
                 OnFailure onFailure = annot.onFailure();
-                Class<?>[] params = method.getParameterTypes();
-
-                if (params.length > 1 || (params.length == 1 && !Event.class.isAssignableFrom(params[0]))) {
+                
+                if (!validateSignature(method)) {
                     onFailure.doAction(
                         "Method " + method.getName() + " signature does not conform to that of an event handler.");
-                    return;
+                    break;
                 }
 
                 Set<String> targets = asSet(annot.target());
@@ -166,6 +194,17 @@ public class EventHandlerScanner {
                 }
             }
         }
+    }
+    
+    /**
+     * Validates if the method signature is suitable for an event handler.
+     *
+     * @param method The method to validate.
+     * @return True if the method is suitable as an event handler.
+     */
+    private static boolean validateSignature(Method method) {
+        Class<?>[] params = method.getParameterTypes();
+        return params.length == 0 || (params.length == 1 && Event.class.isAssignableFrom(params[0]));
     }
 
     /**
@@ -215,4 +254,5 @@ public class EventHandlerScanner {
 
     private EventHandlerScanner() {
     }
+
 }

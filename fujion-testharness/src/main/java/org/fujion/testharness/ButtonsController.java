@@ -30,6 +30,7 @@ import org.fujion.component.Checkbox;
 import org.fujion.component.Radiobutton;
 import org.fujion.component.Upload;
 import org.fujion.event.ChangeEvent;
+import org.fujion.event.ClickEvent;
 import org.fujion.event.UploadEvent;
 
 /**
@@ -52,6 +53,15 @@ public class ButtonsController extends BaseController {
     @EventHandler(value = "click", target = "@btnWithEvent")
     private void btnEventHandler() {
         log("Button event handler was invoked");
+    }
+    
+    /**
+     * This gets invoked from an onEvent style attribute.
+     *
+     * @param event The click event.
+     */
+    public void btnEventHandler(ClickEvent event) {
+        log("Attribute bound event handler was invoked");
     }
     
     @EventHandler(value = "change", target = { "rg1", "rg2" })

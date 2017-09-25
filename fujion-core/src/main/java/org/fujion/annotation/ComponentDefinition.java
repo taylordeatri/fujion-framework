@@ -33,7 +33,7 @@ import org.apache.commons.beanutils.ConstructorUtils;
 import org.fujion.ancillary.ComponentException;
 import org.fujion.ancillary.ComponentFactory;
 import org.fujion.ancillary.ConvertUtil;
-import org.fujion.ancillary.DeferredExecution;
+import org.fujion.ancillary.DeferredInvocation;
 import org.fujion.annotation.Component.ChildTag;
 import org.fujion.annotation.Component.ContentHandling;
 import org.fujion.annotation.Component.FactoryParameter;
@@ -46,21 +46,21 @@ import org.fujion.component.BaseComponent;
  * Stores metadata about a component, as derived from component annotations.
  */
 public class ComponentDefinition {
-
+    
     /**
      * Represents the cardinality of a child tag.
      */
     public static class Cardinality {
-
+        
         private final int minimum;
-
+        
         private final int maximum;
-
+        
         Cardinality(int minimum, int maximum) {
             this.minimum = minimum;
             this.maximum = maximum;
         }
-
+        
         /**
          * Returns the minimum cardinality.
          *
@@ -69,7 +69,7 @@ public class ComponentDefinition {
         public int getMinimum() {
             return minimum;
         }
-
+        
         /**
          * Returns the maximum cardinality.
          *
@@ -78,7 +78,7 @@ public class ComponentDefinition {
         public int getMaximum() {
             return maximum;
         }
-
+        
         /**
          * Returns true if there is a minimum cardinality.
          *
@@ -87,7 +87,7 @@ public class ComponentDefinition {
         public boolean hasMinimum() {
             return minimum > 0;
         }
-
+        
         /**
          * Returns true if there is a maximum cardinality.
          *
@@ -96,7 +96,7 @@ public class ComponentDefinition {
         public boolean hasMaximum() {
             return maximum != Integer.MAX_VALUE;
         }
-
+        
         /**
          * Returns true if the count falls within the cardinality constraints.
          *
@@ -107,31 +107,31 @@ public class ComponentDefinition {
             return count >= minimum && count <= maximum;
         }
     }
-
-    private final ContentHandling contentHandling;
-
-    private final String tag;
-
-    private final Class<? extends BaseComponent> componentClass;
-
-    private final Class<? extends ComponentFactory> factoryClass;
     
+    private final ContentHandling contentHandling;
+    
+    private final String tag;
+    
+    private final Class<? extends BaseComponent> componentClass;
+    
+    private final Class<? extends ComponentFactory> factoryClass;
+
     private final String widgetModule;
-
+    
     private final String widgetClass;
-
+    
     private final Set<String> parentTags = new HashSet<>();
-
+    
     private final Map<String, Cardinality> childTags = new HashMap<>();
-
+    
     private final Map<String, Method> getters = new HashMap<>();
-
+    
     private final Map<String, Method> setters = new HashMap<>();
-
+    
     private final Map<String, Method> parameters = new HashMap<>();
-
+    
     private final Set<String> deferred = new HashSet<>();
-
+    
     /**
      * Creates a component definition derived from annotation information within the specified
      * class.
@@ -146,17 +146,17 @@ public class ComponentDefinition {
         this.widgetClass = annot.widgetClass();
         this.tag = annot.tag();
         this.contentHandling = annot.content();
-
+        
         for (String tag : annot.parentTag()) {
             addParentTag(tag);
         }
-
+        
         for (ChildTag tag : annot.childTag()) {
             addChildTag(tag);
         }
-
+        
     }
-
+    
     /**
      * Returns The value of the named property.
      *
@@ -167,14 +167,14 @@ public class ComponentDefinition {
      */
     public Object getProperty(BaseComponent instance, String name) throws Exception {
         Method method = getters.get(name);
-
+        
         if (method == null) {
             throw new RuntimeException("Property cannot be read: " + name);
         }
-
+        
         return method.invoke(instance);
     }
-
+    
     /**
      * Sets a property value or defers that operation if the property is marked as such.
      *
@@ -184,31 +184,36 @@ public class ComponentDefinition {
      * @param value The value to set.
      * @return Null if the operation occurred, or a DeferredExecution object if deferred.
      */
-    public DeferredExecution<?> setProperty(BaseComponent instance, String name, Object value) {
+    public DeferredInvocation<?> setProperty(BaseComponent instance, String name, Object value) {
         if (name.startsWith("@")) {
             instance.setAttribute(name.substring(1), value);
             return null;
         }
+        
+        if (name.startsWith("on")) {
+            value = name + "\n" + value;
+            name = "#on";
+        }
 
         Method method = setters.get(name);
-
+        
         if (method == null) {
             if (parameters.containsKey(name)) {
                 return null;
             }
-
+            
             String message = getters.containsKey(name) ? "Property is read-only" : "Property is not recognized";
             throw new ComponentException(message + ": " + name);
         }
-
+        
         if (deferred.contains(name)) {
-            return new DeferredExecution<>(instance, method, value);
+            return new DeferredInvocation<>(instance, method, value);
         }
 
         ConvertUtil.invokeMethod(instance, method, value);
         return null;
     }
-
+    
     /**
      * Returns the XML tag for this component type.
      *
@@ -217,7 +222,7 @@ public class ComponentDefinition {
     public String getTag() {
         return tag;
     }
-
+    
     /**
      * Returns the implementation class for this component type.
      *
@@ -226,7 +231,7 @@ public class ComponentDefinition {
     public Class<? extends BaseComponent> getComponentClass() {
         return componentClass;
     }
-
+    
     /**
      * Returns the factory class for this component type.
      *
@@ -235,7 +240,7 @@ public class ComponentDefinition {
     public Class<? extends ComponentFactory> getFactoryClass() {
         return factoryClass;
     }
-
+    
     /**
      * Returns a factory instance for this component.
      *
@@ -248,7 +253,7 @@ public class ComponentDefinition {
             throw MiscUtil.toUnchecked(e);
         }
     }
-
+    
     /**
      * Returns the javascript module containing the widget class.
      *
@@ -257,7 +262,7 @@ public class ComponentDefinition {
     public String getWidgetModule() {
         return widgetModule;
     }
-
+    
     /**
      * Returns the javascript class for the widget.
      *
@@ -266,7 +271,7 @@ public class ComponentDefinition {
     public String getWidgetClass() {
         return widgetClass;
     }
-
+    
     /**
      * Returns the cardinality of a child tag.
      *
@@ -277,7 +282,7 @@ public class ComponentDefinition {
         Cardinality cardinality = childTags.get(childTag);
         return cardinality == null ? childTags.get("*") : cardinality;
     }
-
+    
     /**
      * Returns an immutable map of all child tags.
      *
@@ -286,7 +291,7 @@ public class ComponentDefinition {
     public Map<String, Cardinality> getChildTags() {
         return Collections.unmodifiableMap(childTags);
     }
-
+    
     /**
      * Returns true if this component allows children.
      *
@@ -295,7 +300,7 @@ public class ComponentDefinition {
     public boolean childrenAllowed() {
         return childTags.size() > 0;
     }
-
+    
     /**
      * Validate that a child defined by the component definition is valid for this parent.
      *
@@ -307,21 +312,21 @@ public class ComponentDefinition {
         if (!childrenAllowed()) {
             throw new ComponentException(componentClass, "Children are not allowed");
         }
-
+        
         childDefinition.validateParent(this);
         Cardinality cardinality = getCardinality(childDefinition.tag);
-
+        
         if (cardinality == null) {
             throw new ComponentException(componentClass, "%s is not a valid child", childDefinition.componentClass);
         }
-
+        
         if (cardinality.hasMaximum() && childCount.getAsInt() >= cardinality.getMaximum()) {
             throw new ComponentException(componentClass, "A maximum of %d children of type %s are allowed",
                     cardinality.getMaximum(), childDefinition.componentClass);
         }
-
+        
     }
-
+    
     /**
      * Validate that a component defined by the component definition is a valid parent for this
      * component.
@@ -334,7 +339,7 @@ public class ComponentDefinition {
             throw new ComponentException(componentClass, "%s is not a valid parent", parentDefinition.componentClass);
         }
     }
-
+    
     /**
      * Returns true if the tag is a valid parent tag.
      *
@@ -344,7 +349,7 @@ public class ComponentDefinition {
     public boolean isParentTag(String tag) {
         return parentTags.contains(tag) || parentTags.contains("*");
     }
-
+    
     /**
      * Returns an immutable set of parent tags.
      *
@@ -353,7 +358,7 @@ public class ComponentDefinition {
     public Set<String> getParentTags() {
         return Collections.unmodifiableSet(parentTags);
     }
-
+    
     /**
      * Returns how to handle content for this component type.
      *
@@ -362,9 +367,9 @@ public class ComponentDefinition {
     public ContentHandling contentHandling() {
         return contentHandling;
     }
-
+    
     // Processors for component annotations
-
+    
     /**
      * Registers a parent tag.
      *
@@ -373,7 +378,7 @@ public class ComponentDefinition {
     private void addParentTag(String tag) {
         parentTags.add(tag);
     }
-
+    
     /**
      * Registers a child tag.
      *
@@ -382,7 +387,7 @@ public class ComponentDefinition {
     private void addChildTag(ChildTag tag) {
         childTags.put(tag.value(), new Cardinality(tag.minimum(), tag.maximum()));
     }
-
+    
     /**
      * Returns true if the method is static.
      *
@@ -392,7 +397,7 @@ public class ComponentDefinition {
     private boolean isStatic(Method method) {
         return Modifier.isStatic(method.getModifiers());
     }
-
+    
     /**
      * Registers a property getter.
      *
@@ -401,16 +406,16 @@ public class ComponentDefinition {
      */
     /*package*/ void _addGetter(PropertyGetter getter, Method method) {
         String name = getter.value();
-
+        
         if (!getters.containsKey(name)) {
             if (isStatic(method) || method.getReturnType() == Void.TYPE || method.getParameterTypes().length > 0) {
                 throw new IllegalArgumentException("Bad signature for getter method: " + method.getName());
             }
-
+            
             getters.put(name, getter.hide() ? null : method);
         }
     }
-
+    
     /**
      * Returns an immutable map of getter methods.
      *
@@ -419,7 +424,7 @@ public class ComponentDefinition {
     public Map<String, Method> getGetters() {
         return Collections.unmodifiableMap(getters);
     }
-
+    
     /**
      * Registers a property setter.
      *
@@ -428,20 +433,20 @@ public class ComponentDefinition {
      */
     /*package*/ void _addSetter(PropertySetter setter, Method method) {
         String name = setter.value();
-
+        
         if (!setters.containsKey(name)) {
             if (isStatic(method) || method.getParameterTypes().length != 1) {
                 throw new IllegalArgumentException("Bad signature for setter method: " + method.getName());
             }
-
+            
             setters.put(name, setter.hide() ? null : method);
-
+            
             if (setter.defer()) {
                 deferred.add(name);
             }
         }
     }
-
+    
     /**
      * Returns an immutable map of setter methods.
      *
@@ -450,7 +455,7 @@ public class ComponentDefinition {
     public Map<String, Method> getSetters() {
         return Collections.unmodifiableMap(setters);
     }
-
+    
     /**
      * Registers factory parameter.
      *
@@ -459,16 +464,16 @@ public class ComponentDefinition {
      */
     /*package*/ void _addFactoryParameter(FactoryParameter parameter, Method method) {
         String name = parameter.value();
-
+        
         if (!parameters.containsKey(name)) {
             if (isStatic(method) || method.getParameterTypes().length != 1) {
                 throw new IllegalArgumentException("Bad signature for factory parameter method: " + method.getName());
             }
-
+            
             parameters.put(name, method);
         }
     }
-
+    
     /**
      * Returns an immutable map of factory parameters.
      *
@@ -477,7 +482,7 @@ public class ComponentDefinition {
     public Map<String, Method> getFactoryParameters() {
         return Collections.unmodifiableMap(parameters);
     }
-
+    
     @Override
     public boolean equals(Object object) {
         return object instanceof ComponentDefinition && ((ComponentDefinition) object).componentClass == componentClass;

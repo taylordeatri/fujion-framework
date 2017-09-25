@@ -6,7 +6,7 @@
 		</columns>
 		<rows>
 			<row>
-				<button label="fire event" name="btnWithEvent" />
+				<button label="fire event" name="btnWithEvent" onClick="controller.btnEventHandler(event); self.addStyle('color','green');"/>
 				This button should have an event handler.
 			</row>
 			<row>

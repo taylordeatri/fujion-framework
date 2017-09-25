@@ -116,8 +116,9 @@ public abstract class BaseUIComponent extends BaseComponent implements IDisable 
      */
     @PropertySetter("style")
     public void setStyles(String styles) {
+        String oldStyles = this.styles.toString();
         this.styles.parse(styles, true);
-        _syncStyles();
+        _syncStyles(oldStyles);
     }
 
     private String _syncStyle(String name, String dflt) {
@@ -133,9 +134,10 @@ public abstract class BaseUIComponent extends BaseComponent implements IDisable 
 
     /**
      * Synchronizes style properties with stored styles and with the client.
+     * 
+     * @param oldStyles Previous styles value.
      */
-    protected void _syncStyles() {
-        String oldStyles = styles.toString();
+    protected void _syncStyles(String oldStyles) {
         height = _syncStyle("height", height);
         width = _syncStyle("width", width);
         flex = _syncStyle("flex", flex);
@@ -160,8 +162,9 @@ public abstract class BaseUIComponent extends BaseComponent implements IDisable 
      * @return The previous value of the style, or null if none.
      */
     public String addStyle(String name, String value) {
+        String oldStyles = this.styles.toString();
         String oldValue = styles.put(name, value);
-        _syncStyles();
+        _syncStyles(oldStyles);
         return oldValue;
     }
 
@@ -172,8 +175,9 @@ public abstract class BaseUIComponent extends BaseComponent implements IDisable 
      *            attribute.
      */
     public void addStyles(String styles) {
+        String oldStyles = this.styles.toString();
         this.styles.parse(styles, false);
-        _syncStyles();
+        _syncStyles(oldStyles);
     }
 
     /**

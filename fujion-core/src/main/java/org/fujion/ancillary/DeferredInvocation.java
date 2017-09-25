@@ -29,7 +29,7 @@ import org.fujion.common.MiscUtil;
  *
  * @param <T> Return type of the method invocation.
  */
-public class DeferredExecution<T> {
+public class DeferredInvocation<T> {
 
     private final Object instance;
 
@@ -44,7 +44,7 @@ public class DeferredExecution<T> {
      * @param method The method to be executed.
      * @param defaultArgs Optional default argument list.
      */
-    public DeferredExecution(Object instance, Method method, Object... defaultArgs) {
+    public DeferredInvocation(Object instance, Method method, Object... defaultArgs) {
         this.instance = instance;
         this.method = method;
         this.defaultArgs = defaultArgs;
