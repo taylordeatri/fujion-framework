@@ -20,6 +20,8 @@
  */
 package org.fujion.component;
 
+import java.util.Map;
+
 import org.fujion.annotation.Component;
 import org.fujion.annotation.Component.ContentHandling;
 
@@ -34,7 +36,13 @@ public class ClientScript extends BaseScriptComponent {
     }
     
     public ClientScript(String script) {
-        super(script, true);
+        super(null, script, true);
+    }
+
+    @Override
+    protected Object _execute(Map<String, Object> variables) {
+        invoke("execute", variables);
+        return null;
     }
     
 }

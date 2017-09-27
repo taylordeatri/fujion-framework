@@ -35,11 +35,11 @@ import org.fujion.component.BaseComponent;
  * them.
  */
 public class ComponentScanner extends AbstractClassScanner<BaseComponent, Component> {
-
+    
     private static final Log log = LogFactory.getLog(ComponentScanner.class);
-
+    
     private static final ComponentScanner instance = new ComponentScanner();
-
+    
     /**
      * Returns a singleton instance of the component scanner.
      *
@@ -48,11 +48,11 @@ public class ComponentScanner extends AbstractClassScanner<BaseComponent, Compon
     public static ComponentScanner getInstance() {
         return instance;
     }
-
+    
     private ComponentScanner() {
         super(BaseComponent.class, Component.class);
     }
-
+    
     /**
      * Creates and registers a component definition for a class by scanning the class and its
      * superclasses for method annotations.
@@ -64,13 +64,13 @@ public class ComponentScanner extends AbstractClassScanner<BaseComponent, Compon
         if (log.isDebugEnabled()) {
             log.debug("Processing @Component annotation for class " + clazz);
         }
-        
+
         ComponentDefinition def = new ComponentDefinition(clazz);
         scanMethods(def, clazz, false);
         scanMethods(def, def.getFactoryClass(), true);
         ComponentRegistry.getInstance().register(def);
     }
-
+    
     /**
      * Scans a class for method annotations, adding them to the component definition as they are
      * found.
@@ -83,34 +83,34 @@ public class ComponentScanner extends AbstractClassScanner<BaseComponent, Compon
         if (clazz == Object.class) {
             return;
         }
-
+        
         for (Method method : clazz.getDeclaredMethods()) {
             method.setAccessible(true);
-
+            
             if (method.isSynthetic() || method.isBridge()) {
                 continue;
             }
-
+            
             PropertySetter setter = factoryMethods ? null : method.getAnnotation(PropertySetter.class);
-
+            
             if (setter != null) {
                 def._addSetter(setter, method);
             }
-
+            
             PropertyGetter getter = factoryMethods ? null : method.getAnnotation(PropertyGetter.class);
-
+            
             if (getter != null) {
                 def._addGetter(getter, method);
             }
-
+            
             FactoryParameter parameter = factoryMethods ? method.getAnnotation(FactoryParameter.class) : null;
-
+            
             if (parameter != null) {
                 def._addFactoryParameter(parameter, method);
             }
         }
-
+        
         scanMethods(def, clazz.getSuperclass(), factoryMethods);
     }
-
+    
 }

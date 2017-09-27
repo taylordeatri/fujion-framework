@@ -3,17 +3,15 @@
 		<div>
 		You should see the message "Embedded client script was executed." in the status log.
 		</div>
-		<cscript>
-			System.import('fujion-core').then(function(fujion) {
+		<cscript mode="defer" name="jsembedded">
 			var msg = 'Embedded client script was executed.';
-			fujion.event.sendToServer({type: 'log', data: msg});
 			console.log(msg);
-			});
+			return msg;
 		</cscript>
 		<div>
 		You should see the message "External client script was executed." in the status log.
 		</div>
-		<cscript src="scripts/cscript.js" />
+		<cscript mode="defer" name="jsexternal" src="scripts/cscript.js" />
 		<div>
 		You should see the message "Groovy script was executed." in the status log.
 		</div>

@@ -767,6 +767,7 @@ define('fujion-widget', ['fujion-core', 'bootstrap', 'jquery-ui', 'jquery-scroll
 			
 			if (this.real$) {
 				this.real$
+					.data('fujion_widget', this)
 					.appendTo(this.realAnchor$)
 					.attr('id', this.subId('real'));
 				this._ancillaries.real$ = this.real$;
@@ -1402,43 +1403,92 @@ define('fujion-widget', ['fujion-core', 'bootstrap', 'jquery-ui', 'jquery-scroll
 	 * Script widget
 	 ******************************************************************************************************************/ 
 	
-	fujion.widget.Script = fujion.widget.MetaWidget.extend({
+	fujion.widget.Script = fujion.widget.BaseWidget.extend({
 		
 		/*------------------------------ Lifecycle ------------------------------*/
 		
 		init: function() {
 			this._super();
-			this.initState({async: false, defer: false});
+			this.initState({async: true, mode: 'IMMEDIATE'});
+			this._wrapper = this.resolveEL('$("#${id}").fujion$widget()._execute()');
+			this._count = 0;
+		},
+		
+		/*------------------------------ Other ------------------------------*/
+		
+		autoexec: function() {
+			if (this._script && !this._count && this.getState('mode') !== 'MANUAL') {
+				this.execute({self: this});
+			}
+		},
+		
+		compile: function(script, run) {
+			this._count = 0;
+			this._script = script ? Function(this.resolveEL(script, '#')).bind(this) : null;
+			run ? this.autoexec() : null;
+		},
+		
+		execute: function(vars) {
+			this._vars = vars;
+			this._script ? this.widget$.text(this._wrapper) : null;
+		},
+		
+		_execute: function() {
+			var vars = this._vars || {};
+			delete this._vars;
+			this._count++;
+			var result = this._script ? this._script(vars) : null;
+			this.trigger('scriptExecution', {data: result});
 		},
 		
 		/*------------------------------ Rendering ------------------------------*/
 		
-		realAnchor$: $('body'),
+		afterRender: function() {
+			this._super();
+			var self = this;
+			
+			setTimeout(function() {
+				self.autoexec();
+			});
+		},
 		
-		renderReal$: function() {
+		render$: function() {
 			return $('<script>');
 		},
 		
 		/*------------------------------ State ------------------------------*/
 		
 		async: function(v) {
-			this.attr('async', v, this.real$);
+			this.attr('async', v);
 		},
 		
 		content: function(v) {
-			this.real$.text(this.resolveEL(v, '#'));
+			this.compile(v);
 		},
 		
-		defer: function(v) {
-			this.attr('defer', v, this.real$);
+		mode: function(v) {
+			this.attr('defer', v === 'DEFER');
 		},
 		
 		src: function(v) {
-			this.attr('src', v, this.real$);
+			this.compile();
+			
+			if (v) {
+				var self = this,
+					async = this.getState('async');
+				
+				$.ajax({
+					url: v,
+					async: async,
+					dataType: 'text'
+				}).done(function (script) {
+					self.compile(script, async);
+				});
+			}
 		},
 		
 		type: function(v) {
-			this.attr('type', v, this.real$);
+			this.attr('type', v);
 		}
 		
 	});
@@ -3379,11 +3429,13 @@ define('fujion-widget', ['fujion-core', 'bootstrap', 'jquery-ui', 'jquery-scroll
 				
 				if (pos) {
 					pos = pos.toLowerCase().replace('_', ' ');
+					var page = fujion.widget._page;
 					
 					this.widget$.position({
 						my: pos,
 						at: pos,
-						of: fujion.widget._page.widget$});
+						of: page ? page.widget$ : $('body')
+					});
 				}
 			}
 		},

@@ -28,6 +28,11 @@ import org.fujion.event.Event;
  */
 public class ScriptsController extends BaseController {
 
+    @EventHandler(value = "scriptExecution", target = { "jsembedded", "jsexternal" })
+    private void jsExecutionHandler(Event event) {
+        log(event.getData().toString());
+    }
+    
     @EventHandler(value = "scriptExecution", target = "clojurescript")
     private void clojureExecutionHandler(Event event) {
         log("Clojure script was executed: " + event.getData());

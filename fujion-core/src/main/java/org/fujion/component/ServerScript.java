@@ -22,7 +22,7 @@ package org.fujion.component;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.Collections;
+import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.fujion.annotation.Component;
@@ -34,6 +34,7 @@ import org.fujion.core.WebUtil;
 import org.fujion.event.Event;
 import org.fujion.event.EventUtil;
 import org.fujion.script.IScriptLanguage;
+import org.fujion.script.IScriptLanguage.IParsedScript;
 import org.fujion.script.ScriptRegistry;
 import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
@@ -43,21 +44,23 @@ import org.springframework.util.Assert;
  */
 @Component(tag = "sscript", widgetClass = "MetaWidget", content = ContentHandling.AS_ATTRIBUTE, parentTag = "*")
 public class ServerScript extends BaseScriptComponent {
-
+    
     private static final String EVENT_DEFERRED = "deferredExecution";
-
+    
     public static final String EVENT_EXECUTED = "scriptExecution";
-
-    private IScriptLanguage script;
-
+    
+    private IScriptLanguage scriptLanguage;
+    
+    private IParsedScript script;
+    
     public ServerScript() {
         super(false);
     }
-    
-    public ServerScript(String script) {
-        super(script, false);
-    }
 
+    public ServerScript(String type, String script) {
+        super(type, script, false);
+    }
+    
     /**
      * Triggers script execution. If not deferred, execution is immediate. Otherwise, a
      * {@value #EVENT_DEFERRED} event is posted, deferring script execution until the end of the
@@ -68,22 +71,34 @@ public class ServerScript extends BaseScriptComponent {
     @Override
     protected void onAttach(Page page) {
         super.onAttach(page);
-
-        if (getDefer()) {
-            EventUtil.post(EVENT_DEFERRED, this, null);
-        } else {
-            doExecute();
+        
+        switch (getMode()) {
+            case DEFER:
+                EventUtil.post(EVENT_DEFERRED, this, null);
+                break;
+            
+            case IMMEDIATE:
+                doExecute();
+                break;
+            
+            case MANUAL:
+                break;
         }
     }
-
+    
     /**
      * Executes the compiled script.
      *
      * @return Value returned by the executed script.
      */
-    private Object execute() {
-        Assert.notNull(script, "A script type must be specified");
-        return script.parse(getScript()).run(Collections.singletonMap(script.getSelf(), this));
+    @Override
+    protected Object _execute(Map<String, Object> variables) {
+        return getScript().run(variables);
+    }
+    
+    @Override
+    public String getSelf() {
+        return scriptLanguage == null ? null : scriptLanguage.getSelf();
     }
 
     /**
@@ -91,14 +106,16 @@ public class ServerScript extends BaseScriptComponent {
      *
      * @return The script text.
      */
-    private String getScript() {
-        if (getSrc() != null) {
-            return getExternalScript();
-        } else {
-            return getContent();
+    private IParsedScript getScript() {
+        if (script == null) {
+            Assert.notNull(scriptLanguage, "A script type must be specified");
+            String code = getSrc() == null ? getContent() : getExternalScript();
+            script = scriptLanguage.parse(code);
         }
+        
+        return script;
     }
-
+    
     /**
      * Return the text of an external script.
      *
@@ -112,20 +129,20 @@ public class ServerScript extends BaseScriptComponent {
             throw MiscUtil.toUnchecked(e);
         }
     }
-
+    
     @Override
     @PropertySetter("type")
     public void setType(String type) {
         type = nullify(type);
-        script = type == null ? null : ScriptRegistry.getInstance().get(type);
-
-        if (script == null && type != null) {
+        scriptLanguage = type == null ? null : ScriptRegistry.getInstance().get(type);
+        
+        if (scriptLanguage == null && type != null) {
             throw new IllegalArgumentException("Unknown script type: " + type);
         }
-        
+
         super.setType(type);
     }
-
+    
     /**
      * Performs deferred execution of the script.
      */
@@ -133,11 +150,19 @@ public class ServerScript extends BaseScriptComponent {
     private void onDeferredExecution() {
         doExecute();
     }
-
+    
     /**
      * Executes the script. Upon completion, fires a {@value #EVENT_EXECUTED} event with the result.
      */
     private void doExecute() {
         EventUtil.post(new Event(EVENT_EXECUTED, this, execute()));
+    }
+
+    /**
+     * Force script re-compilation if any property changes.
+     */
+    @EventHandler("propertychange")
+    private void onPropertyChanged() {
+        script = null;
     }
 }

@@ -190,12 +190,7 @@ public class ComponentDefinition {
             return null;
         }
         
-        if (name.startsWith("on")) {
-            value = name + "\n" + value;
-            name = "#on";
-        }
-
-        Method method = setters.get(name);
+        Method method = setters.get(name.startsWith("on") ? "#on" : name);
         
         if (method == null) {
             if (parameters.containsKey(name)) {
@@ -206,11 +201,13 @@ public class ComponentDefinition {
             throw new ComponentException(message + ": " + name);
         }
         
+        Object[] args = method.getParameterCount() == 1 ? new Object[] { value } : new Object[] { name, value };
+        
         if (deferred.contains(name)) {
-            return new DeferredInvocation<>(instance, method, value);
+            return new DeferredInvocation<>(instance, method, args);
         }
 
-        ConvertUtil.invokeMethod(instance, method, value);
+        ConvertUtil.invokeMethod(instance, method, args);
         return null;
     }
     
@@ -435,7 +432,10 @@ public class ComponentDefinition {
         String name = setter.value();
         
         if (!setters.containsKey(name)) {
-            if (isStatic(method) || method.getParameterTypes().length != 1) {
+            int length = method.getParameterCount();
+
+            if (isStatic(method) || length == 0 || length > 2
+                    || (length == 2 && method.getParameterTypes()[0] != String.class)) {
                 throw new IllegalArgumentException("Bad signature for setter method: " + method.getName());
             }
             

@@ -47,6 +47,7 @@ import org.fujion.annotation.WiredComponentScanner;
 import org.fujion.client.ClientInvocation;
 import org.fujion.client.ClientInvocationQueue;
 import org.fujion.common.MiscUtil;
+import org.fujion.component.BaseScriptComponent.ExecutionMode;
 import org.fujion.event.Event;
 import org.fujion.event.EventListeners;
 import org.fujion.event.EventUtil;
@@ -54,45 +55,42 @@ import org.fujion.event.ForwardListener;
 import org.fujion.event.IEventListener;
 import org.fujion.event.PropertychangeEvent;
 import org.fujion.event.StatechangeEvent;
-import org.fujion.script.IScriptLanguage;
-import org.fujion.script.IScriptLanguage.IParsedScript;
-import org.fujion.script.ScriptRegistry;
 import org.springframework.util.Assert;
 
 /**
  * The abstract base class for all components.
  */
 public abstract class BaseComponent implements IElementIdentifier {
-    
+
     /**
      * Reference to a subcomponent. A subcomponent typically does not have an explicit
      * implementation on the server, but does have a corresponding HTML element on the client. This
      * class exists to allow client invocations to be directed to that element.
      */
     public static class SubComponent implements IElementIdentifier {
-        
+
         private final BaseComponent component;
-        
+
         private final String subId;
-        
+
         private SubComponent(BaseComponent component, String subId) {
             this.component = component;
             this.subId = subId;
         }
-        
+
         @Override
         public String getId() {
             return component.getId() + "-" + subId;
         }
     }
-    
+
     /**
      * An index of child component names maintained by a parent component.
      */
     private class NameIndex {
-        
+
         private Map<String, BaseComponent> names;
-        
+
         /**
          * Add a component's name (if any).
          *
@@ -100,13 +98,13 @@ public abstract class BaseComponent implements IElementIdentifier {
          */
         public void add(BaseComponent component) {
             String name = component.getName();
-            
+
             if (name != null) {
                 names = names == null ? new HashMap<>() : names;
                 names.put(name, component);
             }
         }
-        
+
         /**
          * Remove a component's name (if any).
          *
@@ -114,16 +112,16 @@ public abstract class BaseComponent implements IElementIdentifier {
          */
         public void remove(BaseComponent component) {
             String name = component.getName();
-            
+
             if (name != null && names != null) {
                 names.remove(name);
             }
         }
-        
+
         private BaseComponent _get(String name) {
             return names == null ? null : names.get(name);
         }
-        
+
         /**
          * Validate that a component's name does not conflict with an existing name.
          *
@@ -133,36 +131,36 @@ public abstract class BaseComponent implements IElementIdentifier {
         public void validate(BaseComponent component) {
             _validate(component, getNameRoot());
         }
-        
+
         private void _validate(BaseComponent component, BaseComponent root) {
             _validate(component.getName(), root, component);
-            
+
             if (!(component.isNamespace())) {
                 for (BaseComponent child : component.getChildren()) {
                     _validate(child, root);
                 }
             }
         }
-        
+
         private void validate(String name) {
             _validate(name, getNameRoot(), null);
         }
-        
+
         private void _validate(String name, BaseComponent root, BaseComponent component) {
             if (name != null) {
                 BaseComponent cmp = _find(name, root);
-                
+
                 if (cmp != null && cmp != component) {
                     throw new ComponentException("Name \"" + name + "\"already exists in current namespace");
                 }
             }
         }
-        
+
         private BaseComponent getNameRoot() {
             BaseComponent root = getNamespace();
             return root == null ? getRoot() : root;
         }
-        
+
         /**
          * Returns a component from the index given its name.
          *
@@ -172,62 +170,62 @@ public abstract class BaseComponent implements IElementIdentifier {
         public BaseComponent find(String name) {
             return _find(name, getNameRoot());
         }
-        
+
         private BaseComponent _find(String name, BaseComponent root) {
             BaseComponent component = root.nameIndex._get(name);
-            
+
             if (component != null) {
                 return component;
             }
-            
+
             for (BaseComponent child : root.getChildren()) {
                 if (!(child.isNamespace())) {
                     component = _find(name, child);
-                    
+
                     if (component != null) {
                         break;
                     }
                 }
             }
-            
+
             return component;
         }
     }
-    
+
     private static final Pattern nameValidator = Pattern.compile("^[a-zA-Z$][a-zA-Z_$0-9]*$");
-    
+
     private String name;
-    
+
     private String id;
-
+    
     private boolean dead;
-    
-    private Page page;
-    
-    private BaseComponent parent;
-    
-    private Object data;
-    
-    private String content;
-    
-    private boolean contentSynced = true;
-    
-    private Map<String, Object> inits;
-    
-    private ClientInvocationQueue invocationQueue;
 
+    private Page page;
+
+    private BaseComponent parent;
+
+    private Object data;
+
+    private String content;
+
+    private boolean contentSynced = true;
+
+    private Map<String, Object> inits;
+
+    private ClientInvocationQueue invocationQueue;
+    
     private boolean namespace;
-    
+
     private final List<BaseComponent> children = new LinkedList<>();
-    
+
     private final Map<String, Object> attributes = new HashMap<>();
-    
+
     private final EventListeners eventListeners = new EventListeners();
-    
+
     private final ComponentDefinition componentDefinition;
-    
+
     private final NameIndex nameIndex = new NameIndex();
-    
+
     /**
      * Validates that a component still exists (i.e., is not dead).
      *
@@ -239,7 +237,7 @@ public abstract class BaseComponent implements IElementIdentifier {
             throw new ComponentException("Component no longer exists: %s", comp.getId());
         }
     }
-    
+
     /**
      * Create a component. Event handler annotations are processed at this time.
      */
@@ -248,7 +246,7 @@ public abstract class BaseComponent implements IElementIdentifier {
         namespace = this instanceof INamespace;
         EventHandlerScanner.wire(this, this);
     }
-    
+
     /**
      * Return the component's definition.
      *
@@ -257,7 +255,7 @@ public abstract class BaseComponent implements IElementIdentifier {
     public ComponentDefinition getDefinition() {
         return componentDefinition;
     }
-    
+
     /**
      * Returns the name associated with this instance. Names must be unique within a common
      * namespace.
@@ -268,7 +266,7 @@ public abstract class BaseComponent implements IElementIdentifier {
     public String getName() {
         return name;
     }
-    
+
     /**
      * Sets the name associated with this instance. Names must be unique within a common namespace.
      *
@@ -283,17 +281,17 @@ public abstract class BaseComponent implements IElementIdentifier {
             nameIndex.add(this);
         }
     }
-    
+
     private void validateName(String name) {
         if (name != null) {
             if (!nameValidator.matcher(name).matches()) {
                 throw new ComponentException(this, "Component name is not valid: " + name);
             }
-            
+
             nameIndex.validate(name);
         }
     }
-    
+
     /**
      * Returns the id of the client widget corresponding to this component.
      *
@@ -304,7 +302,7 @@ public abstract class BaseComponent implements IElementIdentifier {
     public String getId() {
         return id;
     }
-    
+
     /**
      * Sets the id of the client widget. Once set, the id is immutable.
      *
@@ -314,14 +312,14 @@ public abstract class BaseComponent implements IElementIdentifier {
         Assert.isNull(this.id, "Unique id cannot be modified.");
         this.id = id;
     }
-    
+
     /**
      * Removes, but does not destroy, this component from its parent.
      */
     public void detach() {
         setParent(null);
     }
-    
+
     /**
      * Destroys this component.
      */
@@ -329,26 +327,26 @@ public abstract class BaseComponent implements IElementIdentifier {
         if (dead) {
             return;
         }
-        
+
         onDestroy();
-        
+
         if (page != null) {
             page.registerComponent(this, false);
         }
-        
+
         destroyChildren();
-        
+
         if (parent != null) {
             parent._removeChild(this, false, true);
         } else {
             invokeIfAttached("destroy");
         }
-        
+
         dead = true;
         fireEvent("destroy");
         eventListeners.removeAll();
     }
-    
+
     /**
      * Destroy a component and all its children upon finalization.
      *
@@ -357,12 +355,12 @@ public abstract class BaseComponent implements IElementIdentifier {
     @Override
     public void finalize() throws Throwable {
         super.finalize();
-        
+
         if (id != null) {
             destroy();
         }
     }
-    
+
     /**
      * Destroy all children under this
      */
@@ -371,13 +369,13 @@ public abstract class BaseComponent implements IElementIdentifier {
             children.get(0).destroy();
         }
     }
-    
+
     /**
      * Override to perform any special cleanup operations when this component is destroyed.
      */
     protected void onDestroy() {
     }
-    
+
     /**
      * Returns true if the component is dead (meaning its corresponding widget has been destroyed).
      * Any operation on a dead component that would cause a client invocation will fail.
@@ -387,7 +385,7 @@ public abstract class BaseComponent implements IElementIdentifier {
     public boolean isDead() {
         return dead;
     }
-    
+
     /**
      * Validates that this component is not dead.
      *
@@ -396,7 +394,7 @@ public abstract class BaseComponent implements IElementIdentifier {
     protected void validate() {
         validate(this);
     }
-    
+
     /**
      * Returns this component's parent, if any.
      *
@@ -405,7 +403,7 @@ public abstract class BaseComponent implements IElementIdentifier {
     public BaseComponent getParent() {
         return parent;
     }
-    
+
     /**
      * Validates that a component would a valid parent for this component.
      *
@@ -415,7 +413,7 @@ public abstract class BaseComponent implements IElementIdentifier {
     protected boolean validateParent(BaseComponent parent) {
         return parent == null || componentDefinition.isParentTag(parent.componentDefinition.getTag());
     }
-    
+
     /**
      * Sets the component's parent.
      *
@@ -434,7 +432,7 @@ public abstract class BaseComponent implements IElementIdentifier {
             }
         }
     }
-    
+
     /**
      * Returns the attribute map for this component.
      *
@@ -443,7 +441,7 @@ public abstract class BaseComponent implements IElementIdentifier {
     public Map<String, Object> getAttributes() {
         return attributes;
     }
-    
+
     /**
      * Returns the value of the named attribute.
      *
@@ -453,7 +451,7 @@ public abstract class BaseComponent implements IElementIdentifier {
     public Object getAttribute(String name) {
         return attributes.get(name);
     }
-    
+
     /**
      * Returns the value of the named attribute, cast to the specified type.
      *
@@ -477,7 +475,7 @@ public abstract class BaseComponent implements IElementIdentifier {
             return dflt;
         }
     }
-    
+
     /**
      * Returns the value of the named attribute, converted to the specified type.
      *
@@ -494,7 +492,7 @@ public abstract class BaseComponent implements IElementIdentifier {
             return null;
         }
     }
-    
+
     /**
      * Finds the named attribute, returning its value. If the named attribute does not exist or has
      * a null value, the parent chain will be searched until a match is found.
@@ -505,14 +503,14 @@ public abstract class BaseComponent implements IElementIdentifier {
     public Object findAttribute(String name) {
         Object value = null;
         BaseComponent cmp = this;
-        
+
         while (cmp != null && (value = cmp.attributes.get(name)) == null) {
             cmp = cmp.getParent();
         }
-        
+
         return value;
     }
-    
+
     /**
      * Sets the value of a named attribute.
      *
@@ -523,7 +521,7 @@ public abstract class BaseComponent implements IElementIdentifier {
     public Object setAttribute(String name, Object value) {
         return attributes.put(name, value);
     }
-    
+
     /**
      * Removes the named attribute if it exists.
      *
@@ -533,7 +531,7 @@ public abstract class BaseComponent implements IElementIdentifier {
     public Object removeAttribute(String name) {
         return attributes.remove(name);
     }
-    
+
     /**
      * Returns true if the named attribute exists.
      *
@@ -543,7 +541,7 @@ public abstract class BaseComponent implements IElementIdentifier {
     public boolean hasAttribute(String name) {
         return attributes.containsKey(name);
     }
-    
+
     /**
      * Validates that the specified component is currently a child of this component.
      *
@@ -555,7 +553,7 @@ public abstract class BaseComponent implements IElementIdentifier {
             throw new ComponentException("Child does not belong to this parent.");
         }
     }
-    
+
     /**
      * Validates that the specified component may be added as a child.
      *
@@ -565,7 +563,7 @@ public abstract class BaseComponent implements IElementIdentifier {
     protected void validateChild(BaseComponent child) {
         componentDefinition.validateChild(child.componentDefinition, () -> getChildCount(child.getClass()));
     }
-    
+
     /**
      * Adds a child to the end of the child list.
      *
@@ -574,7 +572,7 @@ public abstract class BaseComponent implements IElementIdentifier {
     public void addChild(BaseComponent child) {
         addChild(child, -1);
     }
-    
+
     /**
      * Adds a child to the child list at the specified position.
      *
@@ -585,23 +583,21 @@ public abstract class BaseComponent implements IElementIdentifier {
         boolean noSync = child.getPage() == null && index < 0;
         child.validate();
         BaseComponent oldParent = child.getParent();
-        
+
         if (oldParent != this) {
             validateChild(child);
             nameIndex.validate(child);
         }
-        
-        if (!child.validatePage(page)) {
-            throw new ComponentException(this, "Child is already associated with a different page.");
-        }
-        
+
+        child.validatePage(page);
+
         if (oldParent == this) {
             int i = child.getIndex();
-            
+
             if (i == index) {
                 return;
             }
-            
+
             if (index > i) {
                 index--;
             }
@@ -609,35 +605,35 @@ public abstract class BaseComponent implements IElementIdentifier {
             child.beforeSetParent(this);
             beforeAddChild(child);
         }
-        
+
         if (oldParent != null) {
             oldParent._removeChild(child, true, false);
         }
-        
+
         if (index < 0) {
             children.add(child);
         } else {
             children.add(index, child);
         }
-        
+
         child.parent = this;
-        
+
         if (page != null) {
             child._attach(page);
         }
-        
+
         nameIndex.add(child);
-        
+
         if (!noSync) {
             invokeIfAttached("addChild", child, index);
         }
-        
+
         if (oldParent != this) {
             afterAddChild(child);
             child.afterSetParent(this);
         }
     }
-    
+
     /**
      * Adds a child to the child list immediately before the reference child.
      *
@@ -649,15 +645,15 @@ public abstract class BaseComponent implements IElementIdentifier {
             addChild(child);
             return;
         }
-        
+
         if (before.getParent() != this) {
             throw new ComponentException(this, "Before component does not belong to this parent.");
         }
-        
+
         int i = children.indexOf(before);
         addChild(child, i);
     }
-    
+
     /**
      * Adds a list of children.
      *
@@ -668,7 +664,7 @@ public abstract class BaseComponent implements IElementIdentifier {
             addChild(child);
         }
     }
-    
+
     /**
      * Removes a child from this parent.
      *
@@ -677,7 +673,7 @@ public abstract class BaseComponent implements IElementIdentifier {
     public void removeChild(BaseComponent child) {
         _removeChild(child, false, false);
     }
-    
+
     /**
      * Removes a child from this parent.
      *
@@ -687,24 +683,24 @@ public abstract class BaseComponent implements IElementIdentifier {
      */
     /*package*/ void _removeChild(BaseComponent child, boolean noSync, boolean destroy) {
         int index = children.indexOf(child);
-        
+
         if (index == -1) {
             throw new ComponentException(this, "Child does not belong to this parent");
         }
-        
+
         beforeRemoveChild(child);
         nameIndex.remove(child);
         child.parent = null;
         children.remove(child);
-        
+
         if (!noSync) {
             invokeIfAttached("removeChild", child, destroy);
         }
-        
+
         child.dead |= destroy;
         afterRemoveChild(child);
     }
-    
+
     /**
      * Swap the position of two children.
      *
@@ -718,7 +714,7 @@ public abstract class BaseComponent implements IElementIdentifier {
         children.set(index2, child1);
         invokeIfAttached("swapChildren", index1, index2);
     }
-    
+
     /**
      * Called before a new parent is set.
      *
@@ -726,7 +722,7 @@ public abstract class BaseComponent implements IElementIdentifier {
      */
     protected void beforeSetParent(BaseComponent newParent) {
     }
-    
+
     /**
      * Called after a new parent is set.
      *
@@ -734,7 +730,7 @@ public abstract class BaseComponent implements IElementIdentifier {
      */
     protected void afterSetParent(BaseComponent oldParent) {
     }
-    
+
     /**
      * Called before a new child is added.
      *
@@ -742,7 +738,7 @@ public abstract class BaseComponent implements IElementIdentifier {
      */
     protected void beforeAddChild(BaseComponent child) {
     }
-    
+
     /**
      * Called after a new child is added.
      *
@@ -750,7 +746,7 @@ public abstract class BaseComponent implements IElementIdentifier {
      */
     protected void afterAddChild(BaseComponent child) {
     }
-    
+
     /**
      * Called before a child is removed.
      *
@@ -758,7 +754,7 @@ public abstract class BaseComponent implements IElementIdentifier {
      */
     protected void beforeRemoveChild(BaseComponent child) {
     }
-    
+
     /**
      * Called after a child is removed.
      *
@@ -766,7 +762,7 @@ public abstract class BaseComponent implements IElementIdentifier {
      */
     protected void afterRemoveChild(BaseComponent child) {
     }
-    
+
     /**
      * Returns an immutable list of existing children.
      *
@@ -775,7 +771,7 @@ public abstract class BaseComponent implements IElementIdentifier {
     public List<BaseComponent> getChildren() {
         return Collections.unmodifiableList(children);
     }
-    
+
     /**
      * Returns an iterable of children of the specified type.
      *
@@ -786,7 +782,7 @@ public abstract class BaseComponent implements IElementIdentifier {
     public <T extends BaseComponent> Iterable<T> getChildren(Class<T> type) {
         return MiscUtil.iterableForType(getChildren(), type);
     }
-    
+
     /**
      * Returns the number of children.
      *
@@ -795,7 +791,7 @@ public abstract class BaseComponent implements IElementIdentifier {
     public int getChildCount() {
         return children.size();
     }
-    
+
     /**
      * Returns the count of children of a specified type.
      *
@@ -804,16 +800,16 @@ public abstract class BaseComponent implements IElementIdentifier {
      */
     public int getChildCount(Class<? extends BaseComponent> type) {
         int count = 0;
-        
+
         for (BaseComponent child : children) {
             if (type.isInstance(child)) {
                 count++;
             }
         }
-        
+
         return count;
     }
-    
+
     /**
      * Returns true if this component may contain children.
      *
@@ -822,7 +818,7 @@ public abstract class BaseComponent implements IElementIdentifier {
     public boolean isContainer() {
         return componentDefinition.childrenAllowed();
     }
-    
+
     /**
      * Return the first child of the requested type.
      *
@@ -837,10 +833,10 @@ public abstract class BaseComponent implements IElementIdentifier {
                 return (T) child;
             }
         }
-        
+
         return null;
     }
-    
+
     /**
      * Returns the child at the specified index. If the index is out of bounds, returns null.
      *
@@ -850,7 +846,7 @@ public abstract class BaseComponent implements IElementIdentifier {
     public BaseComponent getChildAt(int index) {
         return index < 0 || index >= children.size() ? null : children.get(index);
     }
-    
+
     /**
      * Returns the first child of this component.
      *
@@ -859,7 +855,7 @@ public abstract class BaseComponent implements IElementIdentifier {
     public BaseComponent getFirstChild() {
         return getChildAt(0);
     }
-    
+
     /**
      * Returns the last child of this component.
      *
@@ -868,7 +864,7 @@ public abstract class BaseComponent implements IElementIdentifier {
     public BaseComponent getLastChild() {
         return getChildAt(getChildCount() - 1);
     }
-    
+
     /**
      * Return the root component of this component's hierarchy.
      *
@@ -876,14 +872,14 @@ public abstract class BaseComponent implements IElementIdentifier {
      */
     public BaseComponent getRoot() {
         BaseComponent root = this;
-        
+
         while (root.getParent() != null) {
             root = root.getParent();
         }
-        
+
         return root;
     }
-    
+
     /**
      * Return first ancestor that is of the requested type.
      *
@@ -894,7 +890,7 @@ public abstract class BaseComponent implements IElementIdentifier {
     public <T extends BaseComponent> T getAncestor(Class<T> type) {
         return getAncestor(type, false);
     }
-    
+
     /**
      * Return first ancestor that is of the requested type.
      *
@@ -906,7 +902,7 @@ public abstract class BaseComponent implements IElementIdentifier {
     @SuppressWarnings("unchecked")
     public <T> T getAncestor(Class<T> type, boolean includeSelf) {
         BaseComponent cmp = includeSelf ? this : this.getParent();
-        
+
         while (cmp != null) {
             if (type.isInstance(cmp)) {
                 break;
@@ -914,10 +910,10 @@ public abstract class BaseComponent implements IElementIdentifier {
                 cmp = cmp.getParent();
             }
         }
-        
+
         return (T) cmp;
     }
-    
+
     /**
      * Returns true if this component is the same as or an ancestor of the specified component.
      *
@@ -928,10 +924,10 @@ public abstract class BaseComponent implements IElementIdentifier {
         while (comp != null && comp != this) {
             comp = comp.getParent();
         }
-        
+
         return comp != null;
     }
-    
+
     /**
      * Returns the index of this child within its parent.
      *
@@ -940,7 +936,7 @@ public abstract class BaseComponent implements IElementIdentifier {
     public int getIndex() {
         return getParent() == null ? -1 : getParent().children.indexOf(this);
     }
-    
+
     /**
      * Moves this child to the specified index within its parent.
      *
@@ -949,7 +945,7 @@ public abstract class BaseComponent implements IElementIdentifier {
     public void setIndex(int index) {
         getParent().addChild(this, index);
     }
-    
+
     /**
      * Return the next sibling for this component.
      *
@@ -958,7 +954,7 @@ public abstract class BaseComponent implements IElementIdentifier {
     public BaseComponent getNextSibling() {
         return getRelativeSibling(1);
     }
-    
+
     /**
      * Return the previous sibling for this component.
      *
@@ -967,7 +963,7 @@ public abstract class BaseComponent implements IElementIdentifier {
     public BaseComponent getPreviousSibling() {
         return getRelativeSibling(-1);
     }
-    
+
     /**
      * Returns the sibling of this component at the specified offset.
      *
@@ -980,7 +976,7 @@ public abstract class BaseComponent implements IElementIdentifier {
         i = i == -1 ? -1 : i + offset;
         return i < 0 || i >= getParent().getChildCount() ? null : getParent().children.get(i);
     }
-    
+
     /**
      * Returns the namespace to which this component belongs. May be null.
      *
@@ -988,18 +984,18 @@ public abstract class BaseComponent implements IElementIdentifier {
      */
     public BaseComponent getNamespace() {
         BaseComponent comp = this;
-
+        
         while (comp != null) {
             if (comp.isNamespace()) {
                 return comp;
             }
-
+            
             comp = comp.getParent();
         }
-
+        
         return null;
     }
-    
+
     /**
      * Returns true if this component is a namespace boundary.
      *
@@ -1009,7 +1005,7 @@ public abstract class BaseComponent implements IElementIdentifier {
     public boolean isNamespace() {
         return namespace;
     }
-
+    
     /**
      * When set to true, this component is a namespace boundary. This may not be changed once a
      * parent or children are added.
@@ -1020,7 +1016,7 @@ public abstract class BaseComponent implements IElementIdentifier {
     private void setNamespace(boolean namespace) {
         this.namespace = namespace;
     }
-    
+
     /**
      * Returns the page to which this component belongs.
      *
@@ -1029,29 +1025,26 @@ public abstract class BaseComponent implements IElementIdentifier {
     public Page getPage() {
         return page;
     }
-    
+
     /**
      * Sets the page property for this component and its children.
      *
      * @param page The owning page.
      */
     private void _setPage(Page page) {
-        if (!validatePage(page)) {
-            throw new ComponentException(this, "Component cannot be assigned to a different page");
-        }
-        
+        validatePage(page);
         this.page = page;
         page.registerComponent(this, true);
         Map<String, Object> props = new HashMap<>();
         _initProps(props);
         page.getSynchronizer().createWidget(parent, props, inits);
         inits = null;
-        
+
         for (BaseComponent child : getChildren()) {
             child._setPage(page);
         }
     }
-    
+
     /**
      * Called when this component is first attached to a page.
      *
@@ -1059,17 +1052,19 @@ public abstract class BaseComponent implements IElementIdentifier {
      */
     protected void onAttach(Page page) {
     }
-    
+
     /**
      * Validates that the specified page can be an owner of this component.
      *
      * @param page The page to be tested.
-     * @return True if the page can be an owner of this component.
+     * @exception ComponentException If fails validation.
      */
-    protected boolean validatePage(Page page) {
-        return page == this.page || this.page == null;
+    protected void validatePage(Page page) {
+        if (page != this.page && this.page != null) {
+            throw new ComponentException(this, "Component cannot be assigned to a different page");
+        }
     }
-    
+
     /**
      * Attach this component and its children to their owning page.
      *
@@ -1081,7 +1076,7 @@ public abstract class BaseComponent implements IElementIdentifier {
             _flushQueue();
         }
     }
-    
+
     /**
      * Creates this component's corresponding widget on the client.
      */
@@ -1090,15 +1085,15 @@ public abstract class BaseComponent implements IElementIdentifier {
             page.getSynchronizer().processQueue(invocationQueue);
             invocationQueue = null;
         }
-        
+
         for (BaseComponent child : getChildren()) {
             child._flushQueue();
         }
-        
+
         onAttach(page);
         fireEvent("attach");
     }
-    
+
     /**
      * Initialize properties to be passed to widget factory. Override to add additional properties.
      *
@@ -1111,7 +1106,7 @@ public abstract class BaseComponent implements IElementIdentifier {
         props.put("cntr", isContainer());
         props.put("nmsp", isNamespace() ? true : null);
     }
-    
+
     /**
      * Synchronize a state value to the client.
      *
@@ -1124,14 +1119,14 @@ public abstract class BaseComponent implements IElementIdentifier {
                 if (inits == null) {
                     inits = new HashMap<>();
                 }
-                
+
                 inits.put(state, value);
             } else {
                 page.getSynchronizer().invokeClient(this, "updateState", state, value, true);
             }
         }
     }
-    
+
     /**
      * Invoke a widget function on the client.
      *
@@ -1143,7 +1138,7 @@ public abstract class BaseComponent implements IElementIdentifier {
             invoke(this, function, args);
         }
     }
-    
+
     /**
      * Invoke a widget function on the client only if attached to a page.
      *
@@ -1155,7 +1150,7 @@ public abstract class BaseComponent implements IElementIdentifier {
             invoke(function, args);
         }
     }
-    
+
     /**
      * Invoke a widget or sub-widget function on the client.
      *
@@ -1165,18 +1160,18 @@ public abstract class BaseComponent implements IElementIdentifier {
      */
     public void invoke(IElementIdentifier id, String function, Object... args) {
         ClientInvocation invocation = new ClientInvocation(id, function, args);
-        
+
         if (page == null) {
             if (invocationQueue == null) {
                 invocationQueue = new ClientInvocationQueue();
             }
-            
+
             invocationQueue.queue(invocation);
         } else {
             page.getSynchronizer().sendToClient(invocation);
         }
     }
-    
+
     /**
      * Looks up a component by its name within the namespace occupied by this component.
      *
@@ -1187,17 +1182,17 @@ public abstract class BaseComponent implements IElementIdentifier {
         if (name == null || name.isEmpty()) {
             return null;
         }
-        
+
         String[] pcs = name.split("\\.");
         BaseComponent cmp = this;
         int i = 0;
-        
+
         while (i < pcs.length && cmp != null) {
             String pc = pcs[i++];
-            
+
             if ("^".equals(pc)) {
                 cmp = cmp.getNamespace();
-                
+
                 if (i != pcs.length) {
                     cmp = cmp == null ? null : cmp.getParent();
                     cmp = cmp == null ? null : cmp.getNamespace();
@@ -1206,10 +1201,10 @@ public abstract class BaseComponent implements IElementIdentifier {
                 cmp = cmp.nameIndex.find(pc);
             }
         }
-        
+
         return cmp;
     }
-    
+
     /**
      * Looks up a component of the specified type by its name within the namespace occupied by this
      * component.
@@ -1223,7 +1218,7 @@ public abstract class BaseComponent implements IElementIdentifier {
     public <T extends BaseComponent> T findByName(String name, Class<T> type) {
         return (T) findByName(name);
     }
-    
+
     /**
      * Find the first child containing the specified data object.
      *
@@ -1236,10 +1231,10 @@ public abstract class BaseComponent implements IElementIdentifier {
                 return child;
             }
         }
-        
+
         return null;
     }
-    
+
     /**
      * Find the first child whose label matches the specified value. This will only examine children
      * that implement the ILabeled interface.
@@ -1253,10 +1248,10 @@ public abstract class BaseComponent implements IElementIdentifier {
                 return comp;
             }
         }
-        
+
         return null;
     }
-    
+
     /**
      * Returns a subcomponent identifier.
      *
@@ -1266,7 +1261,7 @@ public abstract class BaseComponent implements IElementIdentifier {
     public SubComponent sub(String subId) {
         return new SubComponent(this, subId);
     }
-    
+
     /**
      * Causes one or more events to be forwarded. Multiple entries must be separated by a space.
      *
@@ -1283,37 +1278,37 @@ public abstract class BaseComponent implements IElementIdentifier {
     @PropertySetter(value = "forward", defer = true)
     private void setForward(String forwards) {
         forwards = trimify(forwards);
-        
+
         if (forwards != null) {
             for (String forward : forwards.split("\\ ")) {
                 if (!forward.isEmpty()) {
                     int i = forward.indexOf("=");
-                    
+
                     if (i <= 0) {
                         throw new IllegalArgumentException("Illegal forward directive:  " + forward);
                     }
-                    
+
                     String original = forward.substring(0, i);
                     forward = forward.substring(i + 1);
                     i = forward.lastIndexOf(".");
                     String name = i == -1 ? null : forward.substring(0, i);
                     forward = forward.substring(i + 1);
                     BaseComponent target = name == null ? this : findByName(name);
-                    
+
                     if (target == null) {
                         throw new ComponentException(this, "No component named \"%s\" found", name);
                     }
-                    
+
                     if (forward.isEmpty()) {
                         throw new IllegalArgumentException("No forward event specified");
                     }
-                    
+
                     addEventForward(original, target, forward);
                 }
             }
         }
     }
-    
+
     /**
      * Adds an event forward. An event forward forwards an event of the specified type received by
      * this component to another component, optionally with a different event type.
@@ -1325,7 +1320,7 @@ public abstract class BaseComponent implements IElementIdentifier {
     public void addEventForward(String eventType, BaseComponent target, String forwardType) {
         addEventListener(eventType, createForwardListener(eventType, target, forwardType));
     }
-    
+
     /**
      * Adds an event forward. An event forward forwards an event of the specified type received by
      * this component to another component, optionally with a different event type.
@@ -1338,7 +1333,7 @@ public abstract class BaseComponent implements IElementIdentifier {
         String eventType = getEventType(eventClass);
         addEventListener(eventType, createForwardListener(eventType, target, forwardType));
     }
-    
+
     /**
      * Removes an event forward, if one exists.
      *
@@ -1349,7 +1344,7 @@ public abstract class BaseComponent implements IElementIdentifier {
     public void removeEventForward(String eventType, BaseComponent target, String forwardType) {
         removeEventListener(eventType, createForwardListener(eventType, target, forwardType));
     }
-    
+
     /**
      * Removes an event forward, if one exists.
      *
@@ -1361,11 +1356,11 @@ public abstract class BaseComponent implements IElementIdentifier {
         String eventType = getEventType(eventClass);
         removeEventListener(eventType, createForwardListener(eventType, target, forwardType));
     }
-    
+
     private ForwardListener createForwardListener(String eventType, BaseComponent target, String forwardType) {
         return new ForwardListener(forwardType == null ? eventType : forwardType, target == null ? this : target);
     }
-    
+
     /**
      * Returns true if this component has any listeners registered for the specified event type.
      *
@@ -1375,7 +1370,7 @@ public abstract class BaseComponent implements IElementIdentifier {
     public boolean hasEventListener(String eventType) {
         return eventListeners.hasListeners(eventType);
     }
-    
+
     /**
      * Returns true if this component has any listeners registered for the specified event type.
      *
@@ -1385,7 +1380,7 @@ public abstract class BaseComponent implements IElementIdentifier {
     public boolean hasEventListener(Class<? extends Event> eventClass) {
         return hasEventListener(getEventType(eventClass));
     }
-    
+
     /**
      * Adds an event listener.
      *
@@ -1395,7 +1390,7 @@ public abstract class BaseComponent implements IElementIdentifier {
     public void addEventListener(String eventType, IEventListener eventListener) {
         updateEventListener(eventType, eventListener, true, true);
     }
-    
+
     /**
      * Adds an event listener.
      *
@@ -1405,7 +1400,7 @@ public abstract class BaseComponent implements IElementIdentifier {
     public void addEventListener(Class<? extends Event> eventClass, IEventListener eventListener) {
         updateEventListener(eventClass, eventListener, true, true);
     }
-    
+
     /**
      * Adds an event listener.
      *
@@ -1418,7 +1413,7 @@ public abstract class BaseComponent implements IElementIdentifier {
     public void addEventListener(String eventType, IEventListener eventListener, boolean syncToClient) {
         updateEventListener(eventType, eventListener, true, syncToClient);
     }
-    
+
     /**
      * Adds an event listener.
      *
@@ -1431,7 +1426,7 @@ public abstract class BaseComponent implements IElementIdentifier {
     public void addEventListener(Class<? extends Event> eventClass, IEventListener eventListener, boolean syncToClient) {
         updateEventListener(eventClass, eventListener, true, syncToClient);
     }
-    
+
     /**
      * Removes an event listener.
      *
@@ -1441,7 +1436,7 @@ public abstract class BaseComponent implements IElementIdentifier {
     public void removeEventListener(String eventType, IEventListener eventListener) {
         updateEventListener(eventType, eventListener, false, true);
     }
-    
+
     /**
      * Removes an event listener.
      *
@@ -1451,7 +1446,7 @@ public abstract class BaseComponent implements IElementIdentifier {
     public void removeEventListener(Class<? extends Event> eventClass, IEventListener eventListener) {
         updateEventListener(eventClass, eventListener, false, true);
     }
-    
+
     /**
      * Removes an event listener.
      *
@@ -1464,7 +1459,7 @@ public abstract class BaseComponent implements IElementIdentifier {
     public void removeEventListener(String eventType, IEventListener eventListener, boolean syncToClient) {
         updateEventListener(eventType, eventListener, false, syncToClient);
     }
-    
+
     /**
      * Removes an event listener.
      *
@@ -1477,35 +1472,35 @@ public abstract class BaseComponent implements IElementIdentifier {
     public void removeEventListener(Class<? extends Event> eventClass, IEventListener eventListener, boolean syncToClient) {
         updateEventListener(eventClass, eventListener, false, syncToClient);
     }
-    
+
     private void updateEventListener(Class<? extends Event> eventClass, IEventListener eventListener, boolean register,
                                      boolean syncToClient) {
         updateEventListener(getEventType(eventClass), eventListener, register, syncToClient);
-        
+
     }
-    
+
     private void updateEventListener(String eventTypes, IEventListener eventListener, boolean register,
                                      boolean syncToClient) {
         for (String eventType : eventTypes.split("\\ ")) {
             eventType = EventUtil.stripOn(eventType);
             boolean before = eventListeners.hasListeners(eventType);
-            
+
             if (register) {
                 eventListeners.add(eventType, eventListener);
             } else {
                 eventListeners.remove(eventType, eventListener);
             }
-            
+
             if (syncToClient && before != eventListeners.hasListeners(eventType)) {
                 syncEventListeners(eventType, before);
             }
         }
     }
-    
+
     private void syncEventListeners(String eventType, boolean remove) {
         invoke("forwardToServer", eventType, remove);
     }
-    
+
     /**
      * Returns the event type given its implementation class, throwing an exception if not a
      * concrete class.
@@ -1515,14 +1510,14 @@ public abstract class BaseComponent implements IElementIdentifier {
      */
     private String getEventType(Class<? extends Event> eventClass) {
         String eventType = EventUtil.getEventType(eventClass);
-        
+
         if (eventType == null) {
             throw new IllegalArgumentException("Not a concrete event type: " + eventClass);
         }
-        
+
         return eventType;
     }
-    
+
     /**
      * Send an event to this component's registered event listeners.
      *
@@ -1531,7 +1526,7 @@ public abstract class BaseComponent implements IElementIdentifier {
     public void fireEvent(String eventType) {
         fireEvent(EventUtil.toEvent(eventType));
     }
-    
+
     /**
      * Send an event to this component's registered event listeners.
      *
@@ -1540,26 +1535,46 @@ public abstract class BaseComponent implements IElementIdentifier {
     public void fireEvent(Event event) {
         eventListeners.invoke(event);
     }
-    
+
     /**
      * Setter for on* event handlers.
      *
-     * @param onHandler Value as &lt;eventName&gt; \n &lt;script&gt;
+     * @param eventName The event name.
+     * @param value Either a script component, a script string, or an event listener.
      */
     @PropertySetter("#on")
-    private void setOnHandler(String onHandler) {
-        String[] pcs = onHandler.split("\n", 2);
-        IScriptLanguage lang = ScriptRegistry.getInstance().get("groovy");
-        IParsedScript script = lang.parse(pcs[1]);
-        addEventListener(pcs[0], (event) -> {
+    private void setOnHandler(String eventName, Object value) {
+        BaseScriptComponent script;
+
+        if (value instanceof IEventListener) {
+            addEventListener(eventName, (IEventListener) value);
+            return;
+        }
+        
+        if (value instanceof BaseScriptComponent) {
+            script = (BaseScriptComponent) value;
+        } else if (value instanceof String) {
+            script = new ServerScript("groovy", value.toString());
+            script.setMode(ExecutionMode.MANUAL);
+        } else {
+            throw new ComponentException(this, "Illegal type (%s) for event handler \"%s\"", value.getClass(), eventName);
+        }
+
+        addEventListener(eventName, (event) -> {
+            if (script.getPage() == null) {
+                script.setParent(getPage());
+            } else {
+                script.validatePage(getPage());
+            }
+
             Map<String, Object> variables = new HashMap<>();
-            variables.put(lang.getSelf(), this);
+            variables.put(script.getSelf(), this);
+            variables.put("controller", findAttribute("@controller"));
             variables.put("event", event);
-            variables.put("controller", this.findAttribute("_controller"));
-            script.run(variables);
+            script.execute(variables);
         });
     }
-
+    
     /**
      * Send an event to all the ancestors of this component. Event propagation stops if any
      * recipient invokes the <code>stopPropagation</code> method on the event.
@@ -1569,13 +1584,13 @@ public abstract class BaseComponent implements IElementIdentifier {
      */
     public void notifyAncestors(Event event, boolean includeThis) {
         BaseComponent next = includeThis ? this : getParent();
-        
+
         while (next != null && !event.isStopped()) {
             next.fireEvent(event);
             next = next.getParent();
         }
     }
-    
+
     /**
      * Send an event to all the descendants of this component using a depth-first traversal. Event
      * propagation stops if any recipient invokes the <code>stopPropagation</code> method on the
@@ -1588,12 +1603,12 @@ public abstract class BaseComponent implements IElementIdentifier {
         for (BaseComponent child : children) {
             child.notifyDescendants(event, true);
         }
-        
+
         if (includeThis && !event.isStopped()) {
             fireEvent(event);
         }
     }
-    
+
     /**
      * Wires a controller's annotated components and event handlers, using this component to resolve
      * name references.
@@ -1607,7 +1622,7 @@ public abstract class BaseComponent implements IElementIdentifier {
         if (controller == null) {
             throw new ComponentException("Controller is null or could not be resolved.");
         }
-        
+
         if (controller instanceof String) {
             try {
                 controller = "self".equals(controller) ? this : Class.forName((String) controller).newInstance();
@@ -1615,16 +1630,16 @@ public abstract class BaseComponent implements IElementIdentifier {
                 throw MiscUtil.toUnchecked(e);
             }
         }
-        
+
         WiredComponentScanner.wire(controller, this);
         EventHandlerScanner.wire(controller, this);
-        setAttribute("_controller", controller);
-
+        setAttribute("@controller", controller);
+        
         if (controller instanceof IAutoWired) {
             ((IAutoWired) controller).afterInitialized(this);
         }
     }
-
+    
     /**
      * Override to cause a UI component to be brought to the forefront of the UI.
      */
@@ -1633,7 +1648,7 @@ public abstract class BaseComponent implements IElementIdentifier {
             getParent().bringToFront();
         }
     }
-    
+
     /**
      * Converts empty string to null.
      *
@@ -1643,7 +1658,7 @@ public abstract class BaseComponent implements IElementIdentifier {
     protected String nullify(String value) {
         return value == null || value.isEmpty() ? null : value;
     }
-    
+
     /**
      * Trims whitespace from a string and nullifies it.
      *
@@ -1653,7 +1668,7 @@ public abstract class BaseComponent implements IElementIdentifier {
     protected String trimify(String value) {
         return value == null ? null : nullify(value.trim());
     }
-    
+
     /**
      * Returns the input value if it is not null, or the default value otherwise.
      *
@@ -1665,7 +1680,7 @@ public abstract class BaseComponent implements IElementIdentifier {
     protected <T> T defaultify(T value, T deflt) {
         return value == null ? deflt : value;
     }
-    
+
     /**
      * Returns true if two objects are equal, allowing for null values.
      *
@@ -1676,7 +1691,7 @@ public abstract class BaseComponent implements IElementIdentifier {
     protected boolean areEqual(Object obj1, Object obj2) {
         return ObjectUtils.equals(obj1, obj2);
     }
-    
+
     /**
      * Returns the data object associated with the component.
      *
@@ -1686,7 +1701,7 @@ public abstract class BaseComponent implements IElementIdentifier {
     public Object getData() {
         return data;
     }
-    
+
     /**
      * Returns the data object associated with the component if it is of the specified type;
      * otherwise returns null.
@@ -1699,7 +1714,7 @@ public abstract class BaseComponent implements IElementIdentifier {
     public <T> T getData(Class<T> type) {
         return type.isInstance(data) ? (T) data : null;
     }
-    
+
     /**
      * Sets the data object to be associated with the component.
      *
@@ -1709,7 +1724,7 @@ public abstract class BaseComponent implements IElementIdentifier {
     public void setData(Object data) {
         this.data = data;
     }
-    
+
     /**
      * Returns the text content associated with this component, if any.
      *
@@ -1719,7 +1734,7 @@ public abstract class BaseComponent implements IElementIdentifier {
     protected String getContent() {
         return content;
     }
-    
+
     /**
      * Sets the text content associated with this component.
      *
@@ -1729,7 +1744,7 @@ public abstract class BaseComponent implements IElementIdentifier {
     protected void setContent(String content) {
         _propertyChange("content", this.content, this.content = nullify(content), contentSynced);
     }
-    
+
     /**
      * Returns true if the content property is to be synced to the client.
      *
@@ -1738,7 +1753,7 @@ public abstract class BaseComponent implements IElementIdentifier {
     protected boolean isContentSynced() {
         return contentSynced;
     }
-
+    
     /**
      * Set to true if the content property is to be synced to the client.
      *
@@ -1747,7 +1762,7 @@ public abstract class BaseComponent implements IElementIdentifier {
     protected void setContentSynced(boolean contentSynced) {
         this.contentSynced = contentSynced;
     }
-
+    
     /**
      * Handle state change events from the client. These events cause the field whose name matches
      * the state name to be directly updated with the new value. This is the principal mechanism by
@@ -1759,7 +1774,7 @@ public abstract class BaseComponent implements IElementIdentifier {
     @EventHandler(value = "statechange", syncToClient = false)
     private void _onStateChange(StatechangeEvent event) {
         String state = event.getState();
-        
+
         try {
             Field field = FieldUtils.getField(this.getClass(), state, true);
             Object oldValue = field.get(this);
@@ -1770,7 +1785,7 @@ public abstract class BaseComponent implements IElementIdentifier {
             throw new ComponentException(e, "Error updating state: " + state);
         }
     }
-    
+
     /**
      * Handle changes to published properties. If the old and new values are the same, no action is
      * taken. Otherwise, the client is notified of the new value (if syncToClient is true) and a
@@ -1786,25 +1801,25 @@ public abstract class BaseComponent implements IElementIdentifier {
         if (areEqual(oldValue, newValue)) {
             return false;
         }
-        
+
         if (syncToClient) {
             _sync(propertyName, newValue);
         }
-
+        
         if (this.hasEventListener(PropertychangeEvent.TYPE)) {
             fireEvent(new PropertychangeEvent(this, propertyName, oldValue, newValue));
         }
-        
+
         return true;
     }
-
+    
     /**
      * Returns basic information about this component for display purposes.
      */
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        
+
         //@formatter:off
         sb.append(getClass().getName())
           .append(", ")
@@ -1814,7 +1829,7 @@ public abstract class BaseComponent implements IElementIdentifier {
           .append("name: ")
           .append(name);
         //@formatter:on
-        
+
         return sb.toString();
     }
 }

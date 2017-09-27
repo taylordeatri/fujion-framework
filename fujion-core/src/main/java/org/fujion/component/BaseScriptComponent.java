@@ -20,46 +20,66 @@
  */
 package org.fujion.component;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.fujion.annotation.Component.PropertyGetter;
 import org.fujion.annotation.Component.PropertySetter;
 
 /**
  * Base for components that implement scripting support.
  */
-public class BaseScriptComponent extends BaseSourcedComponent {
+public abstract class BaseScriptComponent extends BaseSourcedComponent {
     
+    /**
+     * Controls timing of script execution.
+     */
+    public enum ExecutionMode {
+        /**
+         * Execution is immediate.
+         */
+        IMMEDIATE,
+        /**
+         * Execution is deferred. The exact timing is implementation dependent.
+         */
+        DEFER,
+        /**
+         * Execution only occurs by manual invocation.
+         */
+        MANUAL
+    }
+    
+    private ExecutionMode mode = ExecutionMode.IMMEDIATE;
+    
+    private String type;
+
     protected BaseScriptComponent(boolean contentSynced) {
         super(contentSynced);
     }
 
-    protected BaseScriptComponent(String content, boolean contentSynced) {
+    protected BaseScriptComponent(String type, String content, boolean contentSynced) {
         super(content, contentSynced);
+        setType(type);
     }
 
-    private boolean defer;
-    
-    private String type;
-
     /**
-     * Returns the defer flag. If true, script execution is deferred (the exact timing is
-     * implementation-dependent). Otherwise it is immediate.
+     * Returns the {@link ExecutionMode execution mode}.
      *
-     * @return The defer flag.
+     * @return The execution mode.
      */
-    @PropertyGetter("defer")
-    public boolean getDefer() {
-        return defer;
+    @PropertyGetter("mode")
+    public ExecutionMode getMode() {
+        return mode;
     }
     
     /**
-     * Sets the defer flag. If true, script execution is deferred (the exact timing is
-     * implementation-dependent). Otherwise it is immediate.
+     * Sets the {@link ExecutionMode execution mode}.
      *
-     * @param defer The defer flag.
+     * @param mode The execution mode.
      */
-    @PropertySetter("defer")
-    public void setDefer(boolean defer) {
-        _propertyChange("defer", this.defer, this.defer = defer, isContentSynced());
+    @PropertySetter("mode")
+    public void setMode(ExecutionMode mode) {
+        _propertyChange("mode", this.mode, this.mode = defaultify(mode, ExecutionMode.IMMEDIATE), isContentSynced());
     }
     
     /**
@@ -73,6 +93,15 @@ public class BaseScriptComponent extends BaseSourcedComponent {
     }
     
     /**
+     * Returns the variable name for "this".
+     *
+     * @return The variable name for "this".
+     */
+    public String getSelf() {
+        return "self";
+    }
+
+    /**
      * Sets the type of script.
      *
      * @param type The script type.
@@ -82,4 +111,31 @@ public class BaseScriptComponent extends BaseSourcedComponent {
         _propertyChange("type", this.type, this.type = nullify(type), isContentSynced());
     }
     
+    /**
+     * Execute the script with the specified variable values.
+     *
+     * @param variables A mapped of named variable values.
+     * @return Result of the script execution.
+     */
+    public Object execute(Map<String, Object> variables) {
+        Map<String, Object> vars = new HashMap<>();
+        vars.put(getSelf(), this);
+        
+        if (variables != null) {
+            vars.putAll(variables);
+        }
+
+        return _execute(vars);
+    }
+    
+    /**
+     * Execute the script with the default variable values.
+     *
+     * @return Result of the script execution.
+     */
+    public Object execute() {
+        return execute(null);
+    }
+    
+    protected abstract Object _execute(Map<String, Object> variables);
 }
