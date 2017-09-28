@@ -548,7 +548,7 @@ public abstract class BaseComponent implements IElementIdentifier {
      * @param child The component to check.
      * @exception ComponentException Thrown if the component fails validation.
      */
-    public void validateIsChild(BaseComponent child) {
+    protected void validateIsChild(BaseComponent child) {
         if (child != null && child.getParent() != this) {
             throw new ComponentException("Child does not belong to this parent.");
         }
