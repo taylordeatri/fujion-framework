@@ -1,0 +1,9 @@
+<window name="myouter">
+    <label name="mycomp" />
+    <div name="myinner" namespace="true">
+        <button name="mycomp" />
+        <span name="refcomp">
+            <toolbar name="mycomp2" />
+        </span>
+    </div>
+</window>

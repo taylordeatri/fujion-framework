@@ -21,14 +21,20 @@
 package org.fujion.test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
 import org.fujion.annotation.ComponentDefinition;
 import org.fujion.client.ExecutionContext;
 import org.fujion.component.BaseComponent;
+import org.fujion.component.Button;
+import org.fujion.component.Label;
 import org.fujion.component.Page;
+import org.fujion.component.Toolbar;
 import org.fujion.component.Treenode;
 import org.fujion.component.Treeview;
 import org.fujion.page.PageDefinition;
@@ -66,6 +72,26 @@ public class FujionTest extends MockTest {
         assertEquals("The Page Title", page.getTitle());
     }
 
+    @Test
+    public void testNamespace() {
+        PageDefinition pagedef = getPageDefinition("nstest.fsp");
+        BaseComponent root = pagedef.materialize(null).get(0);
+        BaseComponent ref = root.findByName("myinner");
+        assertNotNull(ref);
+        BaseComponent cmp = ref.findByName("mycomp");
+        assertTrue(cmp instanceof Button);
+        cmp = ref.findByName("^.mycomp");
+        assertTrue(cmp instanceof Label);
+        cmp = ref.findByName("mycomp2");
+        assertTrue(cmp instanceof Toolbar);
+        cmp = ref.findByName("^.mycomp2");
+        assertNull(cmp);
+        cmp = ref.findByName("^.myinner.mycomp2");
+        assertTrue(cmp instanceof Toolbar);
+        cmp = ref.findByName("^.mycomp.myinner.mycomp");
+        assertTrue(cmp instanceof Button);
+    }
+    
     private final String[] nodes = { "1.1", "2.1", "3.1", "2.2", "1.2", "1.3", "2.1", "3.1", "2.2" };
 
     @Test
