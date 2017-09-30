@@ -29,18 +29,21 @@ import org.fujion.component.Page;
  * capability on the main controller.
  */
 public class BaseController implements IAutoWired {
-
+    
     protected Page page;
 
+    protected BaseComponent root;
+    
     /**
      * Generates a log entry as each controller is initialized.
      */
     @Override
     public void afterInitialized(BaseComponent root) {
+        this.root = root;
         page = root.getPage();
         log(getClass().getName() + " initialized.");
     }
-
+    
     /**
      * Log the message to the UI.
      *
@@ -48,12 +51,12 @@ public class BaseController implements IAutoWired {
      */
     public void log(String message) {
         MainController mainController = (MainController) page.getAttribute("mainController");
-
+        
         if (mainController != null) {
             mainController.log(message);
         }
     }
-
+    
     /**
      * Logs one of two messages, depending on the condition.
      *
@@ -64,5 +67,5 @@ public class BaseController implements IAutoWired {
     public void log(boolean condition, String messageIfTrue, String messageIfFalse) {
         log(condition ? messageIfTrue : messageIfFalse);
     }
-
+    
 }

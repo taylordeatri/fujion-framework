@@ -21,46 +21,62 @@
 package org.fujion.testharness;
 
 import org.fujion.annotation.EventHandler;
+import org.fujion.annotation.WiredComponent;
+import org.fujion.component.BaseScriptComponent;
+import org.fujion.component.Combobox;
+import org.fujion.component.Comboitem;
 import org.fujion.event.Event;
 
 /**
  * Demonstration of supported server-side scripting engines.
  */
 public class ScriptsController extends BaseController {
+    
+    @WiredComponent
+    private Combobox cboScript;
 
     @EventHandler(value = "scriptExecution", target = { "jsembedded", "jsexternal" })
     private void jsExecutionHandler(Event event) {
         log(event.getData().toString());
     }
-    
+
     @EventHandler(value = "scriptExecution", target = "clojurescript")
     private void clojureExecutionHandler(Event event) {
         log("Clojure script was executed: " + event.getData());
     }
-
+    
     @EventHandler(value = "scriptExecution", target = "groovyscript")
     private void groovyExecutionHandler(Event event) {
         log("Groovy script was executed: " + event.getData());
     }
-
+    
     @EventHandler(value = "scriptExecution", target = "jrubyscript")
     private void jrubyExecutionHandler(Event event) {
         log("JRuby script was executed: " + event.getData());
     }
-
+    
     @EventHandler(value = "scriptExecution", target = "jythonscript")
     private void jythonExecutionHandler(Event event) {
         log("Jython script was executed: " + event.getData());
     }
-
+    
     @EventHandler(value = "scriptExecution", target = "rscript")
     private void renjinExecutionHandler(Event event) {
         log("Renjin script was executed: " + event.getData());
     }
-
+    
     @EventHandler(value = "scriptExecution", target = "externalscript")
     private void externalExecutionHandler(Event event) {
         log("External server script was executed: " + event.getData());
     }
+    
+    @EventHandler(value = "click", target = "btnScript")
+    private void btnScriptClickHandler() {
+        Comboitem item = cboScript.getSelectedItem();
 
+        if (item != null) {
+            BaseScriptComponent script = root.findByName(item.getValue(), BaseScriptComponent.class);
+            script.execute();
+        }
+    }
 }

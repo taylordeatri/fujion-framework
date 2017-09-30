@@ -30,19 +30,19 @@ import org.fujion.annotation.Component.ContentHandling;
  */
 @Component(tag = "cscript", widgetClass = "Script", content = ContentHandling.AS_ATTRIBUTE, parentTag = "*")
 public class ClientScript extends BaseScriptComponent {
-    
+
     public ClientScript() {
         super(true);
     }
-    
-    public ClientScript(String script) {
-        super(null, script, true);
-    }
 
+    public ClientScript(String script) {
+        super(script, true);
+    }
+    
     @Override
     protected Object _execute(Map<String, Object> variables) {
         invoke("execute", variables);
         return null;
     }
-    
+
 }

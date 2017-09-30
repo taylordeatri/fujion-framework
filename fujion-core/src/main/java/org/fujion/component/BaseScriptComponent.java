@@ -51,15 +51,12 @@ public abstract class BaseScriptComponent extends BaseSourcedComponent {
     
     private ExecutionMode mode = ExecutionMode.IMMEDIATE;
     
-    private String type;
-
     protected BaseScriptComponent(boolean contentSynced) {
         super(contentSynced);
     }
 
-    protected BaseScriptComponent(String type, String content, boolean contentSynced) {
+    protected BaseScriptComponent(String content, boolean contentSynced) {
         super(content, contentSynced);
-        setType(type);
     }
 
     /**
@@ -83,16 +80,6 @@ public abstract class BaseScriptComponent extends BaseSourcedComponent {
     }
     
     /**
-     * Returns the type of script.
-     *
-     * @return The script type.
-     */
-    @PropertyGetter("type")
-    public String getType() {
-        return type;
-    }
-    
-    /**
      * Returns the variable name for "this".
      *
      * @return The variable name for "this".
@@ -101,16 +88,6 @@ public abstract class BaseScriptComponent extends BaseSourcedComponent {
         return "self";
     }
 
-    /**
-     * Sets the type of script.
-     *
-     * @param type The script type.
-     */
-    @PropertySetter("type")
-    public void setType(String type) {
-        _propertyChange("type", this.type, this.type = nullify(type), isContentSynced());
-    }
-    
     /**
      * Execute the script with the specified variable values.
      *

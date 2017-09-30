@@ -1409,8 +1409,7 @@ define('fujion-widget', ['fujion-core', 'bootstrap', 'jquery-ui', 'jquery-scroll
 		
 		init: function() {
 			this._super();
-			this.initState({async: true, mode: 'IMMEDIATE'});
-			this._wrapper = this.resolveEL('$("#${id}").fujion$widget()._execute()');
+			this.initState({mode: 'IMMEDIATE'});
 			this._count = 0;
 		},
 		
@@ -1429,27 +1428,34 @@ define('fujion-widget', ['fujion-core', 'bootstrap', 'jquery-ui', 'jquery-scroll
 		},
 		
 		execute: function(vars) {
-			this._vars = vars;
-			this._script ? this.widget$.text(this._wrapper) : null;
-		},
-		
-		_execute: function() {
-			var vars = this._vars || {};
-			delete this._vars;
-			this._count++;
-			var result = this._script ? this._script(vars) : null;
-			this.trigger('scriptExecution', {data: result});
+			if (this._script) {
+				this._count++;
+				this.trigger('scriptExecution', {data: this._script(vars)});
+			}
 		},
 		
 		/*------------------------------ Rendering ------------------------------*/
 		
 		afterRender: function() {
 			this._super();
-			var self = this;
 			
-			setTimeout(function() {
-				self.autoexec();
-			});
+			switch(this.getState('mode')) {
+				case 'DEFER':
+					var self = this;
+					
+					setTimeout(function() {
+						self.autoexec();
+					});
+					
+					break;
+					
+				case 'IMMEDIATE':
+					this.autoexec();
+					break;
+					
+				case 'MANUAL':
+					break;
+			}
 		},
 		
 		render$: function() {
@@ -1458,16 +1464,11 @@ define('fujion-widget', ['fujion-core', 'bootstrap', 'jquery-ui', 'jquery-scroll
 		
 		/*------------------------------ State ------------------------------*/
 		
-		async: function(v) {
-			this.attr('async', v);
-		},
-		
 		content: function(v) {
 			this.compile(v);
 		},
 		
 		mode: function(v) {
-			this.attr('defer', v === 'DEFER');
 		},
 		
 		src: function(v) {
@@ -1475,7 +1476,7 @@ define('fujion-widget', ['fujion-core', 'bootstrap', 'jquery-ui', 'jquery-scroll
 			
 			if (v) {
 				var self = this,
-					async = this.getState('async');
+					async = this.getState('mode') === 'DEFER';
 				
 				$.ajax({
 					url: v,
@@ -1485,12 +1486,7 @@ define('fujion-widget', ['fujion-core', 'bootstrap', 'jquery-ui', 'jquery-scroll
 					self.compile(script, async);
 				});
 			}
-		},
-		
-		type: function(v) {
-			this.attr('type', v);
 		}
-		
 	});
 	
 	/******************************************************************************************************************
