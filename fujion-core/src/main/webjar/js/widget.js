@@ -1417,20 +1417,20 @@ define('fujion-widget', ['fujion-core', 'bootstrap', 'jquery-ui', 'jquery-scroll
 		
 		autoexec: function() {
 			if (this._script && !this._count && this.getState('mode') !== 'MANUAL') {
-				this.execute({self: this});
+				this.execute(this, {});
 			}
 		},
 		
 		compile: function(script, run) {
 			this._count = 0;
-			this._script = script ? Function(this.resolveEL(script, '#')).bind(this) : null;
+			this._script = script ? Function('self', 'fujion', 'vars', this.resolveEL(script, '#')).bind(this) : null;
 			run ? this.autoexec() : null;
 		},
 		
-		execute: function(vars) {
+		execute: function(self, vars) {
 			if (this._script) {
 				this._count++;
-				this.trigger('scriptExecution', {data: this._script(vars)});
+				this.trigger('scriptExecution', {data: this._script(self, fujion, vars)});
 			}
 		},
 		
