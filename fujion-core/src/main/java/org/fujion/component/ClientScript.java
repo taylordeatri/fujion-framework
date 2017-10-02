@@ -26,23 +26,23 @@ import org.fujion.annotation.Component;
 import org.fujion.annotation.Component.ContentHandling;
 
 /**
- * Component wrapping script source code for client-side invocation.
+ * Component wrapping JavaScript source code for client-side invocation.
  */
 @Component(tag = "cscript", widgetClass = "Script", content = ContentHandling.AS_ATTRIBUTE, parentTag = "*")
 public class ClientScript extends BaseScriptComponent {
-    
+
     public ClientScript() {
         super(true);
     }
-    
+
     public ClientScript(String script) {
         super(script, true);
     }
-
+    
     @Override
     protected Object _execute(Map<String, Object> variables) {
         invoke("execute", variables.get(getSelf()), variables);
         return null;
     }
-    
+
 }
