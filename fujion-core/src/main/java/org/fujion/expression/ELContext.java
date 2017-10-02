@@ -38,6 +38,14 @@ public class ELContext {
     
     private final Map<String, Object> args;
 
+    /**
+     * Create an EL context.
+     *
+     * @param component The current component.
+     * @param parent The component that will become the parent.
+     * @param element The current page element.
+     * @param args The argument map passed to the materializer.
+     */
     public ELContext(BaseComponent component, BaseComponent parent, PageElement element, Map<String, Object> args) {
         this.component = component;
         this.parent = parent;
@@ -46,7 +54,15 @@ public class ELContext {
     }
 
     /**
-     * Returns a value for the named object.
+     * Returns a value for the named object. If the name is "self", the component itself is
+     * returned. Otherwise, name resolution is attempted from several sources in the following
+     * order:
+     * <ol>
+     * <li>Tag library prefixes</li>
+     * <li>The argument map passed to the materializer</li>
+     * <li>The component's attribute map</li>
+     * <li>The component's namespace</li>
+     * </ol>
      *
      * @param name The object name.
      * @return The value of the named object, or null if not found.
