@@ -122,6 +122,4 @@ class PomodoroComponent extends Component {
 
 //Must export component to be instantiated as ReactComponent
 
-let ReactComponent = PomodoroComponent;
-
-export { ReactComponent };
+export { PomodoroComponent as ReactComponent };

@@ -58,8 +58,7 @@ class PomodoroComponent {
 
 // Must export component to be bootstrapped as AngularComponent
 
-let AngularComponent = PomodoroComponent;
-export { AngularComponent };
+export { PomodoroComponent as AngularComponent };
   
 /* Any additional metadata to be passed to the application module during bootstrapping
  * may be exported as in the following example:
