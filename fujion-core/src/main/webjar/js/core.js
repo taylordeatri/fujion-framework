@@ -268,7 +268,7 @@ define('fujion-core', ['jquery', 'jquery-ui', 'lodash'], function($) {
 		}
 	},
 	
-	/*------------------------------ Websocket Support ------------------------------*/
+	/*------------------------------ WebSocket Support ------------------------------*/
 	
 	ws: {
 		_init: function(options) {
