@@ -1,13 +1,14 @@
 'use strict';
 
-define('${ffwUCC}', [
+define('${artifactId}', [
 	'fujion-core', 
-	'fujion-widget'
+	'fujion-widget',
+	'${artifactId}-css'
 	], 
 	
 	function(fujion, Widget) { 
 	
-	Widget.${ffwUCC} = Widget.UIWidget.extend({
+	var wclass = Widget.UIWidget.extend({
 	
 		/*------------------------------ Containment ------------------------------*/
 
@@ -24,12 +25,12 @@ define('${ffwUCC}', [
 		/*------------------------------ Rendering ------------------------------*/
 		
 		render$: function() {
-			return $('<div/>');
+			return $('<label>${ffwName}</label>');
 		},
 		
 		/*------------------------------ State ------------------------------*/
 		
 	});
 
-	return fujion.widget;
+	return Widget.addon('${package}', '${ffwUCC}', wclass);
 });

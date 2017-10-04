@@ -15,11 +15,15 @@
 	<name>${ffwName}</name>
 	
 	<properties>
-		<!-- Uncomment and update these properties to package as a WebJar -->
-		<!-- <webjar.name>${artifactId}</webjar.name> -->
-		<!-- <systemjs> -->
-		<!--  -->
-		<!-- </systemjs> -->
+		<webjar.name>${artifactId}</webjar.name>
+		<systemjs>
+		{
+			'paths': {
+				'${artifactId}': 'js/${ffwLCC}',
+				'${artifactId}-css': 'css/${ffwLCC}'
+			}
+		}
+		</systemjs>
 	</properties>
 	
 	<dependencies>
@@ -27,6 +31,18 @@
 			<groupId>org.fujion</groupId>
 			<artifactId>fujion-core</artifactId>
 			<version>${ffwVersion}</version>
+		</dependency>
+		<!-- Testing -->
+		<dependency>
+			<groupId>org.fujion</groupId>
+			<artifactId>fujion-test</artifactId>
+			<version>${ffwVersion}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 </project>

@@ -3,6 +3,8 @@
 #set( $symbol_escape = '\' )
 package ${package};
 
+import java.util.Map;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -19,4 +21,10 @@ public class ${ffwUCC}Component extends BaseComponent {
 	public ${ffwUCC}Component() {
 	}
 	
+    @Override
+    protected void _initProps(Map<String, Object> props) {
+        props.put("wclazz", "${artifactId}");
+        super._initProps(props);
+    }
+
 }
