@@ -8,11 +8,8 @@
 		http://maven.apache.org/xsd/archetype-descriptor-1.0.0.xsd">
 	
 	<requiredProperties>
-		<requiredProperty key="displayName"  >
+		<requiredProperty key="displayName">
 			<!-- Descriptive Name -->
-		</requiredProperty>
-		<requiredProperty key="className">
-			<!-- Use Camel Case Name : No Spaces -->
 		</requiredProperty>
 		<requiredProperty key="version">
 			<!-- Project Version -->
@@ -31,13 +28,7 @@
 			<directory>src/main/resources</directory>
 		</fileSet>
 		<fileSet filtered="true" packaged="false" encoding="UTF-8">
-			<directory>src/main/webjar</directory>
-		</fileSet>
-		<fileSet filtered="true" packaged="true" encoding="UTF-8">
-			<directory>src/test/java</directory>
-		</fileSet>
-		<fileSet filtered="true" packaged="false" encoding="UTF-8">
-			<directory>src/test/resources</directory>
+			<directory>src/main/webapp</directory>
 		</fileSet>
 	</fileSets>
 </archetype-descriptor>
