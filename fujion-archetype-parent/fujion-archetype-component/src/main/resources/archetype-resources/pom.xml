@@ -18,7 +18,7 @@
 	
 	<groupId>${groupId}</groupId>
 	<artifactId>${artifactId}</artifactId>
-	<version>${version}</version>
+	<version>1.0.0-SNAPSHOT</version>
 	<name>${displayName}</name>
 	
 	<properties>
@@ -26,8 +26,8 @@
 		<systemjs>
 		{
 			'paths': {
-				'${artifactId}': 'js/${className}',
-				'${artifactId}-css': 'css/${className}'
+				'${artifactId}': 'js/${classname}',
+				'${artifactId}-css': 'css/${classname}'
 			}
 		}
 		</systemjs>

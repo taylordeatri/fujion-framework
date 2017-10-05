@@ -1,10 +1,3 @@
-#set( $symbol_pound = '#' )
-#set( $symbol_dollar = '$' )
-#set( $symbol_escape = '\' )
-#set( $CLASSNAME = $className.toUpperCase() )
-#set( $classname = $className.toLowerCase() )
-#set( $ClassName = $className.substring(0,1).toUpperCase() + $className.substring(1) )
-#set( $className = $className.substring(0,1).toLowerCase() + $className.substring(1) )
 package ${package};
 
 import java.util.Map;
@@ -20,7 +13,7 @@ import org.fujion.component.BaseComponent;
 @Component(tag = "${classname}", widgetModule = "${artifactId}", widgetClass = "${ClassName}", parentTag = "*")
 public class ${ClassName}Component extends BaseComponent {
 
-	private static final Log log = LogFactory.getLog(#ucc()Component.class);
+	private static final Log log = LogFactory.getLog(${ClassName}Component.class);
 
 	public ${ClassName}Component() {
 	}
