@@ -8,19 +8,13 @@
 		http://maven.apache.org/xsd/archetype-descriptor-1.0.0.xsd">
 	
 	<requiredProperties>
-		<requiredProperty key="ffwName"  >
+		<requiredProperty key="displayName"  >
 			<!-- Descriptive Name -->
 		</requiredProperty>
-		<requiredProperty key="ffwUCC">
-			<!-- Upper Camel Case Name : No Spaces -->
+		<requiredProperty key="className">
+			<!-- Use Camel Case Name : No Spaces -->
 		</requiredProperty>
-		<requiredProperty key="ffwLCC">
-			<!-- Lower Camel Case Name : No Spaces -->
-		</requiredProperty>
-		<requiredProperty key="ffwLC">
-			<!-- Lower Case Name : No Spaces -->
-		</requiredProperty>
-		<requiredProperty key="ffwVersion">
+		<requiredProperty key="fujionVersion">
 			<!-- Fujion Framework Version -->
 		</requiredProperty>
 	</requiredProperties>

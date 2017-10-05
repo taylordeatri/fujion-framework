@@ -1,3 +1,10 @@
+#set( $symbol_pound = '#' )
+#set( $symbol_dollar = '$' )
+#set( $symbol_escape = '\' )
+#set( $CLASSNAME = $className.toUpperCase() )
+#set( $classname = $className.toLowerCase() )
+#set( $ClassName = $className.substring(0,1).toUpperCase() + $className.substring(1) )
+#set( $className = $className.substring(0,1).toLowerCase() + $className.substring(1) )
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -6,21 +13,21 @@
 	<parent>
 		<groupId>org.fujion</groupId>
 		<artifactId>fujion-parent</artifactId>
-		<version>${ffwVersion}</version>
+		<version>${fujionVersion}</version>
 	</parent>
 	
 	<groupId>${groupId}</groupId>
 	<artifactId>${artifactId}</artifactId>
 	<version>${version}</version>
-	<name>${ffwName}</name>
+	<name>${displayName}</name>
 	
 	<properties>
 		<webjar.name>${artifactId}</webjar.name>
 		<systemjs>
 		{
 			'paths': {
-				'${artifactId}': 'js/${ffwLCC}',
-				'${artifactId}-css': 'css/${ffwLCC}'
+				'${artifactId}': 'js/${className}',
+				'${artifactId}-css': 'css/${className}'
 			}
 		}
 		</systemjs>
@@ -30,13 +37,13 @@
 		<dependency>
 			<groupId>org.fujion</groupId>
 			<artifactId>fujion-core</artifactId>
-			<version>${ffwVersion}</version>
+			<version>${fujionVersion}</version>
 		</dependency>
 		<!-- Testing -->
 		<dependency>
 			<groupId>org.fujion</groupId>
 			<artifactId>fujion-test</artifactId>
-			<version>${ffwVersion}</version>
+			<version>${fujionVersion}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
