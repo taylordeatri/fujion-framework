@@ -76,7 +76,7 @@ public class Slider extends BaseUIComponent {
      */
     @PropertySetter("value")
     public void setValue(int value) {
-        _propertyChange("value", this.value, this.value = value, true);
+        propertyChange("value", this.value, this.value = value, true);
     }
     
     /**
@@ -96,7 +96,7 @@ public class Slider extends BaseUIComponent {
      */
     @PropertySetter("maxvalue")
     public void setMaxValue(int maxvalue) {
-        _propertyChange("maxvalue", this.maxvalue, this.maxvalue = maxvalue, true);
+        propertyChange("maxvalue", this.maxvalue, this.maxvalue = maxvalue, true);
     }
     
     /**
@@ -116,7 +116,7 @@ public class Slider extends BaseUIComponent {
      */
     @PropertySetter("minvalue")
     public void setMinValue(int minvalue) {
-        _propertyChange("minvalue", this.minvalue, this.minvalue = minvalue, true);
+        propertyChange("minvalue", this.minvalue, this.minvalue = minvalue, true);
     }
     
     /**
@@ -136,7 +136,7 @@ public class Slider extends BaseUIComponent {
      */
     @PropertySetter("orientation")
     public void setOrientation(Orientation orientation) {
-        _propertyChange("orientation", this.orientation, this.orientation = defaultify(orientation, Orientation.HORIZONTAL),
+        propertyChange("orientation", this.orientation, this.orientation = defaultify(orientation, Orientation.HORIZONTAL),
             true);
     }
     
@@ -160,7 +160,7 @@ public class Slider extends BaseUIComponent {
     @PropertySetter("step")
     public void setStep(int step) {
         Assert.isTrue(step > 0, "Step value must be greater than zero.");
-        _propertyChange("step", this.step, this.step = step, true);
+        propertyChange("step", this.step, this.step = step, true);
     }
 
     /**
@@ -182,7 +182,7 @@ public class Slider extends BaseUIComponent {
      */
     @PropertySetter("synchronized")
     protected void setSynchronized(boolean synced) {
-        _propertyChange("synced", this.synced, this.synced = synced, true);
+        propertyChange("synced", this.synced, this.synced = synced, true);
     }
 
     /**

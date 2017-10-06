@@ -75,7 +75,7 @@ public class MessagePane extends BaseUIComponent {
      * @param title The title bar text.
      */
     public void setTitle(String title) {
-        _propertyChange("title", this.title, this.title = nullify(title), true);
+        propertyChange("title", this.title, this.title = nullify(title), true);
     }
 
     /**
@@ -95,7 +95,7 @@ public class MessagePane extends BaseUIComponent {
      * @param duration The duration, in milliseconds, that the message will be displayed.
      */
     public void setDuration(int duration) {
-        _propertyChange("duration", this.duration, this.duration = duration, true);
+        propertyChange("duration", this.duration, this.duration = duration, true);
     }
 
     /**
@@ -134,7 +134,7 @@ public class MessagePane extends BaseUIComponent {
      * @param actionable Set to true to make the message actionable.
      */
     public void setActionable(boolean actionable) {
-        _propertyChange("actionable", this.actionable, this.actionable = actionable, true);
+        propertyChange("actionable", this.actionable, this.actionable = actionable, true);
     }
 
     /**

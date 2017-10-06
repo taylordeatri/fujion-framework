@@ -66,7 +66,7 @@ public class Treeview extends BaseUIComponent implements Iterable<Treenode>, ISu
      */
     @PropertySetter("showRoot")
     public void setShowRoot(boolean showRoot) {
-        _propertyChange("showRoot", this.showRoot, this.showRoot = showRoot, true);
+        propertyChange("showRoot", this.showRoot, this.showRoot = showRoot, true);
     }
 
     /**
@@ -86,7 +86,7 @@ public class Treeview extends BaseUIComponent implements Iterable<Treenode>, ISu
      */
     @PropertySetter("showLines")
     public void setShowLines(boolean showLines) {
-        _propertyChange("showLines", this.showLines, this.showLines = showLines, true);
+        propertyChange("showLines", this.showLines, this.showLines = showLines, true);
     }
 
     /**
@@ -110,7 +110,7 @@ public class Treeview extends BaseUIComponent implements Iterable<Treenode>, ISu
      */
     @PropertySetter("showToggles")
     public void setShowToggles(boolean showToggles) {
-        _propertyChange("showToggles", this.showToggles, this.showToggles = showToggles, true);
+        propertyChange("showToggles", this.showToggles, this.showToggles = showToggles, true);
     }
 
     /**

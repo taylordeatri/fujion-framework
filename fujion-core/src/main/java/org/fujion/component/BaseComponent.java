@@ -280,7 +280,7 @@ public abstract class BaseComponent implements IElementIdentifier {
         if (!areEqual(name = nullify(name), this.name)) {
             validateName(name);
             nameIndex.remove(this);
-            _propertyChange("name", this.name, this.name = name, true);
+            propertyChange("name", this.name, this.name = name, true);
             nameIndex.add(this);
         }
     }
@@ -1039,7 +1039,7 @@ public abstract class BaseComponent implements IElementIdentifier {
         this.page = page;
         page.registerComponent(this, true);
         Map<String, Object> props = new HashMap<>();
-        _initProps(props);
+        initProps(props);
         page.getSynchronizer().createWidget(parent, props, inits);
         inits = null;
 
@@ -1102,7 +1102,7 @@ public abstract class BaseComponent implements IElementIdentifier {
      *
      * @param props Properties for widget factory.
      */
-    protected void _initProps(Map<String, Object> props) {
+    protected void initProps(Map<String, Object> props) {
         props.put("id", id);
         props.put("wclass", componentDefinition.getWidgetClass());
         props.put("wmodule", componentDefinition.getWidgetModule());
@@ -1116,7 +1116,7 @@ public abstract class BaseComponent implements IElementIdentifier {
      * @param state The state name.
      * @param value The state value.
      */
-    protected void _sync(String state, Object value) {
+    protected void sync(String state, Object value) {
         if (!dead) {
             if (getPage() == null) {
                 if (inits == null) {
@@ -1818,7 +1818,7 @@ public abstract class BaseComponent implements IElementIdentifier {
      */
     @PropertySetter("#text")
     protected void setContent(String content) {
-        _propertyChange("content", this.content, this.content = nullify(content), contentSynced);
+        propertyChange("content", this.content, this.content = nullify(content), contentSynced);
     }
 
     /**
@@ -1856,7 +1856,7 @@ public abstract class BaseComponent implements IElementIdentifier {
             Object oldValue = field.get(this);
             Object newValue = ConvertUtil.convert(event.getValue(), field.getType(), this);
             field.set(this, newValue);
-            _propertyChange(state, oldValue, newValue, false);
+            propertyChange(state, oldValue, newValue, false);
         } catch (Exception e) {
             throw new ComponentException(e, "Error updating state: " + state);
         }
@@ -1873,13 +1873,13 @@ public abstract class BaseComponent implements IElementIdentifier {
      * @param syncToClient If true, notify client of change.
      * @return True if property value changed.
      */
-    protected boolean _propertyChange(String propertyName, Object oldValue, Object newValue, boolean syncToClient) {
+    protected boolean propertyChange(String propertyName, Object oldValue, Object newValue, boolean syncToClient) {
         if (areEqual(oldValue, newValue)) {
             return false;
         }
 
         if (syncToClient) {
-            _sync(propertyName, newValue);
+            sync(propertyName, newValue);
         }
         
         if (this.hasEventListener(PropertychangeEvent.TYPE)) {

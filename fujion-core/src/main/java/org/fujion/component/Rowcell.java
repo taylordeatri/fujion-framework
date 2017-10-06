@@ -53,7 +53,7 @@ public class Rowcell extends BaseLabeledComponent<BaseLabeledComponent.LabelPosi
      */
     @PropertySetter("colspan")
     public void setColspan(int colspan) {
-        _propertyChange("colspan", this.colspan, this.colspan = colspan, true);
+        propertyChange("colspan", this.colspan, this.colspan = colspan, true);
     }
 
     /**
@@ -73,7 +73,7 @@ public class Rowcell extends BaseLabeledComponent<BaseLabeledComponent.LabelPosi
      */
     @PropertySetter("rowspan")
     public void setRowspan(int rowspan) {
-        _propertyChange("rowspan", this.rowspan, this.rowspan = rowspan, true);
+        propertyChange("rowspan", this.rowspan, this.rowspan = rowspan, true);
     }
 
 }

@@ -56,7 +56,7 @@ public abstract class BaseLabeledImageComponent<P extends BaseLabeledComponent.I
      */
     @PropertySetter("image")
     public void setImage(String image) {
-        _propertyChange("image", this.image, this.image = nullify(image), true);
+        propertyChange("image", this.image, this.image = nullify(image), true);
     }
 
 }

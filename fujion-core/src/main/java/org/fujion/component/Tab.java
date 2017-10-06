@@ -73,7 +73,7 @@ public class Tab extends BaseLabeledImageComponent<BaseLabeledComponent.LabelPos
      */
     @PropertySetter("closable")
     public void setClosable(boolean closable) {
-        _propertyChange("closable", this.closable, this.closable = closable, true);
+        propertyChange("closable", this.closable, this.closable = closable, true);
     }
 
     /**
@@ -125,7 +125,7 @@ public class Tab extends BaseLabeledImageComponent<BaseLabeledComponent.LabelPos
      * @param notifyParent If true, notify the parent tab view of the status change.
      */
     protected void _setSelected(boolean selected, boolean notifyParent) {
-        if (_propertyChange("selected", this.selected, this.selected = selected, true)) {
+        if (propertyChange("selected", this.selected, this.selected = selected, true)) {
             if (notifyParent && getParent() != null) {
                 getTabview().setSelectedTab(selected ? this : null);
             }
@@ -206,7 +206,7 @@ public class Tab extends BaseLabeledImageComponent<BaseLabeledComponent.LabelPos
 
         if (delta != 0) {
             badgeCounter += delta;
-            _sync("badge", badgeCounter);
+            sync("badge", badgeCounter);
         }
     }
 }

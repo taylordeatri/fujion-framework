@@ -61,7 +61,7 @@ public class Textbox extends BaseInputboxComponent<String> {
      */
     @PropertySetter("masked")
     public void setMasked(boolean masked) {
-        _propertyChange("masked", this.masked, this.masked = masked, true);
+        propertyChange("masked", this.masked, this.masked = masked, true);
     }
 
     @Override

@@ -76,7 +76,7 @@ public abstract class BaseScriptComponent extends BaseSourcedComponent {
      */
     @PropertySetter("mode")
     public void setMode(ExecutionMode mode) {
-        _propertyChange("mode", this.mode, this.mode = defaultify(mode, ExecutionMode.IMMEDIATE), isContentSynced());
+        propertyChange("mode", this.mode, this.mode = defaultify(mode, ExecutionMode.IMMEDIATE), isContentSynced());
     }
     
     /**

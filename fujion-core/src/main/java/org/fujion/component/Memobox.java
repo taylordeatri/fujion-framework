@@ -90,7 +90,7 @@ public class Memobox extends BaseInputboxComponent<String> {
      */
     @PropertySetter("autoScroll")
     public void setAutoScroll(boolean autoScroll) {
-        _propertyChange("autoScroll", this.autoScroll, this.autoScroll = autoScroll, true);
+        propertyChange("autoScroll", this.autoScroll, this.autoScroll = autoScroll, true);
     }
 
     /**
@@ -112,7 +112,7 @@ public class Memobox extends BaseInputboxComponent<String> {
      */
     @PropertySetter("wrap")
     public void setWrap(WrapMode wrap) {
-        _propertyChange("wrap", this.wrap, this.wrap = defaultify(wrap, WrapMode.SOFT), true);
+        propertyChange("wrap", this.wrap, this.wrap = defaultify(wrap, WrapMode.SOFT), true);
     }
 
     /**
@@ -135,7 +135,7 @@ public class Memobox extends BaseInputboxComponent<String> {
     @PropertySetter("cols")
     public void setCols(int cols) {
         Assert.isTrue(cols > 0, "Cols must be greater than zero");
-        _propertyChange("cols", this.cols, this.cols = cols, true);
+        propertyChange("cols", this.cols, this.cols = cols, true);
     }
 
     /**
@@ -156,7 +156,7 @@ public class Memobox extends BaseInputboxComponent<String> {
     @PropertySetter("rows")
     public void setRows(int rows) {
         Assert.isTrue(rows > 0, "Rows must be greater than zero");
-        _propertyChange("rows", this.rows, this.rows = rows, true);
+        propertyChange("rows", this.rows, this.rows = rows, true);
     }
 
     @Override

@@ -60,7 +60,7 @@ public class Upload extends BaseUIComponent {
      */
     @PropertySetter("multiple")
     public void setMultiple(boolean multiple) {
-        _propertyChange("multiple", this.multiple, this.multiple = multiple, true);
+        propertyChange("multiple", this.multiple, this.multiple = multiple, true);
     }
 
     /**
@@ -87,7 +87,7 @@ public class Upload extends BaseUIComponent {
      */
     @PropertySetter("accept")
     public void setAccept(String accept) {
-        _propertyChange("accept", this.accept, this.accept = nullify(accept), true);
+        propertyChange("accept", this.accept, this.accept = nullify(accept), true);
     }
 
     /**
@@ -110,7 +110,7 @@ public class Upload extends BaseUIComponent {
     @PropertySetter("maxsize")
     public void setMaxsize(int maxsize) {
         Assert.isTrue(maxsize >= 0, "maxsize must be >= 0");
-        _propertyChange("_maxsize", this.maxsize, this.maxsize = maxsize, true);
+        propertyChange("_maxsize", this.maxsize, this.maxsize = maxsize, true);
     }
 
     /**
@@ -132,7 +132,7 @@ public class Upload extends BaseUIComponent {
      */
     @PropertySetter("progress")
     public void setProgress(boolean progress) {
-        _propertyChange("_progress", this.progress, this.progress = progress, true);
+        propertyChange("_progress", this.progress, this.progress = progress, true);
     }
 
     /**

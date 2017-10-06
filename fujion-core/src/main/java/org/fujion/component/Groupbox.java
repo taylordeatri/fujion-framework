@@ -51,7 +51,7 @@ public class Groupbox extends BaseUIComponent {
      */
     @PropertySetter("title")
     public void setTitle(String title) {
-        _propertyChange("title", this.title, this.title = nullify(title), true);
+        propertyChange("title", this.title, this.title = nullify(title), true);
     }
 
 }

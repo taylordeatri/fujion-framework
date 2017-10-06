@@ -85,7 +85,7 @@ public class Toolbar extends BaseUIComponent {
      */
     @PropertySetter("alignment")
     public void setAlignment(Alignment alignment) {
-        _propertyChange("alignment", this.alignment, this.alignment = defaultify(alignment, Alignment.START), true);
+        propertyChange("alignment", this.alignment, this.alignment = defaultify(alignment, Alignment.START), true);
     }
     
     /**
@@ -105,7 +105,7 @@ public class Toolbar extends BaseUIComponent {
      */
     @PropertySetter("orientation")
     public void setOrientation(Orientation orientation) {
-        _propertyChange("orientation", this.orientation, this.orientation = defaultify(orientation, Orientation.HORIZONTAL),
+        propertyChange("orientation", this.orientation, this.orientation = defaultify(orientation, Orientation.HORIZONTAL),
             true);
     }
 }

@@ -51,7 +51,7 @@ public class Progressbar extends BaseLabeledComponent<BaseLabeledComponent.Label
      */
     @PropertySetter("value")
     public void setValue(int value) {
-        _propertyChange("value", this.value, this.value = value, true);
+        propertyChange("value", this.value, this.value = value, true);
     }
 
     /**
@@ -71,7 +71,7 @@ public class Progressbar extends BaseLabeledComponent<BaseLabeledComponent.Label
      */
     @PropertySetter("maxvalue")
     public void setMaxValue(int maxvalue) {
-        _propertyChange("maxvalue", this.maxvalue, this.maxvalue = maxvalue, true);
+        propertyChange("maxvalue", this.maxvalue, this.maxvalue = maxvalue, true);
     }
 
 }

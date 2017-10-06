@@ -296,7 +296,7 @@ public final class Page extends BaseComponent implements INamespace {
      */
     @PropertySetter("closable")
     public void setClosable(boolean closable) {
-        _propertyChange("closable", this.closable, this.closable = closable, true);
+        propertyChange("closable", this.closable, this.closable = closable, true);
     }
 
     /**
@@ -316,6 +316,6 @@ public final class Page extends BaseComponent implements INamespace {
      */
     @PropertySetter("title")
     public void setTitle(String title) {
-        _propertyChange("title", this.title, this.title = nullify(title), true);
+        propertyChange("title", this.title, this.title = nullify(title), true);
     }
 }

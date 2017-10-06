@@ -34,9 +34,9 @@ import org.fujion.annotation.Component.ContentHandling;
 public class Namespace extends Span implements INamespace {
 
     @Override
-    protected void _initProps(Map<String, Object> props) {
+    protected void initProps(Map<String, Object> props) {
         props.put("wclazz", "fujion_namespace");
-        super._initProps(props);
+        super.initProps(props);
     }
     
 }

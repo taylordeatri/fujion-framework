@@ -62,7 +62,7 @@ public abstract class BasePickerComponent<T> extends BaseInputboxComponent<T> {
      */
     @PropertySetter("showText")
     public void setShowText(boolean showText) {
-        _propertyChange("showText", this.showText, this.showText = showText, true);
+        propertyChange("showText", this.showText, this.showText = showText, true);
     }
 
     /**
@@ -84,7 +84,7 @@ public abstract class BasePickerComponent<T> extends BaseInputboxComponent<T> {
      */
     @PropertySetter("showHints")
     public void setShowHints(boolean showHints) {
-        _propertyChange("showHints", this.showHints, this.showHints = showHints, true);
+        propertyChange("showHints", this.showHints, this.showHints = showHints, true);
     }
 
     @Override

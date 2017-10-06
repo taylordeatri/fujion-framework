@@ -53,7 +53,7 @@ public class Listitem extends BaseLabeledComponent<BaseLabeledComponent.LabelPos
      * @param notifyParent If true, notify the parent of the state change.
      */
     protected void _setSelected(boolean selected, boolean notifyClient, boolean notifyParent) {
-        if (_propertyChange("selected", this.selected, this.selected = selected, notifyClient)) {
+        if (propertyChange("selected", this.selected, this.selected = selected, notifyClient)) {
             if (notifyParent && getParent() != null) {
                 getListbox()._updateSelected(this);
             }
@@ -106,7 +106,7 @@ public class Listitem extends BaseLabeledComponent<BaseLabeledComponent.LabelPos
      */
     @PropertySetter("value")
     public void setValue(String value) {
-        _propertyChange("value", this.value, this.value = value, true);
+        propertyChange("value", this.value, this.value = value, true);
     }
 
     /**

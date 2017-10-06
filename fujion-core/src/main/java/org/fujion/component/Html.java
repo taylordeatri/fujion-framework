@@ -82,7 +82,7 @@ public class Html extends BaseUIComponent {
             super.setContent(null);
         }
         
-        _propertyChange("src", this.src, this.src = src, isContentSynced());
+        propertyChange("src", this.src, this.src = src, isContentSynced());
     }
     
 }

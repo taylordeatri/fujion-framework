@@ -54,7 +54,7 @@ public class Iframe extends BaseUIComponent {
      */
     @PropertySetter("src")
     public void setSrc(String src) {
-        _propertyChange("src", this.src, this.src = nullify(src), true);
+        propertyChange("src", this.src, this.src = nullify(src), true);
     }
 
     /**
@@ -97,7 +97,7 @@ public class Iframe extends BaseUIComponent {
      */
     @PropertySetter("sandbox")
     public void setSandbox(String sandbox) {
-        _propertyChange("sandbox", this.sandbox, this.sandbox = sandbox, true);
+        propertyChange("sandbox", this.sandbox, this.sandbox = sandbox, true);
     }
 
     /**

@@ -130,7 +130,7 @@ public class Combobox extends BaseInputboxComponent<String> implements ISupports
 
     @PropertySetter("autoFilter")
     public void setAutoFilter(boolean autoFilter) {
-        _propertyChange("autoFilter", this.autoFilter, this.autoFilter = autoFilter, true);
+        propertyChange("autoFilter", this.autoFilter, this.autoFilter = autoFilter, true);
     }
 
     @Override

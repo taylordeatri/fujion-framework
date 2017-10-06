@@ -60,7 +60,7 @@ public class Checkbox extends BaseLabeledComponent<BaseLabeledComponent.LabelPos
      */
     @PropertySetter("checked")
     public void setChecked(boolean checked) {
-        _propertyChange("checked", this.checked, this.checked = checked, true);
+        propertyChange("checked", this.checked, this.checked = checked, true);
     }
 
     /**

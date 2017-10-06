@@ -126,7 +126,7 @@ public class Tabview extends BaseUIComponent {
      */
     @PropertySetter("tabPosition")
     public void setTabPosition(TabPosition tabPosition) {
-        _propertyChange("tabPosition", this.tabPosition, this.tabPosition = defaultify(tabPosition, TabPosition.TOP), true);
+        propertyChange("tabPosition", this.tabPosition, this.tabPosition = defaultify(tabPosition, TabPosition.TOP), true);
     }
     
 }

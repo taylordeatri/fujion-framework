@@ -87,8 +87,8 @@ public abstract class BaseInputComponent<T> extends BaseUIComponent {
      * @param notifyClient If true, notify the client of the change.
      */
     protected void _setValue(T value, boolean notifyClient) {
-        if (_propertyChange("value", this.value, this.value = value, false) && notifyClient) {
-            _sync("value", value == null ? null : _toClient(value));
+        if (propertyChange("value", this.value, this.value = value, false) && notifyClient) {
+            sync("value", value == null ? null : _toClient(value));
         }
     }
 

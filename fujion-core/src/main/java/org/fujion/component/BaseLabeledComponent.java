@@ -75,7 +75,7 @@ public abstract class BaseLabeledComponent<P extends BaseLabeledComponent.ILabel
     @Override
     @PropertySetter("label")
     public void setLabel(String label) {
-        _propertyChange("label", this.label, this.label = nullify(label), true);
+        propertyChange("label", this.label, this.label = nullify(label), true);
     }
 
     /**
@@ -93,7 +93,7 @@ public abstract class BaseLabeledComponent<P extends BaseLabeledComponent.ILabel
      * @param position The label position.
      */
     protected void setPosition(P position) {
-        _propertyChange("position", this.position, this.position = position, true);
+        propertyChange("position", this.position, this.position = position, true);
     }
 
 }

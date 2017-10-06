@@ -66,7 +66,7 @@ public abstract class BaseInputboxComponent<T> extends BaseInputComponent<T> {
      * @param synced The synchronization flag.
      */
     protected void setSynchronized(boolean synced) {
-        _propertyChange("synced", this.synced, this.synced = synced, true);
+        propertyChange("synced", this.synced, this.synced = synced, true);
     }
 
     /**
@@ -90,8 +90,8 @@ public abstract class BaseInputboxComponent<T> extends BaseInputComponent<T> {
      * @param minvalue The minimum allowable value. Null indicates no minimum.
      */
     public void setMinValue(T minvalue) {
-        if (_propertyChange("minvalue", this.minvalue, this.minvalue = minvalue, false)) {
-            _sync("minvalue", _toString(minvalue));
+        if (propertyChange("minvalue", this.minvalue, this.minvalue = minvalue, false)) {
+            sync("minvalue", _toString(minvalue));
         }
     }
 
@@ -116,8 +116,8 @@ public abstract class BaseInputboxComponent<T> extends BaseInputComponent<T> {
      * @param maxvalue The maximum allowable value. Null indicates no maximum.
      */
     public void setMaxValue(T maxvalue) {
-        if (_propertyChange("maxvalue", this.maxvalue, this.maxvalue = maxvalue, false)) {
-            _sync("maxvalue", _toString(maxvalue));
+        if (propertyChange("maxvalue", this.maxvalue, this.maxvalue = maxvalue, false)) {
+            sync("maxvalue", _toString(maxvalue));
         }
     }
 
@@ -138,7 +138,7 @@ public abstract class BaseInputboxComponent<T> extends BaseInputComponent<T> {
      */
     @PropertySetter("pattern")
     public void setPattern(String pattern) {
-        _propertyChange("pattern", this.pattern, this.pattern = nullify(pattern), true);
+        propertyChange("pattern", this.pattern, this.pattern = nullify(pattern), true);
     }
 
     /**
@@ -158,7 +158,7 @@ public abstract class BaseInputboxComponent<T> extends BaseInputComponent<T> {
      */
     @PropertySetter("placeholder")
     public void setPlaceholder(String placeholder) {
-        _propertyChange("placeholder", this.placeholder, this.placeholder = nullify(placeholder), true);
+        propertyChange("placeholder", this.placeholder, this.placeholder = nullify(placeholder), true);
     }
 
     /**
@@ -178,7 +178,7 @@ public abstract class BaseInputboxComponent<T> extends BaseInputComponent<T> {
      */
     @PropertySetter("maxlength")
     public void setMaxLength(int maxLength) {
-        _propertyChange("maxlength", this.maxLength, this.maxLength = NumUtil.enforceRange(maxLength, 0, 524288), true);
+        propertyChange("maxlength", this.maxLength, this.maxLength = NumUtil.enforceRange(maxLength, 0, 524288), true);
     }
 
     /**
@@ -198,7 +198,7 @@ public abstract class BaseInputboxComponent<T> extends BaseInputComponent<T> {
      */
     @PropertySetter("readonly")
     public void setReadonly(boolean readonly) {
-        _propertyChange("readonly", this.readonly, this.readonly = readonly, true);
+        propertyChange("readonly", this.readonly, this.readonly = readonly, true);
     }
 
     /**
@@ -218,7 +218,7 @@ public abstract class BaseInputboxComponent<T> extends BaseInputComponent<T> {
      */
     @PropertySetter("required")
     public void setRequired(boolean required) {
-        _propertyChange("required", this.required, this.required = required, true);
+        propertyChange("required", this.required, this.required = required, true);
     }
 
     /**

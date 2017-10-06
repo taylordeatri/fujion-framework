@@ -75,7 +75,7 @@ public abstract class BaseSourcedComponent extends BaseComponent {
             super.setContent(null);
         }
         
-        _propertyChange("src", this.src, this.src = src, isContentSynced());
+        propertyChange("src", this.src, this.src = src, isContentSynced());
     }
 
 }

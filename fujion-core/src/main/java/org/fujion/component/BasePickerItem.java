@@ -64,8 +64,8 @@ public abstract class BasePickerItem<T> extends BaseComponent {
      * @param value The new value.
      */
     public void setRawValue(T value) {
-        if (_propertyChange("value", this.value, this.value = value, false)) {
-            _sync("value", _toString(value));
+        if (propertyChange("value", this.value, this.value = value, false)) {
+            sync("value", _toString(value));
         }
     }
 

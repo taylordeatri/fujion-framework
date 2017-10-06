@@ -63,7 +63,7 @@ public class CodeMirror extends BaseInputComponent<String> {
      */
     @PropertySetter("readonly")
     public void setReadonly(boolean readonly) {
-        _propertyChange("readonly", this.readonly, this.readonly = readonly, true);
+        propertyChange("readonly", this.readonly, this.readonly = readonly, true);
     }
 
     /**
@@ -83,7 +83,7 @@ public class CodeMirror extends BaseInputComponent<String> {
      */
     @PropertySetter("placeholder")
     public void setPlaceholder(String placeholder) {
-        _propertyChange("placeholder", this.placeholder, this.placeholder = nullify(placeholder), true);
+        propertyChange("placeholder", this.placeholder, this.placeholder = nullify(placeholder), true);
     }
 
     /**
@@ -103,7 +103,7 @@ public class CodeMirror extends BaseInputComponent<String> {
      */
     @PropertySetter("mode")
     public void setMode(String mode) {
-        _propertyChange("mode", this.mode, this.mode = trimify(mode), true);
+        propertyChange("mode", this.mode, this.mode = trimify(mode), true);
     }
 
     /**
@@ -123,7 +123,7 @@ public class CodeMirror extends BaseInputComponent<String> {
      */
     @PropertySetter("lineNumbers")
     public void setLineNumbers(boolean lineNumbers) {
-        _propertyChange("lineNumbers", this.lineNumbers, this.lineNumbers = lineNumbers, true);
+        propertyChange("lineNumbers", this.lineNumbers, this.lineNumbers = lineNumbers, true);
     }
 
     @Override

@@ -160,7 +160,7 @@ public class ServerScript extends BaseScriptComponent {
             throw new IllegalArgumentException("Unknown script type: " + type);
         }
         
-        _propertyChange("type", this.type, this.type = type, false);
+        propertyChange("type", this.type, this.type = type, false);
     }
 
     /**

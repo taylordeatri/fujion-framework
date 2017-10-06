@@ -55,7 +55,7 @@ public class Timer extends BaseComponent {
      */
     @PropertySetter("interval")
     public void setInterval(long interval) {
-        _propertyChange("interval", this.interval, this.interval = interval, true);
+        propertyChange("interval", this.interval, this.interval = interval, true);
     }
 
     /**
@@ -79,7 +79,7 @@ public class Timer extends BaseComponent {
      */
     @PropertySetter("repeat")
     public void setRepeat(int repeat) {
-        _propertyChange("repeat", this.repeat, this.repeat = repeat, true);
+        propertyChange("repeat", this.repeat, this.repeat = repeat, true);
     }
 
     /**
@@ -100,7 +100,7 @@ public class Timer extends BaseComponent {
     @PropertySetter("running")
     public void setRunning(boolean running) {
         if (interval > 0) {
-            _propertyChange("running", this.running, this.running = running, true);
+            propertyChange("running", this.running, this.running = running, true);
         }
     }
 

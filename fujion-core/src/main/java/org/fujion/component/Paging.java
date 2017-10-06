@@ -119,7 +119,7 @@ public class Paging extends BaseLabeledComponent<BaseLabeledComponent.LabelPosit
      */
     @PropertySetter("currentPage")
     public void setCurrentPage(int currentPage) {
-        if (_propertyChange("currentPage", this.currentPage, this.currentPage = currentPage, true)) {
+        if (propertyChange("currentPage", this.currentPage, this.currentPage = currentPage, true)) {
             syncToPaginator();
         }
     }
@@ -141,7 +141,7 @@ public class Paging extends BaseLabeledComponent<BaseLabeledComponent.LabelPosit
      */
     @PropertySetter("pageSize")
     public void setPageSize(int pageSize) {
-        if (_propertyChange("pageSize", this.pageSize, this.pageSize = pageSize, true)) {
+        if (propertyChange("pageSize", this.pageSize, this.pageSize = pageSize, true)) {
             syncToPaginator();
         }
     }
@@ -165,7 +165,7 @@ public class Paging extends BaseLabeledComponent<BaseLabeledComponent.LabelPosit
     }
     
     private void setMaxPage(int maxPage) {
-        _propertyChange("maxPage", this.maxPage, this.maxPage = maxPage, true);
+        propertyChange("maxPage", this.maxPage, this.maxPage = maxPage, true);
     }
     
     /**

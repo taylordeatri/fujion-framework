@@ -58,7 +58,7 @@ public class Row extends BaseUIComponent {
     }
     
     protected void _setSelected(boolean selected, boolean notifyClient, boolean notifyParent) {
-        if (_propertyChange("selected", this.selected, this.selected = selected, notifyClient)) {
+        if (propertyChange("selected", this.selected, this.selected = selected, notifyClient)) {
             if (notifyParent && getParent() != null) {
                 ((Rows) getParent())._updateSelected(this);
             }

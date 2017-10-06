@@ -62,7 +62,7 @@ public class Detail extends BaseLabeledComponent<BaseLabeledComponent.LabelPosit
      */
     @PropertySetter("open")
     public void setOpen(boolean open) {
-        _propertyChange("open", this.open, this.open = open, true);
+        propertyChange("open", this.open, this.open = open, true);
     }
 
     /**

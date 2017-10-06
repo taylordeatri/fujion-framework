@@ -208,7 +208,7 @@ public class Column extends BaseLabeledImageComponent<BaseLabeledComponent.Label
      * @param notifyParent If true, update the sort column property of the parent.
      */
     protected void _setSortColumn(boolean sortColumn, boolean notifyParent) {
-        if (_propertyChange("sortColumn", this.sortColumn, this.sortColumn = sortColumn, false)) {
+        if (propertyChange("sortColumn", this.sortColumn, this.sortColumn = sortColumn, false)) {
 
             if (sortColumn) {
                 sort();
@@ -231,6 +231,6 @@ public class Column extends BaseLabeledImageComponent<BaseLabeledComponent.Label
     }
 
     private void updateClient() {
-        _sync("sortOrder", sortComparator == null ? null : sortColumn ? sortOrder : SortOrder.UNSORTED);
+        sync("sortOrder", sortComparator == null ? null : sortColumn ? sortOrder : SortOrder.UNSORTED);
     }
 }

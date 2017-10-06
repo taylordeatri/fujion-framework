@@ -87,7 +87,7 @@ public class Caption extends BaseLabeledComponent<BaseLabeledComponent.LabelPosi
      */
     @PropertySetter("alignment")
     public void setAlignment(LabelAlignment alignment) {
-        _propertyChange("alignment", this.alignment, this.alignment = defaultify(alignment, LabelAlignment.START), true);
+        propertyChange("alignment", this.alignment, this.alignment = defaultify(alignment, LabelAlignment.START), true);
     }
     
     /**
@@ -105,7 +105,7 @@ public class Caption extends BaseLabeledComponent<BaseLabeledComponent.LabelPosi
      * @param labelStyle The label style(s).
      */
     public void setLabelStyle(String labelStyle) {
-        _propertyChange("labelStyle", this.labelStyle, this.labelStyle = trimify(labelStyle), true);
+        propertyChange("labelStyle", this.labelStyle, this.labelStyle = trimify(labelStyle), true);
     }
     
     /**
@@ -123,7 +123,7 @@ public class Caption extends BaseLabeledComponent<BaseLabeledComponent.LabelPosi
      * @param labelClass The label CSS class(es).
      */
     public void setLabelClass(String labelClass) {
-        _propertyChange("labelClass", this.labelClass, this.labelClass = trimify(labelClass), true);
+        propertyChange("labelClass", this.labelClass, this.labelClass = trimify(labelClass), true);
     }
     
 }

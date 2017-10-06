@@ -150,7 +150,7 @@ public class Window extends BaseUIComponent implements INamespace {
      */
     @PropertySetter("title")
     public void setTitle(String title) {
-        _propertyChange("title", this.title, this.title = nullify(title), true);
+        propertyChange("title", this.title, this.title = nullify(title), true);
     }
 
     /**
@@ -170,7 +170,7 @@ public class Window extends BaseUIComponent implements INamespace {
      */
     @PropertySetter("image")
     public void setImage(String image) {
-        _propertyChange("image", this.image, this.image = nullify(image), true);
+        propertyChange("image", this.image, this.image = nullify(image), true);
     }
 
     /**
@@ -193,7 +193,7 @@ public class Window extends BaseUIComponent implements INamespace {
      */
     @PropertySetter("closable")
     public void setClosable(boolean closable) {
-        _propertyChange("closable", this.closable, this.closable = closable, true);
+        propertyChange("closable", this.closable, this.closable = closable, true);
     }
 
     /**
@@ -217,7 +217,7 @@ public class Window extends BaseUIComponent implements INamespace {
      */
     @PropertySetter("sizable")
     public void setSizable(boolean sizable) {
-        _propertyChange("sizable", this.sizable, this.sizable = sizable, true);
+        propertyChange("sizable", this.sizable, this.sizable = sizable, true);
     }
 
     /**
@@ -241,7 +241,7 @@ public class Window extends BaseUIComponent implements INamespace {
      */
     @PropertySetter("position")
     public void setPosition(Position position) {
-        _propertyChange("position", this.position, this.position = position, true);
+        propertyChange("position", this.position, this.position = position, true);
     }
     
     /**
@@ -263,7 +263,7 @@ public class Window extends BaseUIComponent implements INamespace {
      */
     @PropertySetter("movable")
     public void setMovable(boolean movable) {
-        _propertyChange("movable", this.movable, this.movable = movable, true);
+        propertyChange("movable", this.movable, this.movable = movable, true);
     }
 
     /**
@@ -289,7 +289,7 @@ public class Window extends BaseUIComponent implements INamespace {
      */
     @PropertySetter("maximizable")
     public void setMaximizable(boolean maximizable) {
-        _propertyChange("maximizable", this.maximizable, this.maximizable = maximizable, true);
+        propertyChange("maximizable", this.maximizable, this.maximizable = maximizable, true);
     }
 
     /**
@@ -317,7 +317,7 @@ public class Window extends BaseUIComponent implements INamespace {
      */
     @PropertySetter("minimizable")
     public void setMinimizable(boolean minimizable) {
-        _propertyChange("minimizable", this.minimizable, this.minimizable = minimizable, true);
+        propertyChange("minimizable", this.minimizable, this.minimizable = minimizable, true);
     }
 
     /**
@@ -337,7 +337,7 @@ public class Window extends BaseUIComponent implements INamespace {
      */
     @PropertySetter("mode")
     public void setMode(Mode mode) {
-        _propertyChange("mode", this.mode, this.mode = defaultify(mode, Mode.INLINE), true);
+        propertyChange("mode", this.mode, this.mode = defaultify(mode, Mode.INLINE), true);
     }
 
     /**
@@ -357,7 +357,7 @@ public class Window extends BaseUIComponent implements INamespace {
      */
     @PropertySetter("size")
     public void setSize(Size size) {
-        _propertyChange("size", this.size, this.size = defaultify(size, Size.NORMAL), true);
+        propertyChange("size", this.size, this.size = defaultify(size, Size.NORMAL), true);
     }
 
     /**

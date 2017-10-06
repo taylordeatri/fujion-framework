@@ -91,7 +91,7 @@ public class Rows extends BaseUIComponent implements ISupportsModel<Row> {
      */
     @PropertySetter("selectable")
     public void setSelectable(Selectable selectable) {
-        if (_propertyChange("selectable", this.selectable, this.selectable = defaultify(selectable, Selectable.NO), true)) {
+        if (propertyChange("selectable", this.selectable, this.selectable = defaultify(selectable, Selectable.NO), true)) {
             if (selectable != Selectable.MULTIPLE && !selected.isEmpty()) {
                 unselect(selectable == Selectable.NO ? null : getSelectedRow());
             }

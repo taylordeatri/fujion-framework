@@ -63,7 +63,7 @@ public class Listbox extends BaseUIComponent implements ISupportsModel<Listitem>
      */
     @PropertySetter("multiple")
     public void setMultiple(boolean multiple) {
-        if (_propertyChange("multiple", this.multiple, this.multiple = multiple, true)) {
+        if (propertyChange("multiple", this.multiple, this.multiple = multiple, true)) {
             if (!multiple && selected.size() > 1) {
                 unselect(null);
             }
@@ -87,7 +87,7 @@ public class Listbox extends BaseUIComponent implements ISupportsModel<Listitem>
      */
     @PropertySetter("size")
     public void setSize(int size) {
-        _propertyChange("size", this.size, this.size = size, true);
+        propertyChange("size", this.size, this.size = size, true);
     }
     
     /**

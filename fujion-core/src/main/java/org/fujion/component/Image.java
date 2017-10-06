@@ -68,7 +68,7 @@ public class Image extends BaseUIComponent {
      */
     @PropertySetter("src")
     public void setSrc(String src) {
-        _propertyChange("src", this.src, this.src = nullify(src), true);
+        propertyChange("src", this.src, this.src = nullify(src), true);
     }
 
     /**
@@ -97,6 +97,6 @@ public class Image extends BaseUIComponent {
      */
     @PropertySetter("alt")
     public void setAlt(String alt) {
-        _propertyChange("alt", this.alt, this.alt = nullify(alt), true);
+        propertyChange("alt", this.alt, this.alt = nullify(alt), true);
     }
 }

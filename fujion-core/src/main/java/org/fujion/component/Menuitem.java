@@ -53,7 +53,7 @@ public class Menuitem extends BaseMenuComponent {
      */
     @PropertySetter("checkable")
     public void setCheckable(boolean checkable) {
-        _propertyChange("checkable", this.checkable, this.checkable = checkable, true);
+        propertyChange("checkable", this.checkable, this.checkable = checkable, true);
     }
 
     /**
@@ -75,7 +75,7 @@ public class Menuitem extends BaseMenuComponent {
      */
     @PropertySetter("checked")
     public void setChecked(boolean checked) {
-        _propertyChange("checked", this.checked, this.checked = checked, true);
+        propertyChange("checked", this.checked, this.checked = checked, true);
     }
 
 }

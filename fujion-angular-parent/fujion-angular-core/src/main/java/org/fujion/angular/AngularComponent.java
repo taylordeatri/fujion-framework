@@ -50,7 +50,7 @@ public class AngularComponent extends BaseUIComponent {
      */
     @PropertySetter("src")
     public void setSrc(String src) {
-        _propertyChange("src", this.src, this.src = trimify(src), true);
+        propertyChange("src", this.src, this.src = trimify(src), true);
     }
 
     /**
