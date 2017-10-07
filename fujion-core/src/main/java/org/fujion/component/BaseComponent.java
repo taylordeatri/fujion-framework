@@ -1692,6 +1692,7 @@ public abstract class BaseComponent implements IElementIdentifier {
         EventHandlerScanner.wire(controller, this);
         controllers = controllers == null ? new ArrayList<>() : controllers;
         controllers.add(controller);
+        setAttribute("@controller", controller);
         
         if (controller instanceof IAutoWired) {
             ((IAutoWired) controller).afterInitialized(this);
@@ -1705,15 +1706,6 @@ public abstract class BaseComponent implements IElementIdentifier {
      */
     public List<Object> getControllers() {
         return controllers == null ? Collections.emptyList() : Collections.unmodifiableList(controllers);
-    }
-
-    /**
-     * Returns a reference to the last controller wired to this component.
-     *
-     * @return The last controller wired to this component, or null if none.
-     */
-    public Object getController() {
-        return controllers == null ? null : controllers.get(controllers.size() - 1);
     }
 
     /**
