@@ -1709,6 +1709,15 @@ public abstract class BaseComponent implements IElementIdentifier {
     }
 
     /**
+     * Returns a reference to the last controller wired to this component.
+     *
+     * @return The last controller wired to this component, or null if none.
+     */
+    public Object getController() {
+        return controllers == null ? null : controllers.get(controllers.size() - 1);
+    }
+
+    /**
      * Override to cause a UI component to be brought to the forefront of the UI.
      */
     public void bringToFront() {

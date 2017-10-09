@@ -32,11 +32,11 @@ import org.fujion.annotation.Component.ContentHandling;
  */
 @Component(tag = "namespace", widgetClass = "Span", content = ContentHandling.AS_CHILD, parentTag = "*", childTag = @ChildTag("*"))
 public class Namespace extends Span implements INamespace {
-
+    
     @Override
     protected void initProps(Map<String, Object> props) {
-        props.put("wclazz", "fujion_namespace");
         super.initProps(props);
+        props.put("wclazz", "fujion_namespace");
     }
-    
+
 }
