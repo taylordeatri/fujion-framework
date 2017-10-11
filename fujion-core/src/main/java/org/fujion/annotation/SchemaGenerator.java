@@ -110,7 +110,7 @@ public class SchemaGenerator {
         root.setAttributeNS(NS_VERSIONING, "vc:minVersion", v1_0_compatible ? "1.0" : "1.1");
         root.setAttribute("elementFormDefault", "qualified");
         schema.appendChild(root);
-        Element ele = createElement("simpleType", root, "name", "fujion_el");
+        Element ele = createElement("simpleType", root, "name", "el");
         ele = createElement("restriction", ele, "base", "xs:string");
         createElement("pattern", ele, "value", ".*\\$\\{.+\\}.*");
         addExtendedType("boolean", root);
@@ -216,8 +216,8 @@ public class SchemaGenerator {
     }
     
     private Element addExtendedType(String type, Element root) {
-        Element ele = createElement("simpleType", root, "name", "fujion_" + type);
-        createElement("union", ele, "memberTypes", "xs:" + type + " fsp:fujion_el");
+        Element ele = createElement("simpleType", root, "name", type);
+        createElement("union", ele, "memberTypes", "xs:" + type + " fsp:el");
         return ele;
     }
     
@@ -226,7 +226,7 @@ public class SchemaGenerator {
         Element root = attr.getOwnerDocument().getDocumentElement();
         attr.setAttribute("type", "fsp:" + name);
         Element st = createElement("simpleType", root, "name", name);
-        Element union = createElement("union", st, "memberTypes", "fsp:fujion_el");
+        Element union = createElement("union", st, "memberTypes", "fsp:el");
         st = createElement("simpleType", union);
         Element res = createElement("restriction", st);
         res.setAttribute("base", "xs:string");
@@ -238,10 +238,9 @@ public class SchemaGenerator {
     
     private String getType(Class<?> javaType) {
         String type = null;
-        type = type != null ? type : getType(javaType, "fsp:fujion_boolean", boolean.class, Boolean.class);
-        type = type != null ? type : getType(javaType, "fsp:fujion_integer", int.class, Integer.class);
-        type = type != null ? type
-                : getType(javaType, "fsp:fujion_decimal", float.class, Float.class, double.class, Double.class);
+        type = type != null ? type : getType(javaType, "fsp:boolean", boolean.class, Boolean.class);
+        type = type != null ? type : getType(javaType, "fsp:integer", int.class, Integer.class);
+        type = type != null ? type : getType(javaType, "fsp:decimal", float.class, Float.class, double.class, Double.class);
         return type != null ? type : "xs:string";
     }
     
