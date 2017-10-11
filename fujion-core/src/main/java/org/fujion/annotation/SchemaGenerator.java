@@ -110,13 +110,19 @@ public class SchemaGenerator {
         root.setAttributeNS(NS_VERSIONING, "vc:minVersion", v1_0_compatible ? "1.0" : "1.1");
         root.setAttribute("elementFormDefault", "qualified");
         schema.appendChild(root);
+        Element ele = createElement("simpleType", root, "name", "fujion_el");
+        ele = createElement("restriction", ele, "base", "xs:string");
+        createElement("pattern", ele, "value", ".*\\$\\{.+\\}.*");
+        addExtendedType("boolean", root);
+        addExtendedType("decimal", root);
+        addExtendedType("integer", root);
         
         for (ComponentDefinition def : registry) {
             if (def.getTag().startsWith("#")) {
                 continue;
             }
             
-            Element ele = createElement("element", root, "name", def.getTag());
+            ele = createElement("element", root, "name", def.getTag());
             Element ct = createElement("complexType", ele);
             
             boolean childrenAllowed = def.childrenAllowed();
@@ -209,8 +215,19 @@ public class SchemaGenerator {
         }
     }
     
+    private Element addExtendedType(String type, Element root) {
+        Element ele = createElement("simpleType", root, "name", "fujion_" + type);
+        createElement("union", ele, "memberTypes", "xs:" + type + " fsp:fujion_el");
+        return ele;
+    }
+    
     private void processEnum(Element attr, Class<?> javaType) {
-        Element st = createElement("simpleType", attr);
+        String name = findElement("element", attr).getAttribute("name") + "_" + attr.getAttribute("name");
+        Element root = attr.getOwnerDocument().getDocumentElement();
+        attr.setAttribute("type", "fsp:" + name);
+        Element st = createElement("simpleType", root, "name", name);
+        Element union = createElement("union", st, "memberTypes", "fsp:fujion_el");
+        st = createElement("simpleType", union);
         Element res = createElement("restriction", st);
         res.setAttribute("base", "xs:string");
         
@@ -221,9 +238,10 @@ public class SchemaGenerator {
     
     private String getType(Class<?> javaType) {
         String type = null;
-        type = type != null ? type : getType(javaType, "xs:boolean", boolean.class, Boolean.class);
-        type = type != null ? type : getType(javaType, "xs:integer", int.class, Integer.class);
-        type = type != null ? type : getType(javaType, "xs:decimal", float.class, Float.class, double.class, Double.class);
+        type = type != null ? type : getType(javaType, "fsp:fujion_boolean", boolean.class, Boolean.class);
+        type = type != null ? type : getType(javaType, "fsp:fujion_integer", int.class, Integer.class);
+        type = type != null ? type
+                : getType(javaType, "fsp:fujion_decimal", float.class, Float.class, double.class, Double.class);
         return type != null ? type : "xs:string";
     }
     
@@ -237,29 +255,56 @@ public class SchemaGenerator {
         return null;
     }
     
+    private Element findElement(String tag, Element ele) {
+        tag = "xs:" + tag;
+
+        while (ele != null) {
+            if (ele.getTagName().equals(tag)) {
+                return ele;
+            }
+            
+            ele = (Element) ele.getParentNode();
+        }
+        
+        return null;
+    }
+    
+    private Element createElement(String tag) {
+        return schema.createElement("xs:" + tag);
+    }
+
     private Element createElement(String tag, Element parent) {
         return createElement(tag, parent, null, null);
     }
     
     private Element createElement(String tag, Element parent, String keyName, String keyValue) {
-        Element element = schema.createElement("xs:" + tag);
-        
+        Element element = createElement(tag);
+        Element ref = null;
+
         if (keyName != null) {
-            NodeList nodes = parent.getChildNodes();
             element.setAttribute(keyName, keyValue);
+        }
+        
+        NodeList nodes = parent.getChildNodes();
+        
+        for (int i = 0, j = nodes.getLength(); i < j; i++) {
+            Element sib = (Element) nodes.item(i);
             
-            for (int i = 0, j = nodes.getLength(); i < j; i++) {
-                Element sib = (Element) nodes.item(i);
-                String val = sib.getAttribute(keyName);
-                
-                if (val != null && val.compareToIgnoreCase(keyValue) >= 0) {
-                    parent.insertBefore(element, sib);
-                    return element;
-                }
+            if (!sib.getTagName().endsWith(tag)) {
+                continue;
+            }
+            
+            String val = keyName == null ? null : sib.getAttribute(keyName);
+            
+            if (val != null && val.compareToIgnoreCase(keyValue) >= 0) {
+                ref = sib;
+                break;
+            } else {
+                ref = (Element) sib.getNextSibling();
             }
         }
         
-        parent.appendChild(element);
+        parent.insertBefore(element, ref);
         return element;
     }
 }
