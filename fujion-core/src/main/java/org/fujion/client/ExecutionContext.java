@@ -37,17 +37,17 @@ import org.springframework.util.Assert;
  * page and the session servicing the request, as well as the request itself.
  */
 public class ExecutionContext {
-
+    
     public static final String ATTR_REQUEST = "fujion_request";
-
-    private static final ThreadLocal<Map<String, Object>> context = new InheritableThreadLocal<Map<String, Object>>() {
-
+    
+    private static final ThreadLocal<Map<String, Object>> context = new ThreadLocal<Map<String, Object>>() {
+        
         @Override
         protected Map<String, Object> initialValue() {
             return new HashMap<>();
         }
     };
-
+    
     /**
      * Put a key/value pair in the thread-local map.
      *
@@ -58,7 +58,7 @@ public class ExecutionContext {
     public static Object put(String key, Object value) {
         return context.get().put(key, value);
     }
-
+    
     /**
      * Returns the value associated with a key, or null if not found.
      *
@@ -68,7 +68,7 @@ public class ExecutionContext {
     public static Object get(String key) {
         return context.get().get(key);
     }
-
+    
     /**
      * Removes a value given its key.
      *
@@ -78,21 +78,21 @@ public class ExecutionContext {
     public static Object remove(String key) {
         return context.get().remove(key);
     }
-
+    
     /**
      * Clears the thread-local map.
      */
     public static void clear() {
         context.get().clear();
     }
-
+    
     /**
      * Destroys the thread-local map.
      */
     public static void destroy() {
         context.remove();
     }
-
+    
     /**
      * Returns true if the thread-local map is empty.
      *
@@ -101,7 +101,7 @@ public class ExecutionContext {
     public static boolean isEmpty() {
         return context.get().isEmpty();
     }
-
+    
     /**
      * Returns the active client request.
      *
@@ -110,7 +110,7 @@ public class ExecutionContext {
     public static ClientRequest getRequest() {
         return (ClientRequest) context.get().get(ATTR_REQUEST);
     }
-
+    
     /**
      * Returns the active client session.
      *
@@ -120,7 +120,7 @@ public class ExecutionContext {
         ClientRequest request = getRequest();
         return request == null ? null : request.getSession();
     }
-
+    
     /**
      * Returns the active client page.
      *
@@ -130,7 +130,7 @@ public class ExecutionContext {
         ClientRequest request = getRequest();
         return request == null ? null : request.getPage();
     }
-
+    
     /**
      * Returns the servlet context.
      *
@@ -140,7 +140,7 @@ public class ExecutionContext {
         Session session = getSession();
         return session == null ? null : session.getServletContext();
     }
-
+    
     /**
      * Invoke a callback in the execution context of the specified page.
      *
@@ -151,13 +151,13 @@ public class ExecutionContext {
         Page page = PageRegistry.getPage(pid);
         Page current = getPage();
         Assert.isTrue(current == null || current == page, "Cannot switch current page execution context");
-
+        
         try {
             if (current == null) {
                 clear();
                 put(ExecutionContext.ATTR_REQUEST, new ClientRequest(page.getSession(), Collections.emptyMap()));
             }
-            
+
             callback.run();
         } finally {
             if (current == null) {
@@ -165,7 +165,7 @@ public class ExecutionContext {
             }
         }
     }
-
+    
     private ExecutionContext() {
     }
 }
