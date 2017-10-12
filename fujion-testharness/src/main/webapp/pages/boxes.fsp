@@ -76,6 +76,15 @@
 				combobox
 			</row>
 			<row>
+				<combobox>
+					<comboitem label="accept" image="images/accept.png" />
+					<comboitem label="book" image="images/book.png" />
+					<comboitem label="cart" image="images/cart.png" />
+					<comboitem label="house" image="images/house.png" />
+				</combobox>
+				combobox with images
+			</row>
+			<row>
 				<combobox name="cboxRender" readonly="true"/>
 				combobox populated from model
 			</row>

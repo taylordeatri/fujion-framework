@@ -2900,7 +2900,13 @@ define('fujion-widget', ['fujion-core', 'bootstrap', 'jquery-ui', 'jquery-scroll
 					matched = len > 0 && label.substring(0, len).toLowerCase() === term;
 				
 				if (!len || !filter || matched) {
-					items.push({label: label, id: child.id, matched: matched, selected: !!child.getState('selected')});
+					items.push({
+						id: child.id, 
+						image: child.getState('image'),
+						label: label, 
+						matched: matched, 
+						selected: !!child.getState('selected')
+					});
 				}
 			});
 			
@@ -2975,11 +2981,19 @@ define('fujion-widget', ['fujion-core', 'bootstrap', 'jquery-ui', 'jquery-scroll
 		},
 		
 		renderItem$: function(ul, item) {
-			return $('<li>')
-				.text(item.label)
+			var item$ = $('<li>')
 				.toggleClass(this.subclazz('matched'), item.matched)
 				.toggleClass(this.subclazz('selected'), item.selected)
 				.appendTo(ul);
+			
+			if (item.image) {
+				$('<img>').attr('src', item.image).appendTo(item$);
+				$('<span>').text(item.label).appendTo(item$);
+			} else {
+				item$.text(item.label)
+			}
+			
+			return item$;
 		},
 		
 		/*------------------------------ State ------------------------------*/
@@ -3009,7 +3023,7 @@ define('fujion-widget', ['fujion-core', 'bootstrap', 'jquery-ui', 'jquery-scroll
 	 * A combo box item widget
 	 ******************************************************************************************************************/ 
 	
-	fujion.widget.Comboitem = fujion.widget.LabeledWidget.extend({		
+	fujion.widget.Comboitem = fujion.widget.LabeledImageWidget.extend({		
 		
 		/*------------------------------ Lifecycle ------------------------------*/
 		
