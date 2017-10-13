@@ -487,10 +487,6 @@ define('fujion-core', ['jquery', 'jquery-ui', 'lodash'], function($) {
 	widget: {
 		_registry: {},
 		
-		_zmodal: 999,
-		
-		_popup: {},
-		
 		_addon: {},
 		
 		_init: function() {
@@ -560,6 +556,8 @@ define('fujion-core', ['jquery', 'jquery-ui', 'lodash'], function($) {
 		}
 		
 	},
+	
+	/*------------------------------ Logging Support ------------------------------*/
 	
 	log: {
 		level: {},

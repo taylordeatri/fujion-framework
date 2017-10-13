@@ -17,9 +17,11 @@ define('fujion-widget', ['fujion-core', 'bootstrap', 'jquery-ui', 'jquery-scroll
 			sortOrder: '<span id="${id}-dir" class="glyphicon"/>'
 	};
 	
-	fujion.widget._radio = {};
+	fujion.widget._zmodal = 999;
 	
 	fujion.widget._popup = {};
+	
+	fujion.widget._radio = {};
 	
 	/******************************************************************************************************************
 	 * Base class providing simulated inheritance.
