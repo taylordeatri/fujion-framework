@@ -614,6 +614,16 @@ caption:empty {
 	background-color: #d9edf7;
 }
 
+.fujion_combobox .ui-menu-item-wrapper {
+	padding: 0;
+}
+
+.fujion_combobox .ui-menu-item-wrapper img {
+	padding-right: 5px;
+	max-height: 20px;
+	max-width: 20px;
+}
+
 /* Messagewindow */
 
 .fujion_messagewindow {

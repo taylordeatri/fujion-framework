@@ -2903,11 +2903,9 @@ define('fujion-widget', ['fujion-core', 'bootstrap', 'jquery-ui', 'jquery-scroll
 				
 				if (!len || !filter || matched) {
 					items.push({
-						id: child.id, 
-						image: child.getState('image'),
+						wgt: child,
 						label: label, 
-						matched: matched, 
-						selected: !!child.getState('selected')
+						matched: matched
 					});
 				}
 			});
@@ -2943,7 +2941,7 @@ define('fujion-widget', ['fujion-core', 'bootstrap', 'jquery-ui', 'jquery-scroll
 		},
 		
 		handleChange: function(event, ui) {
-			var wgt = ui.item ? fujion.widget.find(ui.item.id) : null;
+			var wgt = ui.item ? ui.item.wgt : null;
 			
 			if (wgt && wgt.setState('selected', true)) {
 				wgt.trigger('change', {value: true});
@@ -2983,18 +2981,16 @@ define('fujion-widget', ['fujion-core', 'bootstrap', 'jquery-ui', 'jquery-scroll
 		},
 		
 		renderItem$: function(ul, item) {
-			var item$ = $('<li>')
-				.toggleClass(this.subclazz('matched'), item.matched)
-				.toggleClass(this.subclazz('selected'), item.selected)
-				.appendTo(ul);
+			var wgt = item.wgt,
+				image = wgt.getState('image'),
+				item$ = $('<li>')
+					.toggleClass(this.subclazz('matched'), item.matched)
+					.toggleClass(this.subclazz('selected'), wgt.getState('selected'))
+					.appendTo(ul),
+				cnt$ = $('<span>').appendTo(item$);
 			
-			if (item.image) {
-				$('<img>').attr('src', item.image).appendTo(item$);
-				$('<span>').text(item.label).appendTo(item$);
-			} else {
-				item$.text(item.label)
-			}
-			
+			image ? $('<img>').attr('src', image).appendTo(cnt$) : null;
+			$('<span>').text(item.label).appendTo(cnt$);
 			return item$;
 		},
 		
@@ -3031,6 +3027,7 @@ define('fujion-widget', ['fujion-core', 'bootstrap', 'jquery-ui', 'jquery-scroll
 		
 		init: function() {
 			this._super();
+			this.initState({selected: false});
 			this.forwardToServer('change');
 		},
 		
