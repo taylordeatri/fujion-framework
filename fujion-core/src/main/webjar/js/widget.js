@@ -2891,28 +2891,6 @@ define('fujion-widget', ['fujion-core', 'bootstrap', 'jquery-ui', 'jquery-scroll
 			return this.sub$('inner');
 		},
 		
-		source: function(request, response) {
-			var term = request.term.toLowerCase(),
-				len = term.length,
-				items = [],
-				filter = this.getState('autoFilter');
-			
-			this.forEachChild(function(child) {
-				var label = child.getState('label') || '',
-					matched = len > 0 && label.substring(0, len).toLowerCase() === term;
-				
-				if (!len || !filter || matched) {
-					items.push({
-						wgt: child,
-						label: label, 
-						matched: matched
-					});
-				}
-			});
-			
-			response(items);
-		},
-				
 		/*------------------------------ Events ------------------------------*/
 
 		handleBlur: function(event) {
@@ -2961,11 +2939,11 @@ define('fujion-widget', ['fujion-core', 'bootstrap', 'jquery-ui', 'jquery-scroll
 	            minLength: 0,
 	            autoFocus: false,
 	            appendTo: '#fujion_root',
-	            source: this.source.bind(this),
 				change: _change,
 				close: _close,
 				open: _open,
-				select: _change
+				select: _change,
+	            source: _source
 			});
 			
 			inp$.data('ui-autocomplete')._renderItem = this.renderItem$.bind(this);
@@ -2988,6 +2966,28 @@ define('fujion-widget', ['fujion-core', 'bootstrap', 'jquery-ui', 'jquery-scroll
 				self.widget$.fujion$track(self.widget$);
 			}
 			
+			function _source(request, response) {
+				var term = request.term.toLowerCase(),
+					len = term.length,
+					items = [],
+					filter = self.getState('autoFilter');
+				
+				self.forEachChild(function(child) {
+					var label = child.getState('label') || '',
+						matched = len > 0 && label.substring(0, len).toLowerCase() === term;
+					
+					if (!len || !filter || matched) {
+						items.push({
+							wgt: child,
+							label: label, 
+							matched: matched
+						});
+					}
+				});
+				
+				response(items);
+			}
+					
 		},
 		
 		render$: function() {
