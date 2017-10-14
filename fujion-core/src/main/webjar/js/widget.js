@@ -1679,7 +1679,7 @@ define('fujion-widget', ['fujion-core', 'bootstrap', 'jquery-ui', 'jquery-scroll
 		
 		/*------------------------------ Events ------------------------------*/
 		
-		moveHandler: function(event) {
+		handleMove: function(event) {
 			this._options.of = event.relatedTarget;
 			this.real$.position(this._options);
 		},
@@ -1735,7 +1735,7 @@ define('fujion-widget', ['fujion-core', 'bootstrap', 'jquery-ui', 'jquery-scroll
 		
 		afterRender: function() {
 			this._super();
-			this.real$.on('move', this.moveHandler.bind(this));
+			this.real$.on('move', this.handleMove.bind(this));
 			this._allowBubble ? null : this.real$.on('click', fujion.event.stopPropagation);
 		},
 		
@@ -2940,12 +2940,12 @@ define('fujion-widget', ['fujion-core', 'bootstrap', 'jquery-ui', 'jquery-scroll
 			}
 		},
 		
-		handleChange: function(event, ui) {
-			var wgt = ui.item ? ui.item.wgt : null;
+		handleMove: function(event) {
+			var inp$ = this.input$(),
+				position = inp$.autocomplete('option', 'position');
 			
-			if (wgt && wgt.setState('selected', true)) {
-				wgt.trigger('change', {value: true});
-			}
+			position.of = inp$;
+			this._ul.position(position);
 		},
 		
 		/*------------------------------ Rendering ------------------------------*/
@@ -2953,20 +2953,41 @@ define('fujion-widget', ['fujion-core', 'bootstrap', 'jquery-ui', 'jquery-scroll
 		afterRender: function() {
 			this._super();
 			
-			var inp$ = this.input$();
+			var self = this,
+				inp$ = this.input$();
 			
 			inp$.autocomplete({
 	            delay: 50,
 	            minLength: 0,
 	            autoFocus: false,
-	            appendTo: this.widget$,
+	            appendTo: '#fujion_root',
 	            source: this.source.bind(this),
-				change: this.handleChange.bind(this),
-				select: this.handleChange.bind(this)
+				change: _change,
+				close: _close,
+				open: _open,
+				select: _change
 			});
 			
 			inp$.data('ui-autocomplete')._renderItem = this.renderItem$.bind(this);
 			inp$.on('blur', this.handleBlur.bind(this));
+			this.widget$.on('move', this.handleMove.bind(this));
+			
+			function _change(event, ui) {
+				var wgt = ui.item ? ui.item.wgt : null;
+				
+				if (wgt && wgt.setState('selected', true)) {
+					wgt.trigger('change', {value: true});
+				}
+			}
+			
+			function _close(event, ui) {
+				self.widget$.fujion$track(self.widget$, true);
+			}
+			
+			function _open(event, ui) {
+				self.widget$.fujion$track(self.widget$);
+			}
+			
 		},
 		
 		render$: function() {
@@ -2981,6 +3002,8 @@ define('fujion-widget', ['fujion-core', 'bootstrap', 'jquery-ui', 'jquery-scroll
 		},
 		
 		renderItem$: function(ul, item) {
+			this._ul = ul;
+			
 			var wgt = item.wgt,
 				image = wgt.getState('image'),
 				item$ = $('<li>')
