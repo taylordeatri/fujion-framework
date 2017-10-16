@@ -2893,10 +2893,6 @@ define('fujion-widget', ['fujion-core', 'bootstrap', 'jquery-ui', 'jquery-scroll
 		
 		/*------------------------------ Events ------------------------------*/
 
-		handleBlur: function(event) {
-			this.input$().autocomplete('close');
-		},
-		
 		handleClick: function(event) {
 			if (event.target.tagName === 'LI') {
 				return;
@@ -2908,14 +2904,8 @@ define('fujion-widget', ['fujion-core', 'bootstrap', 'jquery-ui', 'jquery-scroll
 				return;
 			}
 			
-			var open = $(inp$.autocomplete('widget')).is(':visible');
-			
-			if (!open) {
-				inp$.autocomplete('search', inp$.attr('value'));
-				inp$.focus();
-			} else {
-				inp$.autocomplete('close');
-			}
+			fujion.event.stop(event);
+			this.setOpen(!this.getState('_open'));
 		},
 		
 		handleMove: function(event) {
@@ -2947,8 +2937,8 @@ define('fujion-widget', ['fujion-core', 'bootstrap', 'jquery-ui', 'jquery-scroll
 			});
 			
 			inp$.data('ui-autocomplete')._renderItem = this.renderItem$.bind(this);
-			inp$.on('blur', this.handleBlur.bind(this));
 			this.widget$.on('move', this.handleMove.bind(this));
+			this.sub$('btn').on('mousedown', this.handleClick.bind(this));
 			
 			function _change(event, ui) {
 				var wgt = ui.item ? ui.item.wgt : null;
@@ -2959,10 +2949,12 @@ define('fujion-widget', ['fujion-core', 'bootstrap', 'jquery-ui', 'jquery-scroll
 			}
 			
 			function _close(event, ui) {
+				self.setState('_open', false);
 				self.widget$.fujion$track(self.widget$, true);
 			}
 			
 			function _open(event, ui) {
+				self.setState('_open', true);
 				self.widget$.fujion$track(self.widget$);
 			}
 			
@@ -3025,18 +3017,22 @@ define('fujion-widget', ['fujion-core', 'bootstrap', 'jquery-ui', 'jquery-scroll
 		
 		readonly: function(v) {
 			this._super.apply(this, arguments);
-			var self = this,
-				btn$ = this.sub$('btn');
+			var mdn = 'mousedown.fujion';
+			this.widget$.off(mdn);
+			v ? this.widget$.on(mdn, this.handleClick.bind(this)) : null;
+		},
+		
+		setOpen: function(open) {
+			this.setState('_open', open);
+			var inp$ = this.input$();
 			
-			this.widget$.off('click.fujion');
-			btn$.off('click.fujion');
-			v ? this.widget$.on('click.fujion', _dropdown) : null;
-			v ? null : btn$.on('click.fujion', _dropdown);
-			
-			function _dropdown(event) {
-				self.handleClick(event);
+			if (open) {
+				inp$.autocomplete('search', inp$.attr('value'));
+				inp$.focus();
+			} else {
+				inp$.autocomplete('close');
 			}
-		}
+		}	
 		
 	});
 	
