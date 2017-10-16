@@ -20,7 +20,6 @@
  */
 package org.fujion.event;
 
-import org.fujion.common.MiscUtil;
 import org.fujion.component.BaseComponent;
 import org.springframework.util.Assert;
 
@@ -44,15 +43,9 @@ public class ForwardListener implements IEventListener {
             if (event.getTarget() != this.target) {
                 EventUtil.send(event, target);
             }
-            
-            return;
-        }
-        
-        try {
+        } else {
             Event newEvent = new ForwardedEvent(forwardType, event);
             EventUtil.send(newEvent, target);
-        } catch (Exception e) {
-            throw MiscUtil.toUnchecked(e);
         }
     }
     
