@@ -2937,6 +2937,7 @@ define('fujion-widget', ['fujion-core', 'bootstrap', 'jquery-ui', 'jquery-scroll
 			});
 			
 			inp$.data('ui-autocomplete')._renderItem = this.renderItem$.bind(this);
+			inp$.data('ui-autocomplete')._renderMenu = this.renderMenu.bind(this);
 			this.widget$.on('move', this.handleMove.bind(this));
 			this.sub$('btn').on('mousedown', this.handleClick.bind(this));
 			
@@ -2995,7 +2996,7 @@ define('fujion-widget', ['fujion-core', 'bootstrap', 'jquery-ui', 'jquery-scroll
 		
 		renderItem$: function(ul, item) {
 			this._ul = ul;
-			
+			ul.css('z-index', fujion.widget._zmodal);
 			var wgt = item.wgt,
 				image = wgt.getState('image'),
 				item$ = $('<li>')
@@ -3007,6 +3008,16 @@ define('fujion-widget', ['fujion-core', 'bootstrap', 'jquery-ui', 'jquery-scroll
 			image ? $('<img>').attr('src', image).appendTo(cnt$) : null;
 			$('<span>').text(item.label).appendTo(cnt$);
 			return item$;
+		},
+		
+		renderMenu: function(ul, items) {
+			this._ul = ul;
+			ul.css('z-index', this.widget$.fujion$zindex() + 1);
+			var ac = this.input$().autocomplete('instance');
+			
+			_.forEach(items, function(item) {
+				ac._renderItemData(ul, item);
+			});
 		},
 		
 		/*------------------------------ State ------------------------------*/
