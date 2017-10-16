@@ -2995,8 +2995,6 @@ define('fujion-widget', ['fujion-core', 'bootstrap', 'jquery-ui', 'jquery-scroll
 		},
 		
 		renderItem$: function(ul, item) {
-			this._ul = ul;
-			ul.css('z-index', fujion.widget._zmodal);
 			var wgt = item.wgt,
 				image = wgt.getState('image'),
 				item$ = $('<li>')
