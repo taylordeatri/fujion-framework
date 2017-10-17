@@ -102,7 +102,7 @@ public class PageDefinition {
             materialize(children, parent, deferrals, args, created);
 
             for (DeferredInvocation<?> deferral : deferrals) {
-                deferral.execute();
+                deferral.invoke();
             }
 
             return created;
@@ -161,11 +161,11 @@ public class PageDefinition {
             }
         }
         
-        materialize(element.getChildren(), component, deferrals, args, null);
-        
         if (parent != null) {
             parent.addChild(component);
         }
+        
+        materialize(element.getChildren(), component, deferrals, args, null);
         
         return component;
     }

@@ -22,6 +22,7 @@ package org.fujion.ancillary;
 
 import java.lang.reflect.Method;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.fujion.common.MiscUtil;
 
 /**
@@ -58,10 +59,10 @@ public class DeferredInvocation<T> {
      * @return Value returned by the method.
      */
     @SuppressWarnings("unchecked")
-    public T execute(Object... args) {
+    public T invoke(Object... args) {
         try {
-            args = args == null || args.length == 0 ? defaultArgs : args;
-            return (T) ConvertUtil.invokeMethod(instance, method, args);
+            Object[] arguments = ArrayUtils.addAll(defaultArgs, args);
+            return (T) ConvertUtil.invokeMethod(instance, method, arguments);
         } catch (Exception e) {
             throw MiscUtil.toUnchecked(e);
         }

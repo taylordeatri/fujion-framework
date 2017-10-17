@@ -14,6 +14,10 @@
 				<import src="web/org/fujion/angular/example/pomodoro.fsp" />
 			</tab>
 			
+			<tab label="Binding" hint="${@msg.fujion.testharness.binding}">
+				<import src="pages/binding.fsp" />
+			</tab>
+			
 			<tab label="Buttons" hint="${@msg.fujion.testharness.buttons}">
 				<import src="pages/buttons.fsp" />
 			</tab>

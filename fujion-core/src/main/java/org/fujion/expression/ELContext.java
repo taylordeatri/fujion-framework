@@ -29,15 +29,15 @@ import org.fujion.page.PageElement;
  * This serves as the context root for an EL expression evaluation.
  */
 public class ELContext {
-
-    private final BaseComponent component;
-
-    private final BaseComponent parent;
-
-    private final PageElement element;
     
-    private final Map<String, Object> args;
+    private final BaseComponent component;
+    
+    private final BaseComponent parent;
+    
+    private final PageElement element;
 
+    private final Map<String, Object> args;
+    
     /**
      * Create an EL context.
      *
@@ -52,7 +52,7 @@ public class ELContext {
         this.element = element;
         this.args = args;
     }
-
+    
     /**
      * Returns a value for the named object. If the name is "self", the component itself is
      * returned. Otherwise, name resolution is attempted from several sources in the following
@@ -62,6 +62,7 @@ public class ELContext {
      * <li>The argument map passed to the materializer</li>
      * <li>The component's attribute map</li>
      * <li>The component's namespace</li>
+     * <li>All ancestor attribute maps</li>
      * </ol>
      *
      * @param name The object name.
@@ -72,6 +73,7 @@ public class ELContext {
         result = result != null ? result : args == null ? null : args.get(name);
         result = result != null ? result : component.getAttribute(name);
         result = result != null ? result : parent == null ? null : parent.findByName(name);
+        result = result != null ? result : parent == null ? null : parent.findAttribute(name);
         return result;
     }
 }
