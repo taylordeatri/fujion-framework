@@ -8,10 +8,10 @@ import org.apache.commons.logging.LogFactory;
 import org.fujion.annotation.Component;
 import org.fujion.annotation.Component.PropertyGetter;
 import org.fujion.annotation.Component.PropertySetter;
-import org.fujion.angular.AngularComponent;
+import org.fujion.react.ReactComponent;
 
-@Component(tag = "${classname}", widgetModule = "fujion-angular-widget", widgetClass = "AngularWidget", parentTag = "*")
-public class ${ClassName} extends AngularComponent {
+@Component(tag = "${classname}", widgetModule = "fujion-react-widget", widgetClass = "ReactWidget", parentTag = "*")
+public class ${ClassName} extends ReactComponent {
 
 	private static final Log log = LogFactory.getLog(${ClassName}.class);
 
