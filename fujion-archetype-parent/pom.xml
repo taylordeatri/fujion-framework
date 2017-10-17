@@ -14,5 +14,6 @@
 		<module>fujion-archetype-fsp</module>
 		<module>fujion-archetype-component</module>
 		<module>fujion-archetype-webapp</module>
+		<module>fujion-archetype-angular</module>
 	</modules>
 </project>
