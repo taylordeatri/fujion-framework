@@ -1041,7 +1041,7 @@ public abstract class BaseComponent implements IElementIdentifier {
         this.page = page;
         page.registerComponent(this, true);
         Map<String, Object> props = new HashMap<>();
-        initProps(props);
+        _initProps(props);
         page.getSynchronizer().createWidget(parent, props, inits);
         inits = null;
         
@@ -1104,7 +1104,7 @@ public abstract class BaseComponent implements IElementIdentifier {
      *
      * @param props Properties for widget factory.
      */
-    protected void initProps(Map<String, Object> props) {
+    protected void _initProps(Map<String, Object> props) {
         props.put("id", id);
         props.put("wclass", componentDefinition.getWidgetClass());
         props.put("wmodule", componentDefinition.getWidgetModule());
