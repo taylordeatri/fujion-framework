@@ -46,7 +46,7 @@ public abstract class AbstractClassScanner<T, A extends Annotation> {
      * @param targetClass The class that is the target of the annotation.
      * @param annotationClass The annotation class.
      */
-    public AbstractClassScanner(Class<T> targetClass, Class<? extends Annotation> annotationClass) {
+    protected AbstractClassScanner(Class<T> targetClass, Class<? extends Annotation> annotationClass) {
         this.targetClass = targetClass;
         this.annotationClass = annotationClass;
     }

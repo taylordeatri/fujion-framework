@@ -32,19 +32,23 @@ import org.fujion.event.EventUtil;
  */
 @Component(tag = "comboitem", widgetClass = "Comboitem", parentTag = "combobox")
 public class Comboitem extends BaseLabeledImageComponent<BaseLabeledComponent.LabelPositionNone> {
-    
+
     private boolean selected;
-    
+
     private String value;
-    
+
     public Comboitem() {
         super();
     }
-    
+
     public Comboitem(String label) {
         super(label);
     }
-    
+
+    public Comboitem(String label, String image) {
+        super(label, image);
+    }
+
     /**
      * Returns the selection state.
      *
@@ -54,7 +58,7 @@ public class Comboitem extends BaseLabeledImageComponent<BaseLabeledComponent.La
     public boolean isSelected() {
         return selected;
     }
-    
+
     /**
      * Sets the selection state.
      *
@@ -64,7 +68,7 @@ public class Comboitem extends BaseLabeledImageComponent<BaseLabeledComponent.La
     public void setSelected(boolean selected) {
         _setSelected(selected, true, true);
     }
-    
+
     /**
      * Returns the value associated with the combo item.
      *
@@ -74,7 +78,7 @@ public class Comboitem extends BaseLabeledImageComponent<BaseLabeledComponent.La
     public String getValue() {
         return value;
     }
-    
+
     /**
      * Sets the value associated with the combo item.
      *
@@ -84,7 +88,7 @@ public class Comboitem extends BaseLabeledImageComponent<BaseLabeledComponent.La
     public void setValue(String value) {
         propertyChange("value", this.value, this.value = value, true);
     }
-    
+
     /**
      * Sets the selection state.
      *
@@ -99,7 +103,7 @@ public class Comboitem extends BaseLabeledImageComponent<BaseLabeledComponent.La
             }
         }
     }
-    
+
     /**
      * Returns the combo box that is the parent of this combo item.
      *
@@ -108,7 +112,7 @@ public class Comboitem extends BaseLabeledImageComponent<BaseLabeledComponent.La
     public Combobox getCombobox() {
         return (Combobox) getParent();
     }
-    
+
     /**
      * Handles change events from the client.
      *
@@ -120,5 +124,5 @@ public class Comboitem extends BaseLabeledImageComponent<BaseLabeledComponent.La
         event = new ChangeEvent(this.getParent(), event.getData(), getLabel());
         EventUtil.send(event);
     }
-
+    
 }
