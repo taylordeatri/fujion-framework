@@ -1,4 +1,4 @@
  
-<page title="Fujion"> 
+<page title="${displayName}"> 
 	<label label="Main Page"/>
 </page>
