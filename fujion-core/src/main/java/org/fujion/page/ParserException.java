@@ -23,15 +23,15 @@ package org.fujion.page;
 /**
  * Run time exception related to parsing errors.
  */
-public class ParseException extends RuntimeException {
+public class ParserException extends RuntimeException {
 
     private static final long serialVersionUID = 1L;
 
-    public ParseException(String message, Object... args) {
+    public ParserException(String message, Object... args) {
         super(String.format(message, args));
     }
     
-    public ParseException(Throwable cause, String message, Object... args) {
+    public ParserException(Throwable cause, String message, Object... args) {
         super(String.format(message, args) + ": " + cause.getMessage());
     }
     

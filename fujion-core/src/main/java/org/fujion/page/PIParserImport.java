@@ -21,30 +21,25 @@
 package org.fujion.page;
 
 import org.fujion.common.MiscUtil;
-import org.fujion.core.WebUtil;
-import org.springframework.core.io.Resource;
 import org.w3c.dom.ProcessingInstruction;
 
 /**
  * Parser for processing instructions that directly import a FSP.
  */
 public class PIParserImport extends PIParserBase {
-
+    
     public PIParserImport() {
         super("import");
     }
-
+    
     @Override
     public void parse(ProcessingInstruction pi, PageElement element) {
         try {
-            String src = getAttribute(pi, "src", true);
-            Resource resource = WebUtil.getResource(src);
-            String source = resource.getFilename();
-            source = source == null ? resource.getDescription() : source;
-            PageParser.getInstance().parse(resource.getInputStream(), source, element);
+            PageSource source = new PageSource(getAttribute(pi, "src", true));
+            PageParser.getInstance().parse(source, element);
         } catch (Exception e) {
             throw MiscUtil.toUnchecked(e);
         }
     }
-
+    
 }
