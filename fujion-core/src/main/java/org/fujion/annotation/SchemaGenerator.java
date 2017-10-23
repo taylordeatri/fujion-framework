@@ -43,6 +43,7 @@ import org.fujion.common.StrUtil;
 import org.fujion.common.Version;
 import org.fujion.common.Version.VersionPart;
 import org.fujion.common.XMLUtil;
+import org.fujion.page.PageParser;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -54,8 +55,6 @@ public class SchemaGenerator {
     
     private final Document schema;
 
-    private static final String NS_FUJION = "http://www.fujion.org/schema/fsp";
-    
     private static final String NS_SCHEMA = "http://www.w3.org/2001/XMLSchema";
     
     private static final String NS_VERSIONING = "http://www.w3.org/2007/XMLSchema-versioning";
@@ -115,8 +114,8 @@ public class SchemaGenerator {
         DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
         schema = docBuilder.newDocument();
         Element root = schema.createElementNS(NS_SCHEMA, "xs:schema");
-        root.setAttribute("targetNamespace", NS_FUJION);
-        root.setAttribute("xmlns:fsp", NS_FUJION);
+        root.setAttribute("targetNamespace", PageParser.NS_FSP);
+        root.setAttribute("xmlns:fsp", PageParser.NS_FSP);
         root.setAttributeNS(NS_VERSIONING, "vc:minVersion", "1.1");
         root.setAttribute("elementFormDefault", "qualified");
         schema.appendChild(root);
@@ -130,9 +129,10 @@ public class SchemaGenerator {
         addExtendedType("decimal", root);
         addExtendedType("integer", root);
         ele = createElement("element", root, "name", "fsp");
-        ele = createElement("complexType", ele);
+        ele = createElement("complexType", ele, "mixed", "true");
         ele = createElement("all", ele);
-        ele = createElement("any", ele, "minOccurs", "0");
+        ele = createElement("any", ele, "namespace", "##targetNamespace");
+        ele.setAttribute("minOccurs", "0");
         ele.setAttribute("maxOccurs", "unbounded");
 
         for (ComponentDefinition def : registry) {
@@ -175,7 +175,7 @@ public class SchemaGenerator {
             
             processAttributes(def.getSetters(), ct);
             processAttributes(def.getFactoryParameters(), ct);
-            createElement("anyAttribute", ct, "namespace", "##any").setAttribute("processContents", "lax");
+            createElement("anyAttribute", ct, "namespace", "##other").setAttribute("processContents", "lax");
         }
     }
     
@@ -189,7 +189,9 @@ public class SchemaGenerator {
     
     private void processAttributes(Map<String, Method> setters, Element ct) {
         for (Entry<String, Method> setter : setters.entrySet()) {
-            if (setter.getKey().startsWith("#")) {
+            String key = setter.getKey();
+            
+            if (key.startsWith("#") || key.endsWith(":")) {
                 continue;
             }
             
