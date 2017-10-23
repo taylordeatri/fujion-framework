@@ -523,6 +523,7 @@ public abstract class BaseComponent implements IElementIdentifier {
      * @param value The new value.
      * @return The previous value of the named attribute, if any.
      */
+    @PropertySetter("attr:")
     public Object setAttribute(String name, Object value) {
         return attributes.put(name, value);
     }
@@ -1587,7 +1588,7 @@ public abstract class BaseComponent implements IElementIdentifier {
      * @param eventName The event name.
      * @param value Either a script component, a script string, or an event listener.
      */
-    @PropertySetter("#on")
+    @PropertySetter("on:")
     private void setOnHandler(String eventName, Object value) {
         BaseScriptComponent script;
 

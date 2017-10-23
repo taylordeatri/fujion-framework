@@ -1,6 +1,11 @@
-<page>
-	<grid controller="org.fujion.testharness.BindingController">
-		<?attribute name="binder" value="${new org.fujion.testharness.BindingController.MyBinder()}"?>
+<fsp xmlns="http://www.fujion.org/schema/fsp"
+ 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ 	xmlns:attr="http://www.fujion.org/schema/fsp/attr"
+ 	xmlns:on="http://www.fujion.org/schema/fsp/on"
+ 	xsi:schemaLocation="http://www.fujion.org/schema/fsp fsp.xsd">
+ 	
+	<grid controller="org.fujion.testharness.BindingController"
+		attr:binder="${new org.fujion.testharness.BindingController.MyBinder()}">
 		
 		<columns style="visibility:hidden">
 			<column width="40%" />
@@ -25,5 +30,5 @@
 			</row>
 		</rows>
 	</grid>
-</page>
+</fsp>
 	

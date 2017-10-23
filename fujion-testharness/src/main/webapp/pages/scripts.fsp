@@ -1,66 +1,64 @@
-<page>
-	<div controller="org.fujion.testharness.ScriptsController" style="overflow:visible">
-		<div>
-		You should see the message "Embedded client script was executed." in the status log.
-		</div>
-		<cscript mode="defer" name="jsembedded">
-			var msg = 'Embedded client script was executed.';
-			console.log(msg);
-			return msg;
-		</cscript>
-		<div>
-		You should see the message "External client script was executed." in the status log.
-		</div>
-		<cscript mode="defer" name="jsexternal" src="scripts/cscript.js" />
-		<div>
-		You should see the message "Groovy script was executed." in the status log.
-		</div>
-		<sscript name="groovyscript" type="groovy">
-			return self.getName() + " is groovy!";
-		</sscript>
-		<div>
-			You should see the message "JRuby script was executed." in the status log.
-		</div>
-		<sscript name="jrubyscript" type="jruby">
-			require "java"
-			"#{$self.getName} rocks!"
-		</sscript>
-		<div>
-			You should see the message "Jython script was executed." in the status log.
-		</div>
-		<sscript name="jythonscript" type="jython">
-			self.getName() + " crushes!"
-		</sscript>
-		<div>
-			You should see the message "Renjin script was executed." in the status log.
-		</div>
-		<sscript name="rscript" type="renjin">
-			paste(self$getName(), "worked!")
-		</sscript>
-		<div>
-			You should see the message "Clojure script was executed." in the status log.
-		</div>
-		<sscript name="clojurescript" type="clojure">
-			(str (.getName (.get args "self")) " finished!")
-		</sscript>
-		<div>
-			You should see the message "External server script was executed." in the status log.
-		</div>
-		<sscript name="externalscript" type="groovy" src="scripts/sscript.groovy" />
-		
-		<toolbar width="100%" style="margin-top:50px">
-			<combobox name="cboScript" width="200px" readonly="true"
-				placeholder="Select a script to execute">
-				<comboitem label="JavaScript (embedded)" value="jsembedded" />
-				<comboitem label="JavaScript (external)" value="jsexternal" />
-				<comboitem label="Groovy (embedded)" value="groovyscript" />
-				<comboitem label="Groovy (external)" value="externalscript" />
-				<comboitem label="JRuby (embedded)" value="jrubyscript" />
-				<comboitem label="Jython (embedded)" value="jythonscript" />
-				<comboitem label="Renjin (embedded)" value="rscript" />
-				<comboitem label="Clojure (embedded)" value="clojurescript" />
-			</combobox>
-			<button name="btnScript" label="Execute" class="flavor:btn-success"/>
-		</toolbar>
+<div controller="org.fujion.testharness.ScriptsController" style="overflow:visible">
+	<div>
+	You should see the message "Embedded client script was executed." in the status log.
 	</div>
-</page>
+	<cscript mode="defer" name="jsembedded">
+		var msg = 'Embedded client script was executed.';
+		console.log(msg);
+		return msg;
+	</cscript>
+	<div>
+	You should see the message "External client script was executed." in the status log.
+	</div>
+	<cscript mode="defer" name="jsexternal" src="scripts/cscript.js" />
+	<div>
+	You should see the message "Groovy script was executed." in the status log.
+	</div>
+	<sscript name="groovyscript" type="groovy">
+		return self.getName() + " is groovy!";
+	</sscript>
+	<div>
+		You should see the message "JRuby script was executed." in the status log.
+	</div>
+	<sscript name="jrubyscript" type="jruby">
+		require "java"
+		"#{$self.getName} rocks!"
+	</sscript>
+	<div>
+		You should see the message "Jython script was executed." in the status log.
+	</div>
+	<sscript name="jythonscript" type="jython">
+		self.getName() + " crushes!"
+	</sscript>
+	<div>
+		You should see the message "Renjin script was executed." in the status log.
+	</div>
+	<sscript name="rscript" type="renjin">
+		paste(self$getName(), "worked!")
+	</sscript>
+	<div>
+		You should see the message "Clojure script was executed." in the status log.
+	</div>
+	<sscript name="clojurescript" type="clojure">
+		(str (.getName (.get args "self")) " finished!")
+	</sscript>
+	<div>
+		You should see the message "External server script was executed." in the status log.
+	</div>
+	<sscript name="externalscript" type="groovy" src="scripts/sscript.groovy" />
+	
+	<toolbar width="100%" style="margin-top:50px">
+		<combobox name="cboScript" width="200px" readonly="true"
+			placeholder="Select a script to execute">
+			<comboitem label="JavaScript (embedded)" value="jsembedded" />
+			<comboitem label="JavaScript (external)" value="jsexternal" />
+			<comboitem label="Groovy (embedded)" value="groovyscript" />
+			<comboitem label="Groovy (external)" value="externalscript" />
+			<comboitem label="JRuby (embedded)" value="jrubyscript" />
+			<comboitem label="Jython (embedded)" value="jythonscript" />
+			<comboitem label="Renjin (embedded)" value="rscript" />
+			<comboitem label="Clojure (embedded)" value="clojurescript" />
+		</combobox>
+		<button name="btnScript" label="Execute" class="flavor:btn-success"/>
+	</toolbar>
+</div>

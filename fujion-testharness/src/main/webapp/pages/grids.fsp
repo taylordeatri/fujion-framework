@@ -1,4 +1,4 @@
-<page>
+<fsp>
 	Selectable:
 	<radiogroup name="rgGrids">
 		<radiobutton label="NO" checked="true" />
@@ -13,4 +13,4 @@
 		</columns>
 		<rows name="rows" />
 	</grid>
-</page>
+</fsp>

@@ -21,6 +21,8 @@
 package org.fujion.page;
 
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -35,7 +37,6 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.core.io.Resource;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -51,21 +52,28 @@ public class PageParser implements BeanPostProcessor {
     
     private static final PageParser instance = new PageParser();
     
-    private static final String CONTENT_ATTR = "#text";
+    public static final String CONTENT_ATTR = "#text";
     
-    private static final String NS_FSP = "http://www.fujion.org/fsp";
+    public static final String NS_FSP = "http://www.fujion.org/schema/fsp";
     
-    private static final String NS_ON = "http://www.fujion.org/fsp/on";
+    public static final String NS_ON = NS_FSP + "/on";
     
-    private static final String NS_ATTR = "http://www.fujion.org/fsp/attr";
+    public static final String NS_ATTR = NS_FSP + "/attr";
     
-    private static RegistryMap<String, PIParserBase> piParsers = new RegistryMap<>(DuplicateAction.ERROR);
+    private final Map<String, String> attrNSMap = new HashMap<>();
+    
+    private final Map<String, String> tagNSMap = new HashMap<>();
+    
+    private final RegistryMap<String, PIParserBase> piParsers = new RegistryMap<>(DuplicateAction.ERROR);
     
     public static PageParser getInstance() {
         return instance;
     }
     
     private PageParser() {
+        attrNSMap.put(NS_ON, "on");
+        attrNSMap.put(NS_ATTR, "attr");
+        tagNSMap.put(NS_FSP, "");
     }
     
     /**
@@ -127,9 +135,12 @@ public class PageParser implements BeanPostProcessor {
         
         switch (node.getNodeType()) {
             case Node.ELEMENT_NODE:
-                Element ele = (Element) node;
-                String tag = ele.getTagName();
+                String tag = normalizeNodeName(node, tagNSMap);
 
+                if (tag == null) {
+                    break;
+                }
+                
                 if (tag.equals("fsp") && node.getParentNode() instanceof Document) {
                     parseChildren(node, parentElement);
                     return;
@@ -142,13 +153,13 @@ public class PageParser implements BeanPostProcessor {
                 }
                 
                 childElement = new PageElement(def, parentElement);
-                NamedNodeMap attributes = ele.getAttributes();
+                NamedNodeMap attributes = node.getAttributes();
                 
                 for (int i = 0; i < attributes.getLength(); i++) {
                     Node attr = attributes.item(i);
-                    String name = attr.getNodeName();
+                    String name = normalizeNodeName(attr, attrNSMap);
                     
-                    if (!name.startsWith("xml")) {
+                    if (name != null) {
                         childElement.setAttribute(name, attr.getNodeValue());
                     }
                 }
@@ -211,6 +222,30 @@ public class PageParser implements BeanPostProcessor {
         }
     }
     
+    /**
+     * Normalizes a namespace-prefixed node name by mapping the namespace's URL to a standard
+     * prefix. If the namespace URL is not known, null is returned. If the node name has no prefix,
+     * the original name is returned.
+     *
+     * @param node Node whose name is to be normalized.
+     * @param nsMap Namespace URL to standard prefix mapping.
+     * @return The normalized node name. If null, the node name could not be normalized.
+     */
+    private String normalizeNodeName(Node node, Map<String, String> nsMap) {
+        String name = node.getNodeName();
+        int i = name.indexOf(":");
+        
+        if (i > 0) {
+            String pfx = name.substring(0, i);
+            name = name.substring(i + 1);
+            String uri = node.lookupNamespaceURI(pfx);
+            pfx = nsMap.get(uri);
+            name = pfx == null ? null : pfx.isEmpty() ? name : pfx + ":" + name;
+        }
+        
+        return name;
+    }
+
     private void parseChildren(Node node, PageElement parentElement) {
         NodeList children = node.getChildNodes();
         int childCount = children.getLength();

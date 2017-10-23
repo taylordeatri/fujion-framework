@@ -1,4 +1,4 @@
-<page>
+<fsp>
 	<style>
 		.my-dd {
 			display: block;
@@ -37,5 +37,5 @@
 			</row>
 		</rows>
 	</grid>
-</page>
+</fsp>
 	

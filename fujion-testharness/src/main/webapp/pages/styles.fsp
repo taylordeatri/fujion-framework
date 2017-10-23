@@ -1,4 +1,4 @@
-<page>
+<fsp>
 	<div style="padding-bottom: 20px; text-decoration: underline">
 	Demonstrate different types of style sheets.
 	</div>
@@ -17,4 +17,4 @@
 		<label class="inline"
 			label="This label should have italicized text on a white background." />
 	</div>
-</page>		
+</fsp>		
