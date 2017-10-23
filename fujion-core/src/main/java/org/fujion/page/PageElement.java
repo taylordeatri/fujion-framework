@@ -109,14 +109,14 @@ public class PageElement {
             map.remove(tag);
             
             if (!cardinality.isValid(count)) {
-                build(sb, "The number of occurrences (%d) for tag '%s' falls outside the range of %d - %d.", count, tag,
+                build(sb, "The number of occurrences (%d) for tag '<%s>' falls outside the range of %d - %d.", count, tag,
                     cardinality.getMinimum(), cardinality.getMaximum());
             }
         }
         
         for (Entry<String, Cardinality> child : map.entrySet()) {
             if (child.getValue().getMinimum() > 0) {
-                build(sb, "A required child tag (%s) is missing.", child.getKey());
+                build(sb, "A required child tag '<%s>' is missing.", child.getKey());
             }
         }
         
@@ -150,10 +150,10 @@ public class PageElement {
     /**
      * Returns a list of this page element's children.
      *
-     * @return A list of this page element's children, possibly null.
+     * @return A list of this page element's children, never null.
      */
     public List<PageElement> getChildren() {
-        return children == null ? null : Collections.unmodifiableList(children);
+        return children == null ? Collections.emptyList() : Collections.unmodifiableList(children);
     }
     
     /**
@@ -165,6 +165,15 @@ public class PageElement {
         return attributes == null ? null : new HashMap<>(attributes);
     }
     
+    /**
+     * Returns true if this is the root page element.
+     *
+     * @return True if this is the root page element.
+     */
+    public boolean isRoot() {
+        return parent == null;
+    }
+
     /**
      * Registers a tag library to this page element.
      *

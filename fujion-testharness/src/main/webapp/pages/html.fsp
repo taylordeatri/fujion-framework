@@ -1,4 +1,4 @@
-<page>
+<fsp>
 	<html>
 		<![CDATA[
 		<div style="background:red;height:50px;width:150px">
@@ -8,4 +8,4 @@
 	</html>
 	
 	<html src="html/import.html" />
-</page>
+</fsp>

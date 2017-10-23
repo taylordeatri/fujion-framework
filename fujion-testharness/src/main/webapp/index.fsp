@@ -66,6 +66,10 @@
 				<import src="pages/panes.fsp" />
 			</tab>
 
+			<tab label="PI's" hint="${@msg.fujion.testharness.pi}">
+				<import src="pages/pi.fsp" />
+			</tab>
+
 			<tab label="React" hint="${@msg.fujion.testharness.react}">
 				<import src="web/org/fujion/react/example/pomodoro.fsp" />
 			</tab>

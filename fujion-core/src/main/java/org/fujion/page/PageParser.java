@@ -26,13 +26,17 @@ import java.io.InputStream;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.commons.io.IOUtils;
-import org.fujion.ancillary.ComponentException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.fujion.ancillary.ComponentRegistry;
+import org.fujion.annotation.Component.ContentHandling;
 import org.fujion.annotation.ComponentDefinition;
 import org.fujion.common.RegistryMap;
 import org.fujion.common.RegistryMap.DuplicateAction;
 import org.fujion.component.Content;
 import org.fujion.core.WebUtil;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.core.io.Resource;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -45,11 +49,19 @@ import org.w3c.dom.Text;
 /**
  * Parses a Fujion server page into a page definition.
  */
-public class PageParser {
+public class PageParser implements BeanPostProcessor {
+
+    private static final Log log = LogFactory.getLog(PageParser.class);
 
     private static final PageParser instance = new PageParser();
 
     private static final String CONTENT_ATTR = "#text";
+
+    private static final String NS_FSP = "http://www.fujion.org/fsp";
+
+    private static final String NS_ON = "http://www.fujion.org/fsp/on";
+
+    private static final String NS_ATTR = "http://www.fujion.org/fsp/attr";
 
     private final RegistryMap<String, PIParserBase> piParsers = new RegistryMap<>(DuplicateAction.ERROR);
 
@@ -60,8 +72,6 @@ public class PageParser {
     }
 
     private PageParser() {
-        registerPIParser(new PIParserTagLibrary());
-        registerPIParser(new PIParserAttribute());
         documentBuilderFactory.setNamespaceAware(true);
     }
 
@@ -88,7 +98,7 @@ public class PageParser {
         try {
             return parse(resource.getInputStream(), source);
         } catch (IOException e) {
-            throw new ComponentException(e, "Exception reading resource '" + source + "'");
+            throw new ParseException(e, "Exception reading resource '%s'", source);
         }
     }
 
@@ -106,45 +116,52 @@ public class PageParser {
      * Parses a Fujion Server Page into a page definition.
      *
      * @param stream An input stream referencing the FSP.
-     * @param source Source of the page definition.
+     * @param source Source of the FSP.
      * @return The resulting page definition.
      */
     protected PageDefinition parse(InputStream stream, String source) {
+        PageDefinition pageDefinition = new PageDefinition();
+        pageDefinition.setSource(source);
+        parse(stream, source, pageDefinition.getRootElement());
+        return pageDefinition;
+    }
+
+    /**
+     * Parse the FSP document referenced by an input stream.
+     *
+     * @param stream An input stream referencing the FSP.
+     * @param source Source of the FSP.
+     * @param parentElement The parent element for the parsing operation.
+     */
+    protected void parse(InputStream stream, String source, PageElement parentElement) {
         try {
-            Document document = documentBuilderFactory.newDocumentBuilder().parse(stream);
-            PageDefinition pageDefinition = new PageDefinition();
-            pageDefinition.setSource(source);
-            parseNode(document, pageDefinition.getRootElement());
-            return pageDefinition;
+            Node rootNode = documentBuilderFactory.newDocumentBuilder().parse(stream);
+            parseNode(rootNode, parentElement);
         } catch (Exception e) {
-            throw new ComponentException(e, "Exception parsing resource '" + source + "'");
+            throw new ParseException(e, "Exception parsing resource '%s'", source);
         } finally {
             IOUtils.closeQuietly(stream);
         }
     }
-
-    /**
-     * Registers a processing instruction parser.
-     *
-     * @param piParser A processing instruction parser.
-     */
-    public void registerPIParser(PIParserBase piParser) {
-        piParsers.put(piParser.getTarget(), piParser);
-    }
-
+    
     private void parseNode(Node node, PageElement parentElement) {
         ComponentDefinition def;
-        ComponentDefinition parentDef = parentElement.getDefinition();
         PageElement childElement;
 
         switch (node.getNodeType()) {
             case Node.ELEMENT_NODE:
                 Element ele = (Element) node;
                 String tag = ele.getTagName();
+                
+                if (tag.equals("fsp") && node.getParentNode() instanceof Document) {
+                    parseChildren(node, parentElement);
+                    return;
+                }
+                
                 def = ComponentRegistry.getInstance().get(tag);
 
                 if (def == null) {
-                    throw new RuntimeException("Unrecognized tag: " + tag);
+                    throw new ParseException("Unrecognized tag  '<%s>'", tag);
                 }
 
                 childElement = new PageElement(def, parentElement);
@@ -165,16 +182,17 @@ public class PageParser {
 
             case Node.TEXT_NODE:
             case Node.CDATA_SECTION_NODE:
-                Text text = (Text) node;
-                String value = text.getWholeText();
+                String value = ((Text) node).getWholeText();
 
                 if (value.trim().isEmpty()) {
                     break;
                 }
 
-                switch (parentDef.contentHandling()) {
+                ComponentDefinition parentDef = parentElement.getDefinition();
+
+                switch (parentDef == null ? ContentHandling.AS_CHILD : parentDef.contentHandling()) {
                     case ERROR:
-                        throw new RuntimeException("Text content is not allowed for tag " + parentDef.getTag());
+                        throw new ParseException("Text content is not allowed for tag '<%s>'", parentDef.getTag());
 
                     case IGNORE:
                         break;
@@ -206,13 +224,13 @@ public class PageParser {
                 if (piParser != null) {
                     piParser.parse(pi, parentElement);
                 } else {
-                    throw new RuntimeException("Unrecognized prosessing instruction: " + pi.getTarget());
+                    throw new ParseException("Unrecognized processing instruction '%s'", pi.getTarget());
                 }
 
                 break;
 
             default:
-                throw new RuntimeException("Unrecognized document content: " + node.getNodeName());
+                throw new ParseException("Unrecognized document content type '%s'", node.getNodeName());
         }
     }
 
@@ -244,6 +262,30 @@ public class PageParser {
         }
 
         return text;
+    }
+    
+    /**
+     * Registers a processing instruction parser.
+     *
+     * @param piParser A processing instruction parser.
+     */
+    private void registerPIParser(PIParserBase piParser) {
+        piParsers.put(piParser.getTarget(), piParser);
+        log.info("Registered processing instruction parser for target '" + piParser.getTarget() + "'.");
+    }
+
+    @Override
+    public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
+        return bean;
+    }
+    
+    @Override
+    public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
+        if (bean instanceof PIParserBase) {
+            registerPIParser((PIParserBase) bean);
+        }
+
+        return bean;
     }
 
 }

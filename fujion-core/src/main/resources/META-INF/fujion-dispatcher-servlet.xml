@@ -99,6 +99,15 @@
 	<bean factory-method="getInstance" depends-on="fujion_WebJarLocator"
 		class="org.fujion.theme.ThemeRegistry" />
 	
+	<bean factory-method="getInstance" 
+		class="org.fujion.page.PageParser" />
+	
+	<bean class="org.fujion.page.PIParserAttribute" />
+	
+	<bean class="org.fujion.page.PIParserImport" />
+	
+	<bean class="org.fujion.page.PIParserTagLibrary" />
+	
 	<bean class="org.springframework.beans.factory.config.MethodInvokingBean">
 		<property name="staticMethod" value="org.fujion.core.InitLocalizer.init" />
 	</bean>
