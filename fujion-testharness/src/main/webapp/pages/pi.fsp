@@ -1,0 +1,26 @@
+<?taglib uri="http://www.fujion.org/tld/test" prefix="testlib"?>
+<fsp>
+	<grid>
+		<columns style="visibility:hidden">
+			<column width="30%" />
+			<column width="70%" />
+		</columns>
+		<rows>
+			<row>
+				<div>${testlib.getLabel('test.message')}</div>
+				Test of tag library method resolution
+			</row>
+			<row name="myrow">
+				<?attribute name="myattrib" value="This is a test attribute"?>
+				<div>${myrow.myattrib}</div>
+				Test of attribute injection
+			</row>
+			<row>
+				<div>
+				<?import src="pages/pi_import.fsp"?>
+				</div>
+				Test of import processing instruction
+			</row>
+		</rows>
+	</grid>
+</fsp>

@@ -1,0 +1,4 @@
+ 
+<page title="${displayName}"> 
+	<label label="Main Page"/>
+</page>

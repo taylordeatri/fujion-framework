@@ -2,20 +2,20 @@
  * #%L
  * fujion
  * %%
- * Copyright (C) 2008 - 2016 Regenstrief Institute, Inc.
+ * Copyright (C) 2008 - 2017 Regenstrief Institute, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  * #L%
  */
 package org.fujion.component;
@@ -31,33 +31,51 @@ import org.fujion.annotation.Component.PropertySetter;
 @Component(tag = "menuitem", widgetClass = "Menuitem", parentTag = { "menu", "menupopup", "menuitem" }, childTag = {
         @ChildTag("menuitem"), @ChildTag("menuheader"), @ChildTag("menuseparator") })
 public class Menuitem extends BaseMenuComponent {
-    
+
     private boolean checkable;
-    
+
     private boolean checked;
-    
+
+    /**
+     * Returns true if the menu item has an associated check box.
+     *
+     * @return True if the menu item has an associated check box.
+     */
     @PropertyGetter("checkable")
     public boolean isCheckable() {
         return checkable;
     }
-    
+
+    /**
+     * Set to true to associate a check box with the menu item.
+     *
+     * @param checkable True to associate a check box with the menu item.
+     */
     @PropertySetter("checkable")
     public void setCheckable(boolean checkable) {
-        if (checkable != this.checkable) {
-            sync("checkable", this.checkable = checkable);
-        }
+        propertyChange("checkable", this.checkable, this.checkable = checkable, true);
     }
-    
+
+    /**
+     * Returns the checked state of the menu item. If the checkable property is set to true, this
+     * state will be reflected in the associated check box.
+     *
+     * @return The checked state of the menu item.
+     */
     @PropertyGetter("checked")
     public boolean isChecked() {
         return checked;
     }
-    
+
+    /**
+     * Sets the checked state of the menu item. If the checkable property is set to true, this state
+     * will be reflected in the associated check box.
+     *
+     * @param checked The checked state of the menu item.
+     */
     @PropertySetter("checked")
     public void setChecked(boolean checked) {
-        if (checked != this.checked) {
-            sync("checked", this.checked = checked);
-        }
+        propertyChange("checked", this.checked, this.checked = checked, true);
     }
-    
+
 }

@@ -1,4 +1,9 @@
-<page>
+<fsp xmlns="http://www.fujion.org/schema/fsp"
+ 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ 	xmlns:attr="http://www.fujion.org/schema/fsp/attr"
+ 	xmlns:on="http://www.fujion.org/schema/fsp/on"
+ 	xsi:schemaLocation="http://www.fujion.org/schema/fsp fsp.xsd">
+ 	
 	<grid controller="org.fujion.testharness.BoxesController">
 		<columns style="visibility:hidden">
 			<column width="40%" />
@@ -21,7 +26,7 @@
 			</row>
 			<row>
 				<memobox name="memobox" placeholder="memobox" keycapture="^A F1 ~0 @J $C ^$F3" />
-				memobox: placeholder="memobox" keycapture="^A F1 ~0 @J !C ^!F3"
+				memobox: placeholder="memobox" keycapture="^A F1 ~0 @J $C ^$F3"
 			</row>
 			<row>
 				<datebox placeholder="datebox" />
@@ -40,10 +45,10 @@
 				longbox placeholder="long integer value"
 			</row>
 			<row>
-				<doublebox placeholder="double value" minValue="-100000"
-					maxValue="100000" />
-				doublebox placeholder="double value" minValue="-100000"
-				maxValue="100000"
+				<doublebox placeholder="double value" minvalue="-100000"
+					maxvalue="100000" />
+				doublebox placeholder="double value" minvalue="-100000"
+				maxvalue="100000"
 			</row>
 			<row>
 				<popupbox name="popupbox" placeholder="popupbox">
@@ -74,6 +79,15 @@
 					<comboitem label="item4" />
 				</combobox>
 				combobox
+			</row>
+			<row>
+				<combobox>
+					<comboitem label="accept" image="images/accept.png" />
+					<comboitem label="book" image="images/book.png" />
+					<comboitem label="cart" image="images/cart.png" />
+					<comboitem label="house" image="images/house.png" />
+				</combobox>
+				combobox with images
 			</row>
 			<row>
 				<combobox name="cboxRender" readonly="true"/>
@@ -115,4 +129,5 @@
 			</row>
 		</rows>
 	</grid>
-</page>
+	
+</fsp>

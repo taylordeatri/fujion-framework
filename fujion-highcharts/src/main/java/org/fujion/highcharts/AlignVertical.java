@@ -3,7 +3,7 @@
  * #%L
  * fujion
  * %%
- * Copyright (C) 2008 - 2016 Regenstrief Institute, Inc.
+ * Copyright (C) 2008 - 2017 Regenstrief Institute, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@
 package org.fujion.highcharts;
 
 /**
- * Vertical alignment options.
+ * Options for vertical alignment.
  */
 public enum AlignVertical {
     top, middle, bottom

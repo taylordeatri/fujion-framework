@@ -1,4 +1,10 @@
-<page>
+<fsp xmlns="http://www.fujion.org/schema/fsp"
+ 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ 	xmlns:attr="http://www.fujion.org/schema/fsp/attr"
+ 	xmlns:on="http://www.fujion.org/schema/fsp/on"
+ 	xsi:schemaLocation="http://www.fujion.org/schema/fsp fsp.xsd">
+ 	
+ 	
 	<grid controller="org.fujion.testharness.ButtonsController">
 		<columns style="visibility:hidden">
 			<column width="40%" />
@@ -6,7 +12,7 @@
 		</columns>
 		<rows>
 			<row>
-				<button label="fire event" name="btnWithEvent" />
+				<button label="fire event" name="btnWithEvent" on:click="controller.btnEventHandler(event); self.addStyle('color','green');"/>
 				This button should have an event handler.
 			</row>
 			<row>
@@ -105,4 +111,4 @@
 			</row>
 		</rows>
 	</grid>
-</page>
+</fsp>

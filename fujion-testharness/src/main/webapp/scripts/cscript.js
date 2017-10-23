@@ -1,5 +1,3 @@
-System.import('fujion-core').then(function(fujion) {
-	var msg = 'External client script was executed.';
-	fujion.event.sendToServer({type: 'log', data: msg});
-	console.log(msg);
-});
+var msg = 'External client script was executed.';
+console.log(msg);
+return msg;

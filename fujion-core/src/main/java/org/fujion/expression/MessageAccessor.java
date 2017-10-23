@@ -2,24 +2,29 @@
  * #%L
  * fujion
  * %%
- * Copyright (C) 2008 - 2016 Regenstrief Institute, Inc.
+ * Copyright (C) 2008 - 2017 Regenstrief Institute, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  * #L%
  */
 package org.fujion.expression;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -39,6 +44,8 @@ import org.springframework.expression.TypedValue;
  * source using the accumulated property names.
  */
 public class MessageAccessor implements PropertyAccessor {
+    
+    private static final Log log = LogFactory.getLog(MessageAccessor.class);
     
     private static final Class<?>[] TARGET_CLASSES = { MessageSource.class, MessageContext.class };
     
@@ -63,35 +70,68 @@ public class MessageAccessor implements PropertyAccessor {
         
         private final MessageSource messageSource;
         
+        /**
+         * New message context with the first part of the label name.
+         *
+         * @param messageSource Message source from which to retrieve label value.
+         * @param name First part of the label name.
+         */
         MessageContext(MessageSource messageSource, String name) {
             this.messageSource = messageSource;
             this.name = name;
         }
         
+        /**
+         * Adds the next part of the label name.
+         *
+         * @param name Next part of the label name.
+         * @return Returns "this" for chaining.
+         */
         MessageContext addName(String name) {
             this.name += "." + name;
             return this;
         }
         
+        /**
+         * Returns the message associated with the label, with any embedded label references
+         * resolved.
+         *
+         * @see java.lang.Object#toString()
+         */
         @Override
         public String toString() {
-            String message = getMessage(name);
-            int i = 0;
-            int k = 0;
-            
-            while ((i = message.indexOf("${")) > -1 && k++ < 20) {
-                int j = message.indexOf("}", i);
-                String repl = getMessage(message.substring(i + 2, j));
-                message = message.substring(0, i) + repl + message.substring(j + 1);
-            }
-            
-            return message;
+            return getMessage(name, new HashSet<String>());
         }
         
-        private String getMessage(String name) {
+        /**
+         * Resolve the label reference and any embedded label references.
+         *
+         * @param name The label name.
+         * @param resolved Set of previously resolved label names (to detect infinite recursion).
+         * @return The resolved message.
+         */
+        private String getMessage(String name, Set<String> resolved) {
             try {
-                return messageSource.getMessage(name, null, LocaleContextHolder.getLocale());
+                String message;
+                
+                if (resolved.contains(name)) {
+                    message = name;
+                    log.warn("Recursive reference to label \"" + name + "\" will not be resolved.");
+                } else {
+                    resolved.add(name);
+                    message = messageSource.getMessage(name, null, LocaleContextHolder.getLocale());
+                    int i = 0;
+
+                    while ((i = message.indexOf("${")) > -1) {
+                        int j = message.indexOf("}", i);
+                        String repl = getMessage(message.substring(i + 2, j), resolved);
+                        message = message.substring(0, i) + repl + message.substring(j + 1);
+                    }
+                }
+                
+                return message;
             } catch (NoSuchMessageException e) {
+                log.warn("Reference to unknown label \"" + name + "\" will be ignored.");
                 return "";
             }
         }

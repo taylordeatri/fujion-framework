@@ -2,20 +2,20 @@
  * #%L
  * fujion
  * %%
- * Copyright (C) 2008 - 2016 Regenstrief Institute, Inc.
+ * Copyright (C) 2008 - 2017 Regenstrief Institute, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  * #L%
  */
 package org.fujion.component;
@@ -46,46 +46,83 @@ public class Listbox extends BaseUIComponent implements ISupportsModel<Listitem>
     
     private final Set<Listitem> selected = new LinkedHashSet<>();
     
+    /**
+     * Returns the multiple selection flag. If true, multiple list items may be selected at once.
+     *
+     * @return The multiple selection flag.
+     */
     @PropertyGetter("multiple")
     public boolean isMultiple() {
         return multiple;
     }
     
+    /**
+     * Sets the multiple selection flag. If true, multiple list items may be selected at once.
+     *
+     * @param multiple The multiple selection flag.
+     */
     @PropertySetter("multiple")
     public void setMultiple(boolean multiple) {
-        if (multiple != this.multiple) {
+        if (propertyChange("multiple", this.multiple, this.multiple = multiple, true)) {
             if (!multiple && selected.size() > 1) {
                 unselect(null);
             }
-            
-            sync("multiple", this.multiple = multiple);
         }
     }
     
+    /**
+     * Returns the number of visible list items.
+     *
+     * @return The number of visible list items
+     */
     @PropertyGetter("size")
     public int getSize() {
         return size;
     }
     
+    /**
+     * Sets the number of visible list items.
+     *
+     * @param size The number of visible list items
+     */
     @PropertySetter("size")
     public void setSize(int size) {
-        if (size != this.size) {
-            sync("size", this.size = size);
-        }
+        propertyChange("size", this.size, this.size = size, true);
     }
     
+    /**
+     * Returns the set of selected list items.
+     *
+     * @return The set of selected list items (never null).
+     */
     public Set<Listitem> getSelected() {
         return Collections.unmodifiableSet(selected);
     }
     
+    /**
+     * Returns the number of selected list items.
+     *
+     * @return The number of selected list items.
+     */
     public int getSelectedCount() {
         return selected.size();
     }
     
+    /**
+     * Returns the selected list item, if any. If there are multiple selections, only the first will
+     * be returned.
+     *
+     * @return The selected list item (may be null).
+     */
     public Listitem getSelectedItem() {
         return selected.isEmpty() ? null : selected.iterator().next();
     }
     
+    /**
+     * Sets the selected list item. Any existing selections are cleared.
+     *
+     * @param item The selected list item (may be null).
+     */
     public void setSelectedItem(Listitem item) {
         validateIsChild(item);
         unselect(item);
@@ -95,15 +132,31 @@ public class Listbox extends BaseUIComponent implements ISupportsModel<Listitem>
         }
     }
     
+    /**
+     * Returns the index of the selected list item. If there are multiple selections, the index of
+     * the first selected item will be returned.
+     *
+     * @return The index of the selected list item. If there is no current selection, returns -1.
+     */
     public int getSelectedIndex() {
         Listitem item = getSelectedItem();
         return item == null ? -1 : item.getIndex();
     }
     
+    /**
+     * Sets the selected list item by its index. Any existing selections are cleared.
+     *
+     * @param index The index of the list item to be selected.
+     */
     public void setSelectedIndex(int index) {
         setSelectedItem((Listitem) getChildAt(index));
     }
     
+    /**
+     * Updates the selection status of a list item.
+     *
+     * @param item A list item.
+     */
     protected void _updateSelected(Listitem item) {
         if (item.isSelected() != selected.contains(item)) {
             if (!multiple) {
@@ -118,10 +171,18 @@ public class Listbox extends BaseUIComponent implements ISupportsModel<Listitem>
         }
     }
     
+    /**
+     * Clears any existing selection.
+     */
     public void clearSelected() {
         unselect(null);
     }
     
+    /**
+     * Unselect all selected list items.
+     *
+     * @param skip Optional list item to skip.
+     */
     private void unselect(Listitem skip) {
         for (Listitem item : selected) {
             if (item != skip) {
@@ -132,11 +193,21 @@ public class Listbox extends BaseUIComponent implements ISupportsModel<Listitem>
         selected.clear();
     }
     
+    /**
+     * If the added list item is marked as selected, add it to the set of selected items.
+     *
+     * @see org.fujion.component.BaseComponent#afterAddChild(org.fujion.component.BaseComponent)
+     */
     @Override
     protected void afterAddChild(BaseComponent child) {
         _updateSelected((Listitem) child);
     }
     
+    /**
+     * If the removed list item is marked as selected, remove it from the set of selected items.
+     *
+     * @see org.fujion.component.BaseComponent#afterRemoveChild(org.fujion.component.BaseComponent)
+     */
     @Override
     protected void afterRemoveChild(BaseComponent child) {
         if (selected.remove(child)) {

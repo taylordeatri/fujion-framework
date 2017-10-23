@@ -2,7 +2,7 @@
  * #%L
  * fujion
  * %%
- * Copyright (C) 2008 - 2016 Regenstrief Institute, Inc.
+ * Copyright (C) 2008 - 2017 Regenstrief Institute, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -60,9 +60,7 @@ public class Upload extends BaseUIComponent {
      */
     @PropertySetter("multiple")
     public void setMultiple(boolean multiple) {
-        if (multiple != this.multiple) {
-            sync("multiple", this.multiple = multiple);
-        }
+        propertyChange("multiple", this.multiple, this.multiple = multiple, true);
     }
 
     /**
@@ -89,9 +87,7 @@ public class Upload extends BaseUIComponent {
      */
     @PropertySetter("accept")
     public void setAccept(String accept) {
-        if (!areEqual(accept = nullify(accept), this.accept)) {
-            sync("accept", this.accept = accept);
-        }
+        propertyChange("accept", this.accept, this.accept = nullify(accept), true);
     }
 
     /**
@@ -113,10 +109,8 @@ public class Upload extends BaseUIComponent {
      */
     @PropertySetter("maxsize")
     public void setMaxsize(int maxsize) {
-        if (maxsize != this.maxsize) {
-            Assert.isTrue(maxsize >= 0, "maxsize must be >= 0");
-            sync("_maxsize", this.maxsize = maxsize);
-        }
+        Assert.isTrue(maxsize >= 0, "maxsize must be >= 0");
+        propertyChange("_maxsize", this.maxsize, this.maxsize = maxsize, true);
     }
 
     /**
@@ -138,9 +132,7 @@ public class Upload extends BaseUIComponent {
      */
     @PropertySetter("progress")
     public void setProgress(boolean progress) {
-        if (progress != this.progress) {
-            sync("_progress", this.progress = progress);
-        }
+        propertyChange("_progress", this.progress, this.progress = progress, true);
     }
 
     /**

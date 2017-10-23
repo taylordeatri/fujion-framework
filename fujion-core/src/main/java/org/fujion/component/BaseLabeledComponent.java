@@ -2,7 +2,7 @@
  * #%L
  * fujion
  * %%
- * Copyright (C) 2008 - 2016 Regenstrief Institute, Inc.
+ * Copyright (C) 2008 - 2017 Regenstrief Institute, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,52 +30,70 @@ import org.fujion.annotation.Component.PropertySetter;
  * @param <P> The type of label positioning that is supported.
  */
 public abstract class BaseLabeledComponent<P extends BaseLabeledComponent.ILabelPosition> extends BaseUIComponent implements ILabeled {
-
+    
+    /**
+     * Position specifier for label.
+     */
     public interface ILabelPosition {};
-
+    
+    /**
+     * Horizontal position specifier.
+     */
     public enum LabelPositionHorz implements ILabelPosition {
         RIGHT, LEFT
     }
-
+    
+    /**
+     * Specifier for all label positions.
+     */
     public enum LabelPositionAll implements ILabelPosition {
         RIGHT, LEFT, TOP, BOTTOM
     }
-
+    
+    /**
+     * Specifier for fixed label position.
+     */
     public enum LabelPositionNone implements ILabelPosition {}
-
+    
     private String label;
-
+    
     private P position;
-
-    public BaseLabeledComponent() {
+    
+    protected BaseLabeledComponent() {
     }
-
-    public BaseLabeledComponent(String label) {
+    
+    protected BaseLabeledComponent(String label) {
         setLabel(label);
     }
-
+    
     @Override
     @PropertyGetter("label")
     public String getLabel() {
         return label;
     }
-
+    
     @Override
     @PropertySetter("label")
     public void setLabel(String label) {
-        if (!areEqual(label = nullify(label), this.label)) {
-            sync("label", this.label = label);
-        }
+        propertyChange("label", this.label, this.label = nullify(label), true);
     }
-
+    
+    /**
+     * Returns the label position.
+     *
+     * @return The label position.
+     */
     protected P getPosition() {
         return position;
     }
-
+    
+    /**
+     * Sets the label position.
+     *
+     * @param position The label position.
+     */
     protected void setPosition(P position) {
-        if (position != this.position) {
-            sync("position", this.position = position);
-        }
+        propertyChange("position", this.position, this.position = position, true);
     }
-
+    
 }

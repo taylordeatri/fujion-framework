@@ -2,7 +2,7 @@
  * #%L
  * fujion
  * %%
- * Copyright (C) 2008 - 2016 Regenstrief Institute, Inc.
+ * Copyright (C) 2008 - 2017 Regenstrief Institute, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,23 +42,23 @@ import org.fujion.page.PageUtil;
  * Demonstration of miscellaneous capabilities.
  */
 public class MiscController extends BaseController {
-    
+
     @WiredComponent(onFailure = OnFailure.IGNORE)
     private Div nomatch;
-    
+
     @WiredComponent
     private BaseComponent dynamicContent;
-    
+
     @WiredComponent
     private Popup contextMenu;
-    
+
     @Override
     public void afterInitialized(BaseComponent root) {
         super.afterInitialized(root);
         log(nomatch == null, "Component 'nomatch' was correctly not wired.", "Component 'nomatch' as erroneously wired.");
         PageUtil.createPageFromContent("<button label='Dynamic Content' class='flavor:btn-danger'/>", dynamicContent);
     }
-    
+
     /**
      * Controls whether or not application closure is challenged.
      *
@@ -66,19 +66,19 @@ public class MiscController extends BaseController {
      */
     @EventHandler(value = "change", target = "chkPreventClosure")
     public void chkPreventClosureHandler(ChangeEvent event) {
-        ClientUtil.canClose(!((Checkbox) event.getTarget()).isChecked());
+        page.setClosable(!((Checkbox) event.getTarget()).isChecked());
     }
-    
+
     @EventHandler(value = "click", target = "btnSaveAsFile")
     public void btnSaveAsFileHandler() {
         ClientUtil.saveToFile("This is test content", "text/plain", "testFile.txt");
     }
-    
+
     @WiredComponent
     private Div divMaskTest;
-    
+
     private boolean masked;
-    
+
     @EventHandler(value = "click", target = "btnMaskTest")
     private void btnMaskTestClickHandler() {
         if (masked = !masked) {
@@ -87,10 +87,10 @@ public class MiscController extends BaseController {
             divMaskTest.removeMask();
         }
     }
-    
+
     @WiredComponent
     private Button btnToggleBalloon;
-    
+
     @EventHandler(value = "click", target = "@btnToggleBalloon")
     private void btnToggleBalloonClickHandler() {
         if (btnToggleBalloon.getBalloon() == null) {
@@ -99,36 +99,36 @@ public class MiscController extends BaseController {
             btnToggleBalloon.setBalloon(null);
         }
     }
-    
+
     @WiredComponent
     private Caption caption;
-
+    
     @WiredComponent
     private Radiogroup rgPosition;
-
+    
     @EventHandler(value = "change", target = "@rgPosition")
     private void positionChangeHandler() {
         String value = rgPosition.getSelected().getLabel();
         LabelPositionAll position = LabelPositionAll.valueOf(value.toUpperCase());
         caption.setPosition(position);
     }
-
+    
     @WiredComponent
     private Radiogroup rgAlignment;
-    
+
     @EventHandler(value = "change", target = "@rgAlignment")
     private void alignmentChangeHandler() {
         String value = rgAlignment.getSelected().getLabel();
         LabelAlignment alignment = LabelAlignment.valueOf(value.toUpperCase());
         caption.setAlignment(alignment);
     }
-    
+
     @WiredComponent
     private Detail detail;
-
+    
     @EventHandler(value = "click", target = "btnToggleDetail")
     private void toggleDetailHandler(Event event) {
         detail.setOpen(!detail.isOpen());
     }
-
+    
 }

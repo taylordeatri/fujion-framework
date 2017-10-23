@@ -1,0 +1,34 @@
+<fsp xmlns="http://www.fujion.org/schema/fsp"
+ 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ 	xmlns:attr="http://www.fujion.org/schema/fsp/attr"
+ 	xmlns:on="http://www.fujion.org/schema/fsp/on"
+ 	xsi:schemaLocation="http://www.fujion.org/schema/fsp fsp.xsd">
+ 	
+	<grid controller="org.fujion.testharness.BindingController"
+		attr:binder="${new org.fujion.testharness.BindingController.MyBinder()}">
+		
+		<columns style="visibility:hidden">
+			<column width="40%" />
+			<column width="80%" />
+		</columns>
+		<rows>
+			<row>
+				<toolbar width="100%">
+					<textbox value="${binder.dual('value')}" />
+					<div flex="1" />
+					<button name="btnReset" label="Reset value" />
+				</toolbar>
+				${'&lt;textbox value="${binder.dual(''value'')}" /&gt;'}
+			</row>
+			<row>
+				<toolbar width="100%">
+					<label label="Test" style="${binder.read('color', 'background-color: %s')}" />
+					<div flex="1" />
+					<button name="btnToggle" label="Toggle color" />
+				</toolbar>
+				${'&lt;label label="Test" style="${binder.read(''color'', ''background-color: %s'')}" /&gt;'}
+			</row>
+		</rows>
+	</grid>
+</fsp>
+	

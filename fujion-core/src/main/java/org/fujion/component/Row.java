@@ -2,7 +2,7 @@
  * #%L
  * fujion
  * %%
- * Copyright (C) 2008 - 2016 Regenstrief Institute, Inc.
+ * Copyright (C) 2008 - 2017 Regenstrief Institute, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,33 +34,42 @@ import org.fujion.event.EventUtil;
  */
 @Component(tag = "row", widgetModule = "fujion-grid", widgetClass = "Row", content = ContentHandling.AS_CHILD, parentTag = "rows", childTag = @ChildTag("*"))
 public class Row extends BaseUIComponent {
-
+    
     private boolean selected;
-
+    
+    /**
+     * Returns the selected state of this row.
+     *
+     * @return The selected state of this row.
+     */
     @PropertyGetter("selected")
     public boolean isSelected() {
         return selected;
     }
-
+    
+    /**
+     * Sets the selected state of this row.
+     *
+     * @param selected The selected state of this row.
+     */
     @PropertySetter("selected")
     public void setSelected(boolean selected) {
         _setSelected(selected, true, true);
     }
-
+    
     protected void _setSelected(boolean selected, boolean notifyClient, boolean notifyParent) {
-        if (selected != this.selected) {
-            this.selected = selected;
-
-            if (notifyClient) {
-                sync("selected", selected);
-            }
-
+        if (propertyChange("selected", this.selected, this.selected = selected, notifyClient)) {
             if (notifyParent && getParent() != null) {
                 ((Rows) getParent())._updateSelected(this);
             }
         }
     }
-
+    
+    /**
+     * Handles change events from the client.
+     *
+     * @param event A change event.
+     */
     @EventHandler(value = "change", syncToClient = false)
     private void _onChange(ChangeEvent event) {
         _setSelected(defaultify(event.getValue(Boolean.class), true), false, true);

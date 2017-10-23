@@ -2,7 +2,7 @@
  * #%L
  * fujion
  * %%
- * Copyright (C) 2008 - 2016 Regenstrief Institute, Inc.
+ * Copyright (C) 2008 - 2017 Regenstrief Institute, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +20,6 @@
  */
 package org.fujion.client;
 
-import java.util.List;
-
 import org.fujion.component.BaseComponent;
 import org.fujion.component.BaseUIComponent;
 import org.fujion.websocket.WebSocketHandler;
@@ -30,7 +28,7 @@ import org.fujion.websocket.WebSocketHandler;
  * Static convenience methods for client-side operations.
  */
 public class ClientUtil {
-    
+
     /**
      * Invoke a function on the client.
      *
@@ -41,23 +39,53 @@ public class ClientUtil {
         ClientInvocation invocation = new ClientInvocation((String) null, function, args);
         WebSocketHandler.send(invocation);
     }
-    
+
+    /**
+     * Redirects the client.
+     *
+     * @param target URL of the redirect target.
+     */
     public static void redirect(String target) {
         redirect(target, null);
     }
-    
+
+    /**
+     * Redirects the client.
+     *
+     * @param target URL of the redirect target.
+     * @param window Name of the window that will be redirected. A null value redirects the current
+     *            window.
+     */
     public static void redirect(String target, String window) {
         invoke("fujion.redirect", target, window);
     }
-    
+
+    /**
+     * Invokes a JavaScript expression on the client.
+     *
+     * @param expression A valid JavaScript expression.
+     */
     public static void eval(String expression) {
         invoke("fujion.eval", expression);
     }
-    
+
+    /**
+     * Submits a form.
+     *
+     * @param form Root component of the form.
+     */
     public static void submit(BaseComponent form) {
         invoke("fujion.submit", form);
     }
-    
+
+    /**
+     * Creates a busy message covering the specified target. A busy message consists of a mask the
+     * covers and prevents interaction with the target component and a message centered within the
+     * mask.
+     *
+     * @param target The target of the busy message.
+     * @param message The message to be displayed. If null, any existing message is removed.
+     */
     public static void busy(BaseUIComponent target, String message) {
         if (message == null || message.isEmpty()) {
             target.removeMask();
@@ -65,37 +93,31 @@ public class ClientUtil {
             target.addMask(message);
         }
     }
-    
+
+    /**
+     * Sets the canClose parameter on the client. When set to true (the default value), the browser
+     * window may be closed without challenge. When set to false, the browser will present a
+     * confirmation dialog before allowing the window to be closed.
+     *
+     * @param value The value for the canClose parameter.
+     * @deprecated Use {@link org.fujion.component.Page#setClosable Page.closable} property instead.
+     */
+    @Deprecated
     public static void canClose(boolean value) {
-        invoke("fujion.canClose", value);
+        ExecutionContext.getPage().setClosable(value);
     }
     
+    /**
+     * Saves content as a file on the client machine.
+     *
+     * @param content Content to save.
+     * @param mimeType The MIME type of the content.
+     * @param fileName The name of the file to be created.
+     */
     public static void saveToFile(String content, String mimeType, String fileName) {
         invoke("fujion.saveToFile", content, mimeType, fileName);
     }
-    
-    /**
-     * Send a print request to the browser client.
-     *
-     * @param selectors List of selectors whose content shall be printed.
-     * @param styleSheets List of stylesheets to be applied before printing.
-     * @param preview If true, open in preview mode. If false, submit directly for printing.
-     */
-    public static void printToClient(List<String> selectors, List<String> styleSheets, boolean preview) {
-        invoke("fujion_print", null, selectors, styleSheets, preview);
-    }
-    
-    /**
-     * Send a print request to the browser client.
-     *
-     * @param selectors Comma-delimited list of selectors whose content shall be printed.
-     * @param styleSheets Comma-delimited list of stylesheets to be applied before printing.
-     * @param preview If true, open in preview mode. If false, submit directly for printing.
-     */
-    public static void printToClient(String selectors, String styleSheets, boolean preview) {
-        invoke("fujion_print", null, selectors, styleSheets, preview);
-    }
-    
+
     private ClientUtil() {
     }
 }

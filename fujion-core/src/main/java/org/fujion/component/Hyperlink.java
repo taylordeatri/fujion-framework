@@ -2,7 +2,7 @@
  * #%L
  * fujion
  * %%
- * Copyright (C) 2008 - 2016 Regenstrief Institute, Inc.
+ * Copyright (C) 2008 - 2017 Regenstrief Institute, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -60,28 +60,44 @@ public class Hyperlink extends BaseLabeledImageComponent<BaseLabeledComponent.La
         super.setPosition(position);
     }
 
+    /**
+     * Returns the URL of the link destination.
+     *
+     * @return URL of the link destination.
+     */
     @PropertyGetter("href")
     public String getHref() {
         return href;
     }
 
+    /**
+     * Sets the URL of the link destination.
+     *
+     * @param href URL of the link destination.
+     */
     @PropertySetter("href")
     public void setHref(String href) {
-        if (!areEqual(href = nullify(href), this.href)) {
-            sync("href", this.href = href);
-        }
+        propertyChange("href", this.href, this.href = nullify(href), true);
     }
 
+    /**
+     * Returns the target where the linked document will be opened.
+     *
+     * @return The target where the linked document will be opened.
+     */
     @PropertyGetter("target")
     public String getTarget() {
         return target;
     }
 
+    /**
+     * Sets the target where the linked document will be opened.
+     *
+     * @param target The target where the linked document will be opened.
+     */
     @PropertySetter("target")
     public void setTarget(String target) {
-        if (!areEqual(href = nullify(target), this.target)) {
-            sync("target", this.target = target);
-        }
+        propertyChange("target", this.target, this.target = nullify(target), true);
     }
 
 }

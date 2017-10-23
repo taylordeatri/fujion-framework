@@ -3,7 +3,7 @@
 define('fujion-widget', ['fujion-core', 'bootstrap', 'jquery-ui', 'jquery-scrollTo', 'balloon-css', 'jquery-ui-css', 'bootstrap-css', 'fujion-widget-css'], function(fujion) { 
 	/* Widget support.  In the documentation, when we refer to 'widget' we mean an instance of the Widget
 	 * class.  When we refer to 'widget$' (following the convention that a variable name ending in '$'
-	 * is always a jquery object), we mean the jquery object contained by the widget.
+	 * is always a jquery object), we mean the jquery object managed by the widget.
 	 */
 	
 	fujion.widget._fnTest = /xyz/.test(function(){xyz;}) ? /\b_super\b/ : /.*/;
@@ -17,9 +17,11 @@ define('fujion-widget', ['fujion-core', 'bootstrap', 'jquery-ui', 'jquery-scroll
 			sortOrder: '<span id="${id}-dir" class="glyphicon"/>'
 	};
 	
-	fujion.widget._radio = {};
+	fujion.widget._zmodal = 999;
 	
 	fujion.widget._popup = {};
+	
+	fujion.widget._radio = {};
 	
 	/******************************************************************************************************************
 	 * Base class providing simulated inheritance.
@@ -170,11 +172,11 @@ define('fujion-widget', ['fujion-core', 'bootstrap', 'jquery-ui', 'jquery-scroll
 		/**
 		 * Invokes a callback on each child widget.
 		 * 
-		 * @param {callback} callback A callback function following the forEach convention.
+		 * @param {callback} callback A callback function following the _.forEach convention.
 		 */
 		forEachChild: function(callback) {
 			if (this._children) {
-				this._children.forEach(callback, this);
+				_.forEach(this._children, callback.bind(this));
 			}
 		},
 				
@@ -767,6 +769,7 @@ define('fujion-widget', ['fujion-core', 'bootstrap', 'jquery-ui', 'jquery-scroll
 			
 			if (this.real$) {
 				this.real$
+					.data('fujion_widget', this)
 					.appendTo(this.realAnchor$)
 					.attr('id', this.subId('real'));
 				this._ancillaries.real$ = this.real$;
@@ -949,7 +952,7 @@ define('fujion-widget', ['fujion-core', 'bootstrap', 'jquery-ui', 'jquery-scroll
 				}
 				inline$.text(this.resolveEL(v, '#'));
 			} else if (inline$) {
-				inline$.destroy();
+				inline$.remove();
 				delete this._ancillaries.inline$;
 			}
 		},
@@ -1305,15 +1308,15 @@ define('fujion-widget', ['fujion-core', 'bootstrap', 'jquery-ui', 'jquery-scroll
 		
 		/*------------------------------ Other ------------------------------*/
 		
-		validate: function(value, full) {
-			var partial = !full && this._partial.test(value);
+		validate: function(value) {
+			var partial = this._partial.test(value);
 			value = partial ? 0 : _.toNumber(value);
-			return partial || (!_.isNaN(value) && this.validateRange(value, full)); 
+			return partial || (!_.isNaN(value) && this.validateRange(value)); 
 		},
 		
-		validateRange: function(value, full) {
-			var min = full ? _.defaultTo(this.getState('min'), this._min) : this._min,
-				max = full ? _.defaultTo(this.getState('max'), this._max) : this._max;
+		validateRange: function(value) {
+			var min = _.defaultTo(this.getState('minvalue'), this._min),
+				max = _.defaultTo(this.getState('maxvalue'), this._max);
 			
 			value = value === undefined ? +this.input$().val() : +value;
 			return value >= min && value <= max;
@@ -1321,11 +1324,11 @@ define('fujion-widget', ['fujion-core', 'bootstrap', 'jquery-ui', 'jquery-scroll
 		
 		/*------------------------------ State ------------------------------*/
 		
-		minValue: function(v) {
+		minvalue: function(v) {
 			this.attr('min', v, this.input$());
 		},
 		
-		maxValue: function(v) {
+		maxvalue: function(v) {
 			this.attr('max', v, this.input$());
 		}
 	});
@@ -1344,6 +1347,7 @@ define('fujion-widget', ['fujion-core', 'bootstrap', 'jquery-ui', 'jquery-scroll
 			}
 			
 			this._super();
+			this.initState({closable: true});
 			fujion.widget._page = this;
 		},
 			
@@ -1358,6 +1362,10 @@ define('fujion-widget', ['fujion-core', 'bootstrap', 'jquery-ui', 'jquery-scroll
 		},
 		
 		/*------------------------------ State ------------------------------*/
+		
+		closable: function(v) {
+			fujion._canClose = v;
+		},
 		
 		title: function(v) {
 			$('head>title').text(v);
@@ -1397,45 +1405,90 @@ define('fujion-widget', ['fujion-core', 'bootstrap', 'jquery-ui', 'jquery-scroll
 	 * Script widget
 	 ******************************************************************************************************************/ 
 	
-	fujion.widget.Script = fujion.widget.MetaWidget.extend({
+	fujion.widget.Script = fujion.widget.BaseWidget.extend({
 		
 		/*------------------------------ Lifecycle ------------------------------*/
 		
 		init: function() {
 			this._super();
-			this.initState({async: false, defer: false});
+			this.initState({mode: 'IMMEDIATE'});
+			this._count = 0;
+		},
+		
+		/*------------------------------ Other ------------------------------*/
+		
+		autoexec: function() {
+			if (this._script && !this._count && this.getState('mode') !== 'MANUAL') {
+				this.execute(this, {});
+			}
+		},
+		
+		compile: function(script, run) {
+			this._count = 0;
+			this._script = script ? Function('self', 'fujion', 'vars', this.resolveEL(script, '#')).bind(this) : null;
+			run ? this.autoexec() : null;
+		},
+		
+		execute: function(self, vars) {
+			if (this._script) {
+				this._count++;
+				this.trigger('scriptExecution', {data: this._script(self, fujion, vars)});
+			}
 		},
 		
 		/*------------------------------ Rendering ------------------------------*/
 		
-		realAnchor$: $('body'),
+		afterRender: function() {
+			this._super();
+			
+			switch(this.getState('mode')) {
+				case 'DEFER':
+					var self = this;
+					
+					setTimeout(function() {
+						self.autoexec();
+					});
+					
+					break;
+					
+				case 'IMMEDIATE':
+					this.autoexec();
+					break;
+					
+				case 'MANUAL':
+					break;
+			}
+		},
 		
-		renderReal$: function() {
+		render$: function() {
 			return $('<script>');
 		},
 		
 		/*------------------------------ State ------------------------------*/
 		
-		async: function(v) {
-			this.attr('async', v, this.real$);
-		},
-		
 		content: function(v) {
-			this.real$.text(this.resolveEL(v, '#'));
+			this.compile(v);
 		},
 		
-		defer: function(v) {
-			this.attr('defer', v, this.real$);
+		mode: function(v) {
 		},
 		
 		src: function(v) {
-			this.attr('src', v, this.real$);
-		},
-		
-		type: function(v) {
-			this.attr('type', v, this.real$);
+			this.compile();
+			
+			if (v) {
+				var self = this,
+					async = this.getState('mode') === 'DEFER';
+				
+				$.ajax({
+					url: v,
+					async: async,
+					dataType: 'text'
+				}).done(function (script) {
+					self.compile(script, async);
+				});
+			}
 		}
-		
 	});
 	
 	/******************************************************************************************************************
@@ -1626,7 +1679,7 @@ define('fujion-widget', ['fujion-core', 'bootstrap', 'jquery-ui', 'jquery-scroll
 		
 		/*------------------------------ Events ------------------------------*/
 		
-		moveHandler: function(event) {
+		handleMove: function(event) {
 			this._options.of = event.relatedTarget;
 			this.real$.position(this._options);
 		},
@@ -1682,7 +1735,7 @@ define('fujion-widget', ['fujion-core', 'bootstrap', 'jquery-ui', 'jquery-scroll
 		
 		afterRender: function() {
 			this._super();
-			this.real$.on('move', this.moveHandler.bind(this));
+			this.real$.on('move', this.handleMove.bind(this));
 			this._allowBubble ? null : this.real$.on('click', fujion.event.stopPropagation);
 		},
 		
@@ -2220,7 +2273,10 @@ define('fujion-widget', ['fujion-core', 'bootstrap', 'jquery-ui', 'jquery-scroll
 		/*------------------------------ Events ------------------------------*/
 			
 		handleClick: function(event) {
-			this._children.length ? this.toggle() : null;
+			if (this._children.length) {
+				this.toggle();
+				this.trigger(this.isOpen() ? 'open' : 'close');
+			}
 			return false;
 		},
 		
@@ -2535,7 +2591,7 @@ define('fujion-widget', ['fujion-core', 'bootstrap', 'jquery-ui', 'jquery-scroll
 		
 		init: function() {
 			this._super();
-			this.initState({wrap: 'SOFT', rows: 2});
+			this.initState({wrap: 'SOFT', rows: 2, cols: 20});
 		},
 		
 		/*------------------------------ Other ------------------------------*/
@@ -2557,6 +2613,10 @@ define('fujion-widget', ['fujion-core', 'bootstrap', 'jquery-ui', 'jquery-scroll
 			if (v) {
 				this.scrollToBottom();
 			}
+		},
+		
+		cols: function(v) {
+			this.attr('cols', v, this.input$());
 		},
 		
 		rows: function(v) {
@@ -2831,30 +2891,8 @@ define('fujion-widget', ['fujion-core', 'bootstrap', 'jquery-ui', 'jquery-scroll
 			return this.sub$('inner');
 		},
 		
-		source: function(request, response) {
-			var term = request.term.toLowerCase(),
-				len = term.length,
-				items = [],
-				filter = this.getState('autoFilter');
-			
-			this.forEachChild(function(child) {
-				var label = child.getState('label') || '',
-					matched = len > 0 && label.substring(0, len).toLowerCase() === term;
-				
-				if (!len || !filter || matched) {
-					items.push({label: label, id: child.id, matched: matched, selected: !!child.getState('selected')});
-				}
-			});
-			
-			response(items);
-		},
-				
 		/*------------------------------ Events ------------------------------*/
 
-		handleBlur: function(event) {
-			this.input$().autocomplete('close');
-		},
-		
 		handleClick: function(event) {
 			if (event.target.tagName === 'LI') {
 				return;
@@ -2866,22 +2904,16 @@ define('fujion-widget', ['fujion-core', 'bootstrap', 'jquery-ui', 'jquery-scroll
 				return;
 			}
 			
-			var open = $(inp$.autocomplete('widget')).is(':visible');
-			
-			if (!open) {
-				inp$.autocomplete('search', inp$.attr('value'));
-				inp$.focus();
-			} else {
-				inp$.autocomplete('close');
-			}
+			fujion.event.stop(event);
+			this.setOpen(!this.getState('_open'));
 		},
 		
-		handleChange: function(event, ui) {
-			var wgt = ui.item ? fujion.widget.find(ui.item.id) : null;
+		handleMove: function(event) {
+			var inp$ = this.input$(),
+				position = inp$.autocomplete('option', 'position');
 			
-			if (wgt && wgt.setState('selected', true)) {
-				wgt.trigger('change', {value: true});
-			}
+			position.of = inp$;
+			this._ul.position(position);
 		},
 		
 		/*------------------------------ Rendering ------------------------------*/
@@ -2889,20 +2921,66 @@ define('fujion-widget', ['fujion-core', 'bootstrap', 'jquery-ui', 'jquery-scroll
 		afterRender: function() {
 			this._super();
 			
-			var inp$ = this.input$();
+			var self = this,
+				inp$ = this.input$();
 			
 			inp$.autocomplete({
 	            delay: 50,
 	            minLength: 0,
 	            autoFocus: false,
-	            appendTo: this.widget$,
-	            source: this.source.bind(this),
-				change: this.handleChange.bind(this),
-				select: this.handleChange.bind(this)
+	            appendTo: '#fujion_root',
+				change: _change,
+				close: _close,
+				open: _open,
+				select: _change,
+	            source: _source
 			});
 			
 			inp$.data('ui-autocomplete')._renderItem = this.renderItem$.bind(this);
-			inp$.on('blur', this.handleBlur.bind(this));
+			inp$.data('ui-autocomplete')._renderMenu = this.renderMenu.bind(this);
+			this.widget$.on('move', this.handleMove.bind(this));
+			this.sub$('btn').on('mousedown', this.handleClick.bind(this));
+			
+			function _change(event, ui) {
+				var wgt = ui.item ? ui.item.wgt : null;
+				
+				if (wgt && wgt.setState('selected', true)) {
+					wgt.trigger('change', {value: true});
+				}
+			}
+			
+			function _close(event, ui) {
+				self.setState('_open', false);
+				self.widget$.fujion$track(self.widget$, true);
+			}
+			
+			function _open(event, ui) {
+				self.setState('_open', true);
+				self.widget$.fujion$track(self.widget$);
+			}
+			
+			function _source(request, response) {
+				var term = request.term.toLowerCase(),
+					len = term.length,
+					items = [],
+					filter = self.getState('autoFilter');
+				
+				self.forEachChild(function(child) {
+					var label = child.getState('label') || '',
+						matched = len > 0 && label.substring(0, len).toLowerCase() === term;
+					
+					if (!len || !filter || matched) {
+						items.push({
+							wgt: child,
+							label: label, 
+							matched: matched
+						});
+					}
+				});
+				
+				response(items);
+			}
+					
 		},
 		
 		render$: function() {
@@ -2917,11 +2995,27 @@ define('fujion-widget', ['fujion-core', 'bootstrap', 'jquery-ui', 'jquery-scroll
 		},
 		
 		renderItem$: function(ul, item) {
-			return $('<li>')
-				.text(item.label)
-				.toggleClass(this.subclazz('matched'), item.matched)
-				.toggleClass(this.subclazz('selected'), item.selected)
-				.appendTo(ul);
+			var wgt = item.wgt,
+				image = wgt.getState('image'),
+				item$ = $('<li>')
+					.toggleClass(this.subclazz('matched'), item.matched)
+					.toggleClass(this.subclazz('selected'), wgt.getState('selected'))
+					.appendTo(ul),
+				cnt$ = $('<span>').appendTo(item$);
+			
+			image ? $('<img>').attr('src', image).appendTo(cnt$) : null;
+			$('<span>').text(item.label).appendTo(cnt$);
+			return item$;
+		},
+		
+		renderMenu: function(ul, items) {
+			this._ul = ul;
+			ul.css('z-index', this.widget$.fujion$zindex() + 1);
+			var ac = this.input$().autocomplete('instance');
+			
+			_.forEach(items, function(item) {
+				ac._renderItemData(ul, item);
+			});
 		},
 		
 		/*------------------------------ State ------------------------------*/
@@ -2932,18 +3026,22 @@ define('fujion-widget', ['fujion-core', 'bootstrap', 'jquery-ui', 'jquery-scroll
 		
 		readonly: function(v) {
 			this._super.apply(this, arguments);
-			var self = this,
-				btn$ = this.sub$('btn');
+			var mdn = 'mousedown.fujion';
+			this.widget$.off(mdn);
+			v ? this.widget$.on(mdn, this.handleClick.bind(this)) : null;
+		},
+		
+		setOpen: function(open) {
+			this.setState('_open', open);
+			var inp$ = this.input$();
 			
-			this.widget$.off('click.fujion');
-			btn$.off('click.fujion');
-			v ? this.widget$.on('click.fujion', _dropdown) : null;
-			v ? null : btn$.on('click.fujion', _dropdown);
-			
-			function _dropdown(event) {
-				self.handleClick(event);
+			if (open) {
+				inp$.autocomplete('search', inp$.attr('value'));
+				inp$.focus();
+			} else {
+				inp$.autocomplete('close');
 			}
-		}
+		}	
 		
 	});
 	
@@ -2951,12 +3049,13 @@ define('fujion-widget', ['fujion-core', 'bootstrap', 'jquery-ui', 'jquery-scroll
 	 * A combo box item widget
 	 ******************************************************************************************************************/ 
 	
-	fujion.widget.Comboitem = fujion.widget.LabeledWidget.extend({		
+	fujion.widget.Comboitem = fujion.widget.LabeledImageWidget.extend({		
 		
 		/*------------------------------ Lifecycle ------------------------------*/
 		
 		init: function() {
 			this._super();
+			this.initState({selected: false});
 			this.forwardToServer('change');
 		},
 		
@@ -3068,14 +3167,14 @@ define('fujion-widget', ['fujion-core', 'bootstrap', 'jquery-ui', 'jquery-scroll
 		
 		init: function() {
 			this._super();
-			this.initState({maxValue: 100, value: 0})
+			this.initState({maxvalue: 100, value: 0})
 		},
 		
 		/*------------------------------ Other ------------------------------*/
 		
 		_pct: function() {
 			var value = this.getState('value'),
-				max = this.getState('maxValue'),
+				max = this.getState('maxvalue'),
 				pct = max <= 0 ? 0 : value / max * 100;
 			
 			return pct > 100 ? 100 : pct;
@@ -3103,7 +3202,7 @@ define('fujion-widget', ['fujion-core', 'bootstrap', 'jquery-ui', 'jquery-scroll
 			this.widget$.children().first().text(v);
 		},
 		
-		maxValue: function(v) {
+		maxvalue: function(v) {
 			this._adjust();
 		},
 		
@@ -3133,7 +3232,7 @@ define('fujion-widget', ['fujion-core', 'bootstrap', 'jquery-ui', 'jquery-scroll
 		
 		init: function() {
 			this._super();
-			this.initState({value: 0, maxValue: 100, minValue: 0, step: 1, orientation: 'HORIZONTAL', synced: false});
+			this.initState({value: 0, maxvalue: 100, minvalue: 0, step: 1, orientation: 'HORIZONTAL', synced: false});
 			this.forwardToServer('change');
 		},
 		
@@ -3155,11 +3254,11 @@ define('fujion-widget', ['fujion-core', 'bootstrap', 'jquery-ui', 'jquery-scroll
 		
 		/*------------------------------ State ------------------------------*/
 		
-		maxValue: function(v) {
+		maxvalue: function(v) {
 			this._slider('max', v);
 		},
 		
-		minValue: function(v) {
+		minvalue: function(v) {
 			this._slider('min', v);
 		},
 		
@@ -3367,11 +3466,13 @@ define('fujion-widget', ['fujion-core', 'bootstrap', 'jquery-ui', 'jquery-scroll
 				
 				if (pos) {
 					pos = pos.toLowerCase().replace('_', ' ');
+					var page = fujion.widget._page;
 					
 					this.widget$.position({
 						my: pos,
 						at: pos,
-						of: fujion.widget._page.widget$});
+						of: page ? page.widget$ : $('body')
+					});
 				}
 			}
 		},

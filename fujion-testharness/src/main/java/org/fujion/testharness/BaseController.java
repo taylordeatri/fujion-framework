@@ -2,7 +2,7 @@
  * #%L
  * fujion
  * %%
- * Copyright (C) 2008 - 2016 Regenstrief Institute, Inc.
+ * Copyright (C) 2008 - 2017 Regenstrief Institute, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,13 +30,16 @@ import org.fujion.component.Page;
  */
 public class BaseController implements IAutoWired {
     
-    private Page page;
+    protected Page page;
+
+    protected BaseComponent root;
     
     /**
      * Generates a log entry as each controller is initialized.
      */
     @Override
     public void afterInitialized(BaseComponent root) {
+        this.root = root;
         page = root.getPage();
         log(getClass().getName() + " initialized.");
     }

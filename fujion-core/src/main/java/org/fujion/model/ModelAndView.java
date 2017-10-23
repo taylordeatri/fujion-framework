@@ -2,7 +2,7 @@
  * #%L
  * fujion
  * %%
- * Copyright (C) 2008 - 2016 Regenstrief Institute, Inc.
+ * Copyright (C) 2008 - 2017 Regenstrief Institute, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,6 +31,12 @@ import org.fujion.model.IListModel.ListEventType;
 import org.fujion.model.IPaginator.IPagingListener;
 import org.fujion.model.IPaginator.PagingEventType;
 
+/**
+ * Associates a model with a view renderer.
+ *
+ * @param <T> The component type to be rendered.
+ * @param <M> The model type.
+ */
 public class ModelAndView<T extends BaseComponent, M> implements IListModelListener, IPagingListener, IModelAndView<T, M> {
     
     private BaseComponent parent;
@@ -130,12 +136,19 @@ public class ModelAndView<T extends BaseComponent, M> implements IListModelListe
         }
     }
     
+    /**
+     * If deferred rendering is active, sets the synchronizer to queueing mode.
+     */
     protected void onRenderStart() {
         if (deferredRendering) {
             synchronizer(true);
         }
     }
     
+    /**
+     * If deferred rendering is active, sets the synchronizer to non-queueing mode and flushes its
+     * queue.
+     */
     protected void onRenderStop() {
         if (deferredRendering) {
             synchronizer(false);
@@ -155,6 +168,13 @@ public class ModelAndView<T extends BaseComponent, M> implements IListModelListe
         }
     }
     
+    /**
+     * Renders a child.
+     *
+     * @param modelIndex The index of the model object to be rendered.
+     * @return The rendered child component, or null if no renderer has been registered or
+     *         pagination is active and the child falls outside the current page.
+     */
     protected T renderChild(int modelIndex) {
         if (renderer != null && paginator.inRange(modelIndex)) {
             M mdl = model.get(modelIndex);
@@ -171,6 +191,11 @@ public class ModelAndView<T extends BaseComponent, M> implements IListModelListe
         return null;
     }
     
+    /**
+     * Destroys the child component corresponding to the model object at the specified index.
+     *
+     * @param modelIndex The index of the model object.
+     */
     protected void destroyChild(int modelIndex) {
         if (paginator.inRange(modelIndex)) {
             BaseComponent child = parent.getChildAt(getChildIndex(modelIndex));
@@ -194,6 +219,9 @@ public class ModelAndView<T extends BaseComponent, M> implements IListModelListe
         }
     }
     
+    /**
+     * Clean up all resources.
+     */
     public void destroy() {
         if (model != null) {
             model.removeEventListener(this);
@@ -207,6 +235,12 @@ public class ModelAndView<T extends BaseComponent, M> implements IListModelListe
         parent = null;
     }
     
+    /**
+     * Dynamically updates the rendering when the model changes.
+     *
+     * @see org.fujion.model.IListModel.IListModelListener#onListChange(org.fujion.model.IListModel.ListEventType,
+     *      int, int)
+     */
     @Override
     public void onListChange(ListEventType type, int startIndex, int endIndex) {
         paginator.setModelSize(model.size());
@@ -258,7 +292,7 @@ public class ModelAndView<T extends BaseComponent, M> implements IListModelListe
     }
     
     /**
-     * Force model index to be within current page range.
+     * Force the model index to be within the current page range.
      *
      * @param modelIndex Model index.
      * @return Adjusted index.

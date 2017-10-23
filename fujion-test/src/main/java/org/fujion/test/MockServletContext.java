@@ -2,7 +2,7 @@
  * #%L
  * fujion
  * %%
- * Copyright (C) 2008 - 2016 Regenstrief Institute, Inc.
+ * Copyright (C) 2008 - 2017 Regenstrief Institute, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,44 +30,47 @@ import org.springframework.core.io.Resource;
  * Mock servlet context for unit testing.
  */
 public class MockServletContext extends org.springframework.mock.web.MockServletContext {
-    
+
+    /**
+     * Resource loader for mock servlet context.
+     */
     public static class ResourceLoader extends DefaultResourceLoader {
-        
+
         @Override
         public Resource getResource(String location) {
             if (location != null && location.startsWith("/web") || location.startsWith("web")) {
                 location = "classpath:" + location;
             }
-
+            
             return super.getResource(location);
         }
-
+        
     }
-
+    
     public MockServletContext() {
         super(new ResourceLoader());
         this.setAttribute("javax.websocket.server.ServerContainer", new MockServerContainer());
     }
-    
+
     @Override
     public String getRealPath(String path) {
         try {
             URL url = getResource(path);
-            
+
             if (url == null) {
                 return null;
             }
-
+            
             String protocol = url.getProtocol();
-
+            
             if ("jar".equals(protocol)) {
                 return url.toString();
             }
         } catch (MalformedURLException e) {
             // NOP
         }
-        
+
         return super.getRealPath(path);
     }
-
+    
 }

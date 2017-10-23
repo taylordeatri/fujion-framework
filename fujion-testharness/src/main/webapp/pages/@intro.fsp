@@ -1,7 +1,6 @@
-<page>
-	<div height="100%" width="100%" class="h1 text-center"
-		style="display:flex;flex-direction:column;align-items:center">
-		Select a tab to view component tests.
-		<image src="images/fujion_logo.png" style="margin-top:50px"/>
-	</div>
-</page>
+
+<div height="100%" width="100%" class="h1 text-center"
+	style="display:flex;flex-direction:column;align-items:center">
+	Select a tab to view component tests.
+	<image src="images/fujion_logo.png" style="margin-top:50px" />
+</div>

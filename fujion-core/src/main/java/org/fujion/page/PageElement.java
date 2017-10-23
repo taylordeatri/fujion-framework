@@ -2,7 +2,7 @@
  * #%L
  * fujion
  * %%
- * Copyright (C) 2008 - 2016 Regenstrief Institute, Inc.
+ * Copyright (C) 2008 - 2017 Regenstrief Institute, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@
 package org.fujion.page;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -74,6 +75,12 @@ public class PageElement {
         childCounts.put(childTag, count + 1);
     }
     
+    /**
+     * Sets the value of a named attribute.
+     *
+     * @param name The attribute name.
+     * @param value The new value.
+     */
     /*package*/ void setAttribute(String name, String value) {
         if (attributes == null) {
             attributes = new HashMap<>();
@@ -102,14 +109,14 @@ public class PageElement {
             map.remove(tag);
             
             if (!cardinality.isValid(count)) {
-                build(sb, "The number of occurrences (%d) for tag '%s' falls outside the range of %d - %d.", count, tag,
+                build(sb, "The number of occurrences (%d) for tag '<%s>' falls outside the range of %d - %d.", count, tag,
                     cardinality.getMinimum(), cardinality.getMaximum());
             }
         }
         
         for (Entry<String, Cardinality> child : map.entrySet()) {
             if (child.getValue().getMinimum() > 0) {
-                build(sb, "A required child tag (%s) is missing.", child.getKey());
+                build(sb, "A required child tag '<%s>' is missing.", child.getKey());
             }
         }
         
@@ -122,27 +129,68 @@ public class PageElement {
         sb.append(sb.length() == 0 ? "" : "\n").append(String.format(format, args));
     }
     
+    /**
+     * Returns the component definition for this page element.
+     *
+     * @return The component definition for this page element.
+     */
     public ComponentDefinition getDefinition() {
         return definition;
     }
     
+    /**
+     * Returns the parent of this page element.
+     *
+     * @return The parent of this page element.
+     */
     public PageElement getParent() {
         return parent;
     }
     
-    public Iterable<PageElement> getChildren() {
-        return children;
+    /**
+     * Returns a list of this page element's children.
+     *
+     * @return A list of this page element's children, never null.
+     */
+    public List<PageElement> getChildren() {
+        return children == null ? Collections.emptyList() : Collections.unmodifiableList(children);
     }
     
+    /**
+     * Returns the attribute map.
+     *
+     * @return The attribute map, never null.
+     */
     public Map<String, String> getAttributes() {
         return attributes == null ? null : new HashMap<>(attributes);
     }
     
+    /**
+     * Returns true if this is the root page element.
+     *
+     * @return True if this is the root page element.
+     */
+    public boolean isRoot() {
+        return parent == null;
+    }
+
+    /**
+     * Registers a tag library to this page element.
+     *
+     * @param prefix The tag library prefix.
+     * @param tagLibrary The tag library.
+     */
     public void addTagLibrary(String prefix, TagLibrary tagLibrary) {
         tagLibraries = tagLibraries == null ? new HashMap<>() : tagLibraries;
         tagLibraries.put(prefix, tagLibrary);
     }
     
+    /**
+     * Returns a tag library registered to this page element or one of its ancestors.
+     *
+     * @param prefix The tag library prefix.
+     * @return The tag library, possibly null.
+     */
     public TagLibrary getTagLibrary(String prefix) {
         TagLibrary lib = tagLibraries == null ? null : tagLibraries.get(prefix);
         return lib != null ? lib : parent == null ? null : parent.getTagLibrary(prefix);

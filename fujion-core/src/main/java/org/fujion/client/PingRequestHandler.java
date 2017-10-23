@@ -2,7 +2,7 @@
  * #%L
  * fujion
  * %%
- * Copyright (C) 2008 - 2016 Regenstrief Institute, Inc.
+ * Copyright (C) 2008 - 2017 Regenstrief Institute, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,14 +27,17 @@ import org.fujion.websocket.IRequestHandler;
  * logic and serve only to verify client-server connectivity and reset inactivity timeouts.
  */
 public class PingRequestHandler implements IRequestHandler {
-
+    
     @Override
     public void handleRequest(ClientRequest request) {
     }
-
+    
+    /**
+     * Returns a request type of "ping".
+     */
     @Override
     public String getRequestType() {
         return "ping";
     }
-
+    
 }

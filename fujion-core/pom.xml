@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.fujion</groupId>
 		<artifactId>fujion-parent</artifactId>
-		<version>1.0.6-SNAPSHOT</version>
+		<version>1.1.0-SNAPSHOT</version>
 	</parent>
 
 	<name>Fujion Core Libraries</name>
@@ -57,6 +57,7 @@
 						<configuration>
 							<mainClass>org.fujion.annotation.SchemaGenerator</mainClass>
 							<arguments>
+								<argument>-f=${project.version}</argument>
 								<argument>${basedir}/target/classes/web/fujion/fsp.xsd</argument>
 							</arguments>
 							<classpathScope>compile</classpathScope>

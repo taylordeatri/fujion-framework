@@ -2,20 +2,20 @@
  * #%L
  * fujion
  * %%
- * Copyright (C) 2008 - 2016 Regenstrief Institute, Inc.
+ * Copyright (C) 2008 - 2017 Regenstrief Institute, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  * #L%
  */
 package org.fujion.common;
@@ -27,18 +27,30 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Wraps a map, providing the ability to control whether key values may be replaced.
- * 
+ * Wraps a map, providing the ability to control how duplicate keys are handled.
+ *
  * @param <KEY> The class of the indexing key.
  * @param <VALUE> The class of the stored item.
  */
 public class RegistryMap<KEY, VALUE> implements Map<KEY, VALUE> {
     
+    /**
+     * Possible actions to take when attempting to store a duplicate key.
+     */
     public enum DuplicateAction {
-        REPLACE, // Replace existing key value (default).
-        IGNORE, // Ignore attempt to replace existing key value.
-        ERROR // Throw exception on duplicate key.
-    };
+        /**
+         * Replace existing key value (default).
+         */
+        REPLACE,
+        /**
+         * Ignore attempt to replace existing key value.
+         */
+        IGNORE,
+        /**
+         * Throw exception on duplicate key.
+         */
+        ERROR
+    }
     
     private final Map<KEY, VALUE> map;
     
@@ -53,7 +65,7 @@ public class RegistryMap<KEY, VALUE> implements Map<KEY, VALUE> {
     
     /**
      * Wraps the specified map, allowing replaceable keys.
-     * 
+     *
      * @param map Map to be wrapped. If null, a concurrent hash map is created and used.
      */
     public RegistryMap(Map<KEY, VALUE> map) {
@@ -62,7 +74,7 @@ public class RegistryMap<KEY, VALUE> implements Map<KEY, VALUE> {
     
     /**
      * Uses concurrent hash map.
-     * 
+     *
      * @param duplicateAction Behavior on attempt to replace existing key.
      */
     public RegistryMap(DuplicateAction duplicateAction) {
@@ -75,7 +87,7 @@ public class RegistryMap<KEY, VALUE> implements Map<KEY, VALUE> {
      */
     public RegistryMap(Map<KEY, VALUE> map, DuplicateAction duplicateAction) {
         this.duplicateAction = duplicateAction == null ? DuplicateAction.REPLACE : duplicateAction;
-        this.map = map == null ? new ConcurrentHashMap<KEY, VALUE>() : map;
+        this.map = map == null ? new ConcurrentHashMap<>() : map;
     }
     
     @Override

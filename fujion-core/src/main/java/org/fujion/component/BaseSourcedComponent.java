@@ -2,7 +2,7 @@
  * #%L
  * fujion
  * %%
- * Copyright (C) 2008 - 2016 Regenstrief Institute, Inc.
+ * Copyright (C) 2008 - 2017 Regenstrief Institute, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,50 +28,54 @@ import org.fujion.annotation.Component.PropertySetter;
  * external source.
  */
 public abstract class BaseSourcedComponent extends BaseComponent {
-
+    
     private String src;
-
+    
     protected BaseSourcedComponent(boolean contentSynced) {
         this(null, contentSynced);
     }
-
+    
     protected BaseSourcedComponent(String content, boolean contentSynced) {
         setContentSynced(contentSynced);
         setContent(content);
     }
-
+    
     @PropertySetter("content")
     @Override
     public void setContent(String content) {
         content = nullify(content);
-
+        
         if (content != null) {
             setSrc(null);
         }
-
+        
         super.setContent(content);
     }
-    
+
+    /**
+     * Returns the URL of the external content source.
+     *
+     * @return URL of the external content source.
+     */
     @PropertyGetter("src")
     public String getSrc() {
         return src;
     }
-
+    
+    /**
+     * Sets the URL of the external content source.
+     *
+     * @param src URL of the external content source.
+     */
     @PropertySetter(value = "src")
     public void setSrc(String src) {
         src = nullify(src);
-
+        
         if (src != null) {
             super.setContent(null);
         }
-
-        if (!areEqual(src, this.src)) {
-            this.src = src;
-            
-            if (isContentSynced()) {
-                sync("src", src);
-            }
-        }
+        
+        propertyChange("src", this.src, this.src = src, isContentSynced());
     }
-    
+
 }

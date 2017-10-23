@@ -2,7 +2,7 @@
  * #%L
  * fujion
  * %%
- * Copyright (C) 2008 - 2016 Regenstrief Institute, Inc.
+ * Copyright (C) 2008 - 2017 Regenstrief Institute, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,9 +25,6 @@ import java.lang.reflect.Method;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.fujion.ancillary.ComponentRegistry;
-import org.fujion.annotation.Component.FactoryParameter;
-import org.fujion.annotation.Component.PropertyGetter;
-import org.fujion.annotation.Component.PropertySetter;
 import org.fujion.component.BaseComponent;
 
 /**
@@ -40,6 +37,11 @@ public class ComponentScanner extends AbstractClassScanner<BaseComponent, Compon
     
     private static final ComponentScanner instance = new ComponentScanner();
     
+    /**
+     * Returns a singleton instance of the component scanner.
+     *
+     * @return Singleton instance of the component scanner.
+     */
     public static ComponentScanner getInstance() {
         return instance;
     }
@@ -86,22 +88,11 @@ public class ComponentScanner extends AbstractClassScanner<BaseComponent, Compon
                 continue;
             }
             
-            PropertySetter setter = factoryMethods ? null : method.getAnnotation(PropertySetter.class);
-            
-            if (setter != null) {
-                def._addSetter(setter, method);
-            }
-            
-            PropertyGetter getter = factoryMethods ? null : method.getAnnotation(PropertyGetter.class);
-            
-            if (getter != null) {
-                def._addGetter(getter, method);
-            }
-            
-            FactoryParameter parameter = factoryMethods ? method.getAnnotation(FactoryParameter.class) : null;
-            
-            if (parameter != null) {
-                def._addFactoryParameter(parameter, method);
+            if (factoryMethods) {
+                def._addFactoryParameter(method);
+            } else {
+                def._addSetter(method);
+                def._addGetter(method);
             }
         }
         

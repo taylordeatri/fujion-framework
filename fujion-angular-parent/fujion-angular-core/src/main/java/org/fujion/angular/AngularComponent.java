@@ -2,7 +2,7 @@
  * #%L
  * fujion
  * %%
- * Copyright (C) 2008 - 2016 Regenstrief Institute, Inc.
+ * Copyright (C) 2008 - 2017 Regenstrief Institute, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,27 +26,41 @@ import org.fujion.annotation.Component.PropertySetter;
 import org.fujion.component.BaseUIComponent;
 
 /**
- * Container for an angular component.
+ * Container for an Angular component.
  */
 @Component(tag = "angular", widgetModule = "fujion-angular-widget", widgetClass = "AngularWidget", parentTag = "*")
 public class AngularComponent extends BaseUIComponent {
-
-    private String src;
     
+    private String src;
+
+    /**
+     * Returns the name of the module containing the Angular component.
+     *
+     * @return Name of module containing Angular component.
+     */
     @PropertyGetter("src")
     public String getSrc() {
         return src;
     }
-    
+
+    /**
+     * Sets the module containing the Angular component.
+     *
+     * @param src Name of module containing Angular component.
+     */
     @PropertySetter("src")
     public void setSrc(String src) {
-        if (!areEqual(src = trimify(src), this.src)) {
-            sync("src", this.src = src);
-        }
+        propertyChange("src", this.src, this.src = trimify(src), true);
     }
-    
+
+    /**
+     * Invokes a published method on the module containing the Angular component.
+     *
+     * @param functionName Name of function to invoke.
+     * @param args Arguments to pass to function.
+     */
     public void ngInvoke(String functionName, Object... args) {
         invoke("ngInvoke", functionName, args);
     }
-    
+
 }

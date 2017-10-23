@@ -2,7 +2,7 @@
  * #%L
  * fujion
  * %%
- * Copyright (C) 2008 - 2016 Regenstrief Institute, Inc.
+ * Copyright (C) 2008 - 2017 Regenstrief Institute, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,17 +30,17 @@ import org.fujion.component.BaseComponent;
  * @param <T> The type of component rendered from the model.
  */
 public interface ISupportsModel<T extends BaseComponent> {
-    
+
     /**
      * Returns the model and view for this component.
      *
      * @return The model and view for this component.
      */
     IModelAndView<T, ?> getModelAndView();
-    
+
     /**
      * Returns the model and view for this component. The model is cast to the specified type.
-     * 
+     *
      * @param <M> The class of the model object.
      * @param type The type of the model object.
      * @return The model and view for this component.
@@ -49,18 +49,19 @@ public interface ISupportsModel<T extends BaseComponent> {
     default <M> IModelAndView<T, M> getModelAndView(Class<M> type) {
         return (IModelAndView<T, M>) getModelAndView();
     }
-    
+
     /**
-     * @see IModelAndView#getModel()
+     * Returns the list model, or null if none set.
+     *
+     * @return The list model, possibly null.
      */
-    @SuppressWarnings("javadoc")
     default IListModel<?> getModel() {
         return getModelAndView().getModel();
     }
-    
+
     /**
      * Returns the model for this component. The model is cast to the specified type.
-     * 
+     *
      * @param <M> The class of the model object.
      * @param type The type of the model object.
      * @return The model this component.
@@ -68,59 +69,78 @@ public interface ISupportsModel<T extends BaseComponent> {
     default <M> IListModel<M> getModel(Class<M> type) {
         return getModelAndView(type).getModel();
     }
-    
+
     /**
-     * @see IModelAndView#setModel(IListModel)
+     * Sets the list model. If not null and a renderer has been set, the model will be re-rendered
+     * immediately. If null, any previous rendering will be removed.
+     *
+     * @param <M> The class of the model object.
+     * @param model The list model, or null to remove an existing one.
      */
-    @SuppressWarnings({ "rawtypes", "unchecked", "javadoc" })
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     default <M> void setModel(IListModel<M> model) {
         getModelAndView().setModel((ListModel) model);
     }
-    
+
     /**
-     * @see IModelAndView#getRenderer()
+     * Returns the renderer, or null if none set.
+     *
+     * @return The renderer, possibly null.
      */
-    @SuppressWarnings("javadoc")
     default IComponentRenderer<T, ?> getRenderer() {
         return getModelAndView().getRenderer();
     }
-    
+
     /**
-     * @see IModelAndView#getRenderer(Class)
+     * Returns the renderer for a specified model type.
+     * 
+     * @param type The type of model object.
+     * @param <M> The class of the model object.
+     * @return The renderer, possibly null.
      */
-    @SuppressWarnings("javadoc")
     default <M> IComponentRenderer<T, M> getRenderer(Class<M> type) {
         return getModelAndView(type).getRenderer();
     }
-    
+
     /**
-     * @see IModelAndView#setRenderer(IComponentRenderer)
+     * Sets the renderer. If not null and a model has been set, the model will be re-rendered
+     * immediately. If null, any previous rendering will be removed.
+     *
+     * @param <M> The class of the model object.
+     * @param renderer The renderer, or null to remove an existing one.
      */
-    @SuppressWarnings({ "rawtypes", "unchecked", "javadoc" })
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     default <M> void setRenderer(IComponentRenderer<T, M> renderer) {
         getModelAndView().setRenderer((IComponentRenderer) renderer);
     }
-    
+
     /**
-     * @see IModelAndView#getDeferredRendering
+     * Returns deferred rendering setting. If true, rendering to the client is deferred until all
+     * model objects are rendered, then client updates are sent in bulk. This can be more efficient
+     * when rendering a large number of items.
+     *
+     * @return The deferred rendering setting.
      */
-    @SuppressWarnings("javadoc")
     default boolean getDeferredRendering() {
         return getModelAndView().getDeferredRendering();
     }
-    
+
     /**
-     * @see IModelAndView#setDeferredRendering(boolean)
+     * Sets the deferred rendering setting. If true, rendering to the client is deferred until all
+     * model objects are rendered, then client updates are sent in bulk. This can be more efficient
+     * when rendering a large number of items.
+     *
+     * @param value The deferred rendering setting.
      */
-    @SuppressWarnings("javadoc")
     default void setDeferredRendering(boolean value) {
         getModelAndView().setDeferredRendering(value);
     }
-    
+
     /**
-     * @see IModelAndView#getPaginator()
+     * Returns the paging controller, if any.
+     *
+     * @return The paging controller, possibly null.
      */
-    @SuppressWarnings("javadoc")
     default IPaginator getPaginator() {
         return getModelAndView().getPaginator();
     }

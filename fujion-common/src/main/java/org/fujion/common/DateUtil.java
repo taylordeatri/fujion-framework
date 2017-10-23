@@ -2,20 +2,20 @@
  * #%L
  * fujion
  * %%
- * Copyright (C) 2008 - 2016 Regenstrief Institute, Inc.
+ * Copyright (C) 2008 - 2017 Regenstrief Institute, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  * #L%
  */
 package org.fujion.common;
@@ -78,28 +78,34 @@ public class DateUtil {
     private static final long[] MS_LG = new long[] { 31557600000L, 2592000000L, 604800000L, 86400000L, 3600000L, 60000L,
             1000L, 1L };
     
+    /**
+     * Labels for time units. TODO: externalize these for localization support.
+     */
     public static String[][] TIME_UNIT = new String[][] { { "year", "years", "yr", "yrs" },
             { "month", "months", "mo", "mos" }, { "week", "weeks", "wk", "wks" }, { "day", "days", "day", "days" },
             { "hour", "hours", "hr", "hrs" }, { "minute", "minutes", "min", "mins" }, { "second", "seconds", "sec", "secs" },
             { "millisecond", "milliseconds", "ms", "ms" } };
     
+    /**
+     * Represents time units in order of increasing precision.
+     */
     public enum TimeUnit {
         YEARS, MONTHS, WEEKS, DAYS, HOURS, MINUTES, SECONDS, MILLISECONDS
-    };
+    }
     
     /**
      * Enum representing common date formats.
      */
     public enum Format {
         //@formatter:off
-        WITH_TZ("dd-MMM-yyyy HH:mm zzz"), 
-        WITHOUT_TZ("dd-MMM-yyyy HH:mm"), 
-        WITHOUT_TIME("dd-MMM-yyyy"), 
+        WITH_TZ("dd-MMM-yyyy HH:mm zzz"),
+        WITHOUT_TZ("dd-MMM-yyyy HH:mm"),
+        WITHOUT_TIME("dd-MMM-yyyy"),
         HL7(HL7_DATE_TIME_PATTERN),
         HL7_WITHOUT_TIME(HL7_DATE_ONLY_PATTERN),
-        JS_WITH_TZ("yyyy-MM-dd HH:mm zzz"), 
-        JS_WITHOUT_TZ("yyyy-MM-dd HH:mm"), 
-        JS_WITHOUT_TIME("yyyy-MM-dd"); 
+        JS_WITH_TZ("yyyy-MM-dd HH:mm zzz"),
+        JS_WITHOUT_TZ("yyyy-MM-dd HH:mm"),
+        JS_WITHOUT_TIME("yyyy-MM-dd");
         //@formatter:on
         
         private String pattern;
@@ -110,7 +116,7 @@ public class DateUtil {
         
         /**
          * Returns the format pattern.
-         * 
+         *
          * @return The format pattern.
          */
         public String getPattern() {
@@ -119,7 +125,7 @@ public class DateUtil {
         
         /**
          * Returns a formatter for this date format.
-         * 
+         *
          * @return A formatter.
          */
         public FastDateFormat getFormatter() {
@@ -129,7 +135,7 @@ public class DateUtil {
         
         /**
          * Formats an input date.
-         * 
+         *
          * @param date The date to format.
          * @return The formatted date.
          */
@@ -139,7 +145,7 @@ public class DateUtil {
         
         /**
          * Parses an input value.
-         * 
+         *
          * @param value The value to parse.
          * @return The resulting date value if successful.
          * @throws ParseException Date parsing exception.
@@ -163,7 +169,7 @@ public class DateUtil {
      * TODO: probably we can add something like "t+d" or "t-y" as valid cases; in these scenarios,
      * the coefficient was omitted and could be defaulted to 1.
      * </p>
-     * 
+     *
      * @param s <code>String</code> containing value to be converted.
      * @return <code>Date</code> object corresponding to the input value, or <code>null</code> if
      *         the parsing failed to resolve a valid Date.
@@ -251,7 +257,7 @@ public class DateUtil {
     
     /**
      * Attempts to parse an input value using one of several patterns.
-     * 
+     *
      * @param value String to parse.
      * @param patterns Patterns to be tried in succession until parsing succeeds.
      * @return The resulting date value.
@@ -264,7 +270,7 @@ public class DateUtil {
     /**
      * Attempts to parse a string containing a date representation using several different date
      * patterns.
-     * 
+     *
      * @param value String to parse
      * @return If the parsing was successful, returns the date value represented by the input value.
      *         Otherwise, returns null.
@@ -287,7 +293,7 @@ public class DateUtil {
     
     /**
      * Clones a date.
-     * 
+     *
      * @param date Date to clone.
      * @return A clone of the original date, or null if the original date was null.
      */
@@ -297,7 +303,7 @@ public class DateUtil {
     
     /**
      * Adds specified number of days to date and, optionally strips the time component.
-     * 
+     *
      * @param date Date value to process.
      * @param daysOffset # of days to add.
      * @param stripTime If true, strip the time component.
@@ -328,7 +334,7 @@ public class DateUtil {
     
     /**
      * Strips the time component from a date.
-     * 
+     *
      * @param date Original date.
      * @return Date without the time component.
      */
@@ -338,7 +344,7 @@ public class DateUtil {
     
     /**
      * Returns the input date with the time set to the end of the day.
-     * 
+     *
      * @param date Original date.
      * @return Date with time set to end of day.
      */
@@ -358,7 +364,7 @@ public class DateUtil {
     
     /**
      * Returns a date with the current time.
-     * 
+     *
      * @return Current date and time.
      */
     public static Date now() {
@@ -367,7 +373,7 @@ public class DateUtil {
     
     /**
      * Returns a date with the current day (no time).
-     * 
+     *
      * @return Current date.
      */
     public static Date today() {
@@ -376,7 +382,7 @@ public class DateUtil {
     
     /**
      * Compares two dates. Allows nulls.
-     * 
+     *
      * @param date1 First date to compare.
      * @param date2 Second date to compare.
      * @return Result of comparison.
@@ -390,7 +396,7 @@ public class DateUtil {
      * Converts a date/time value to a string, using the format dd-mmm-yyyy hh:mm. Because we cannot
      * determine the absence of a time from a time of 24:00, we must assume a time of 24:00 means
      * that no time is present and strip that from the return value.
-     * 
+     *
      * @param date Date value to convert.
      * @return Formatted string representation of the specified date, or an empty string if date is
      *         null.
@@ -403,7 +409,7 @@ public class DateUtil {
      * Converts a date/time value to a string, using the format dd-mmm-yyyy hh:mm. Because we cannot
      * determine the absence of a time from a time of 24:00, we must assume a time of 24:00 means
      * that no time is present and strip that from the return value.
-     * 
+     *
      * @param date Date value to convert.
      * @param showTimezone If true, time zone information is also appended.
      * @return Formatted string representation of the specified date, or an empty string if date is
@@ -417,7 +423,7 @@ public class DateUtil {
      * Converts a date/time value to a string, using the format dd-mmm-yyyy hh:mm. Because we cannot
      * determine the absence of a time from a time of 24:00, we must assume a time of 24:00 means
      * that no time is present and strip that from the return value.
-     * 
+     *
      * @param date Date value to convert
      * @param showTimezone If true, time zone information is also appended.
      * @param ignoreTime If true, the time component is ignored.
@@ -433,7 +439,7 @@ public class DateUtil {
     /**
      * Same as formatDate(Date, boolean) except replaces the time separator with the specified
      * string.
-     * 
+     *
      * @param date Date value to convert
      * @param timeSeparator String to use in place of default time separator
      * @return Formatted string representation of the specified date using the specified time
@@ -445,7 +451,7 @@ public class DateUtil {
     
     /**
      * Convert a date to HL7 format.
-     * 
+     *
      * @param date Date to convert.
      * @return The HL7-formatted date.
      */
@@ -456,7 +462,7 @@ public class DateUtil {
     
     /**
      * Returns true if the date has an associated time.
-     * 
+     *
      * @param date Date value to check.
      * @return True if the date has a time component.
      */
@@ -472,7 +478,7 @@ public class DateUtil {
     
     /**
      * Return elapsed time in ms to displayable format with units.
-     * 
+     *
      * @param elapsed Elapsed time in ms.
      * @return Elapsed time in displayable format.
      */
@@ -482,7 +488,7 @@ public class DateUtil {
     
     /**
      * Return elapsed time in ms to displayable format with units.
-     * 
+     *
      * @param elapsed Elapsed time in ms.
      * @return Elapsed time in displayable format.
      * @param minUnits Minimum units for return value (null = ms).
@@ -493,7 +499,7 @@ public class DateUtil {
     
     /**
      * Return elapsed time in ms to displayable format with units.
-     * 
+     *
      * @param elapsed Elapsed time in ms.
      * @param pluralize If true, pluralize units when appropriate.
      * @param abbreviated If true, use abbreviated form of units.
@@ -506,7 +512,7 @@ public class DateUtil {
     
     /**
      * Return elapsed time in ms to displayable format with units.
-     * 
+     *
      * @param elapsed Elapsed time in ms.
      * @param pluralize If true, pluralize units when appropriate.
      * @param abbreviated If true, use abbreviated form of units.
@@ -542,7 +548,7 @@ public class DateUtil {
     
     /**
      * Parses an elapsed time string, returning time in milliseconds.
-     * 
+     *
      * @param value The string value to parse.
      * @return The elapsed time value in milliseconds.
      */
@@ -552,7 +558,7 @@ public class DateUtil {
     
     /**
      * Parses an elapsed time string, returning time in specified units.
-     * 
+     *
      * @param value The string value to parse.
      * @param units The units of the returned value (defaults to ms).
      * @return The elapsed time value in the requested units.
@@ -593,7 +599,7 @@ public class DateUtil {
     
     /**
      * Formats a duration in ms.
-     * 
+     *
      * @param duration Duration in ms.
      * @return Formatted duration.
      */
@@ -603,7 +609,7 @@ public class DateUtil {
     
     /**
      * Formats a duration in ms to the specified accuracy.
-     * 
+     *
      * @param duration Duration in ms.
      * @param accuracy Accuracy of output.
      * @return Formatted duration.
@@ -614,7 +620,7 @@ public class DateUtil {
     
     /**
      * Formats a duration in ms to the specified accuracy.
-     * 
+     *
      * @param duration Duration in ms.
      * @param accuracy Accuracy of output.
      * @param pluralize If true, pluralize units when appropriate.
@@ -662,7 +668,7 @@ public class DateUtil {
     
     /**
      * Returns the user's time zone.
-     * 
+     *
      * @return The user's time zone.
      */
     public static TimeZone getLocalTimeZone() {
@@ -674,7 +680,7 @@ public class DateUtil {
      * Returns age as a formatted string expressed in days, months, or years, depending on whether
      * person is an infant (&lt; 2 mos), toddler (&gt; 2 mos, &lt; 2 yrs), or more than 2 years old.
      * </p>
-     * 
+     *
      * @param dob Date of person's birth
      * @return the age display string
      */
@@ -695,7 +701,7 @@ public class DateUtil {
      * Allows the caller to specify whether or not to pluralize the age units in the age display
      * string.
      * </p>
-     * 
+     *
      * @param dob Date of person's birth
      * @param pluralize If true, pluralize the age units in the age display string.
      * @param refDate The date as of which to calculate the Person's age (null means today).
@@ -763,7 +769,7 @@ public class DateUtil {
     
     /**
      * Converts day, month, and year to a date.
-     * 
+     *
      * @param day Day of month.
      * @param month Month (1=January, etc.)
      * @param year Year (4 digit).
@@ -775,7 +781,7 @@ public class DateUtil {
     
     /**
      * Converts day, month, year and time parameters to a date.
-     * 
+     *
      * @param day Day of month.
      * @param month Month (1=January, etc.)
      * @param year Year (4 digit).

@@ -2,7 +2,7 @@
  * #%L
  * fujion
  * %%
- * Copyright (C) 2008 - 2016 Regenstrief Institute, Inc.
+ * Copyright (C) 2008 - 2017 Regenstrief Institute, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
  *        http://www.springframework.org/schema/beans
  *        http://www.springframework.org/schema/beans/spring-beans.xsd
  *        http://www.fujion.org/schema/component
- *        http://www.fujion.org/schema/extensions/component-extensions.xsd">
+ *        http://www.fujion.org/schema/component-extensions.xsd">
  *
  *    <!-- Scan by package -->
  *    <ffc:component-scan package="org.acme.foo" />
@@ -45,7 +45,7 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
  * </pre>
  */
 public class ComponentXmlParser extends AbstractXmlParser {
-    
+
     @Override
     protected void setTargetObject(BeanDefinitionBuilder builder) {
         builder.addPropertyReference("targetObject", "fujion_ComponentScanner");

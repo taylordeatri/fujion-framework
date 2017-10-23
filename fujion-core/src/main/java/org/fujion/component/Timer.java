@@ -2,7 +2,7 @@
  * #%L
  * fujion
  * %%
- * Copyright (C) 2008 - 2016 Regenstrief Institute, Inc.
+ * Copyright (C) 2008 - 2017 Regenstrief Institute, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,9 +55,7 @@ public class Timer extends BaseComponent {
      */
     @PropertySetter("interval")
     public void setInterval(long interval) {
-        if (interval != this.interval) {
-            sync("interval", this.interval = interval);
-        }
+        propertyChange("interval", this.interval, this.interval = interval, true);
     }
 
     /**
@@ -81,9 +79,7 @@ public class Timer extends BaseComponent {
      */
     @PropertySetter("repeat")
     public void setRepeat(int repeat) {
-        if (repeat != this.repeat) {
-            sync("repeat", this.repeat = repeat);
-        }
+        propertyChange("repeat", this.repeat, this.repeat = repeat, true);
     }
 
     /**
@@ -103,8 +99,8 @@ public class Timer extends BaseComponent {
      */
     @PropertySetter("running")
     public void setRunning(boolean running) {
-        if (interval > 0 && running != this.running) {
-            sync("running", this.running = running);
+        if (interval > 0) {
+            propertyChange("running", this.running, this.running = running, true);
         }
     }
 

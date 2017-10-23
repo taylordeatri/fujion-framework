@@ -2,7 +2,7 @@
  * #%L
  * fujion
  * %%
- * Copyright (C) 2008 - 2016 Regenstrief Institute, Inc.
+ * Copyright (C) 2008 - 2017 Regenstrief Institute, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,21 +20,29 @@
  */
 package org.fujion.component;
 
+import java.util.Map;
+
 import org.fujion.annotation.Component;
 import org.fujion.annotation.Component.ContentHandling;
 
 /**
- * Component wrapping script source code for client-side invocation.
+ * Component wrapping JavaScript source code for client-side invocation.
  */
 @Component(tag = "cscript", widgetClass = "Script", content = ContentHandling.AS_ATTRIBUTE, parentTag = "*")
 public class ClientScript extends BaseScriptComponent {
-    
+
     public ClientScript() {
         super(true);
     }
-    
+
     public ClientScript(String script) {
         super(script, true);
     }
     
+    @Override
+    protected Object _execute(Map<String, Object> variables) {
+        invoke("execute", variables.get(getSelf()), variables);
+        return null;
+    }
+
 }

@@ -2,7 +2,7 @@
  * #%L
  * fujion
  * %%
- * Copyright (C) 2008 - 2016 Regenstrief Institute, Inc.
+ * Copyright (C) 2008 - 2017 Regenstrief Institute, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,11 +27,24 @@ import org.fujion.client.ClientRequest;
  * Allows the implementer to receive notifications about session activity.
  */
 public interface ISessionListener {
-
+    
+    /**
+     * Called when a client request is received.
+     *
+     * @param request A client request.
+     */
     void onClientRequest(ClientRequest request);
-
+    
+    /**
+     * Called when a client invocation is sent.
+     *
+     * @param invocation A client invocation.
+     */
     void onClientInvocation(ClientInvocation invocation);
-
+    
+    /**
+     * Called when the session is destroyed.
+     */
     void onDestroy();
-
+    
 }

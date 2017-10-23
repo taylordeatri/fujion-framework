@@ -2,7 +2,7 @@
  * #%L
  * fujion
  * %%
- * Copyright (C) 2008 - 2016 Regenstrief Institute, Inc.
+ * Copyright (C) 2008 - 2017 Regenstrief Institute, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,29 +24,40 @@ import org.fujion.annotation.EventType;
 import org.fujion.annotation.EventType.EventParameter;
 import org.fujion.component.BaseComponent;
 
+/**
+ * A drop event.
+ */
 @EventType(DropEvent.TYPE)
 public class DropEvent extends Event {
-    
+
+    /**
+     * The event type.
+     */
     public static final String TYPE = "drop";
-    
+
     @EventParameter
     private BaseComponent draggable;
-    
+
     public DropEvent() {
         super(TYPE);
     }
-    
+
     public DropEvent(BaseComponent target, Object data) {
         super(TYPE, target, data);
     }
-    
+
     public DropEvent(BaseComponent target, BaseComponent draggable, Object data) {
         this(target, data);
         this.draggable = draggable;
     }
-
+    
+    /**
+     * Returns the component that was dragged.
+     *
+     * @return The component that was dragged.
+     */
     public BaseComponent getDraggable() {
         return draggable;
     }
-
+    
 }

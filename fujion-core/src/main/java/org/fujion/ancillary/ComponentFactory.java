@@ -2,7 +2,7 @@
  * #%L
  * fujion
  * %%
- * Copyright (C) 2008 - 2016 Regenstrief Institute, Inc.
+ * Copyright (C) 2008 - 2017 Regenstrief Institute, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,9 +24,9 @@ import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.fujion.common.MiscUtil;
 import org.fujion.annotation.Component.FactoryParameter;
 import org.fujion.annotation.ComponentDefinition;
+import org.fujion.common.MiscUtil;
 import org.fujion.component.BaseComponent;
 import org.fujion.expression.ELEvaluator;
 
@@ -35,18 +35,18 @@ import org.fujion.expression.ELEvaluator;
  * deserialization to provide control over component creation.
  */
 public class ComponentFactory {
-
+    
     private final ComponentDefinition def;
-
+    
     private Class<? extends BaseComponent> clazz;
-
+    
     private boolean inactive;
-
+    
     public ComponentFactory(ComponentDefinition def) {
         this.def = def;
         this.clazz = def.getComponentClass();
     }
-
+    
     /**
      * A special processor may modify the component's implementation class, as long as the
      * substituted class is a subclass of the original.
@@ -56,14 +56,14 @@ public class ComponentFactory {
     @FactoryParameter("impl")
     protected void setImplementationClass(Class<? extends BaseComponent> clazz) {
         Class<? extends BaseComponent> originalClazz = def.getComponentClass();
-        
+
         if (clazz != null && !originalClazz.isAssignableFrom(clazz)) {
             throw new ComponentException("Implementation class must extend class " + originalClazz.getName());
         }
-
+        
         this.clazz = clazz;
     }
-
+    
     /**
      * Conditionally prevents the factory from creating a component.
      *
@@ -73,7 +73,7 @@ public class ComponentFactory {
     protected void setIf(boolean condition) {
         inactive = !condition;
     }
-
+    
     /**
      * Conditionally prevents the factory from creating a component.
      *
@@ -83,7 +83,7 @@ public class ComponentFactory {
     protected void setUnless(boolean condition) {
         inactive = condition;
     }
-
+    
     /**
      * Returns true if component creation has been inactivated.
      *
@@ -92,7 +92,7 @@ public class ComponentFactory {
     public boolean isInactive() {
         return inactive;
     }
-    
+
     /**
      * Creates a component instance from the definition using a factory context.
      *
@@ -103,19 +103,19 @@ public class ComponentFactory {
         if (attributes != null) {
             for (Entry<String, Method> entry : def.getFactoryParameters().entrySet()) {
                 String name = entry.getKey();
-
+                
                 if (attributes.containsKey(name)) {
                     Object value = ELEvaluator.getInstance().evaluate(attributes.remove(name));
-                    ConvertUtil.invokeSetter(this, entry.getValue(), value);
+                    ConvertUtil.invokeMethod(this, entry.getValue(), value);
                 }
             }
         }
-
+        
         try {
             return inactive ? null : clazz.newInstance();
         } catch (Exception e) {
             throw MiscUtil.toUnchecked(e);
         }
     }
-
+    
 }

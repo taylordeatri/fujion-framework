@@ -2,20 +2,20 @@
  * #%L
  * fujion
  * %%
- * Copyright (C) 2008 - 2016 Regenstrief Institute, Inc.
+ * Copyright (C) 2008 - 2017 Regenstrief Institute, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License")),
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  * #L%
  */
 package org.fujion.event;
@@ -25,6 +25,9 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 
+/**
+ * Key code mnemonics.
+ */
 public enum KeyCode {
     
     VK_0(48),
@@ -407,6 +410,17 @@ public enum KeyCode {
     
     private final int code;
     
+    /**
+     * Returns a key code from its text representation.
+     *
+     * @param value Value to convert. This may be one of:
+     *            <ul>
+     *            <li>"#" followed by a numeric key code value</li>
+     *            <li>The key code mnemonic as specified in the {@link #KeyCode} enumeration (the
+     *            "VK_" prefix is optional)</li>
+     *            </ul>
+     * @return The corresponding key code, or null if none.
+     */
     public static KeyCode fromString(String value) {
         if (value != null) {
             try {
@@ -429,6 +443,12 @@ public enum KeyCode {
         return null;
     }
     
+    /**
+     * Returns the {@link KeyCode keycode} enum, given the key code.
+     *
+     * @param keyCode The key code.
+     * @return The KeyCode enum, or null if not found.
+     */
     public static KeyCode fromCode(int keyCode) {
         if (!initialized) {
             initMap();
@@ -456,8 +476,20 @@ public enum KeyCode {
     
     /**
      * Normalizes a key capture string by ordering prefixes and converting symbolic names to key
-     * code values.
-     * 
+     * code values. A key capture string consists of zero or more <b>key modifiers</b> followed by a
+     * <b>key code specifier</b>. Key modifiers are:
+     * <ul>
+     * <li>^ = Control key</li>
+     * <li>@ = Alt key</li>
+     * <li>~ = Meta key</li>
+     * <li>$ = Shift key</li>
+     * </ul>
+     * A key code specifier may be one of:
+     * <ul>
+     * <li># followed by a numeric key code.</li>
+     * <li>A {@link KeyCode key mnemonic} (with or without the VK_ prefix).</li>
+     * </ul>
+     *
      * @param keycapture One or more key capture strings delimited by spaces.
      * @return The normalized string.
      */
@@ -504,6 +536,11 @@ public enum KeyCode {
         this.code = code;
     }
     
+    /**
+     * Returns the key code.
+     *
+     * @return The key code.
+     */
     public int getCode() {
         return code;
     }

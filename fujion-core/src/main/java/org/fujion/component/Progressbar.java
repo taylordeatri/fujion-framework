@@ -2,7 +2,7 @@
  * #%L
  * fujion
  * %%
- * Copyright (C) 2008 - 2016 Regenstrief Institute, Inc.
+ * Copyright (C) 2008 - 2017 Regenstrief Institute, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,30 +32,46 @@ public class Progressbar extends BaseLabeledComponent<BaseLabeledComponent.Label
 
     private int value;
 
-    private int maxValue = 100;
+    private int maxvalue = 100;
 
+    /**
+     * Returns the current value of the slider.
+     *
+     * @return The current value of the slider.
+     */
     @PropertyGetter("value")
     public int getValue() {
         return value;
     }
 
+    /**
+     * Sets the current value of the slider.
+     *
+     * @param value The current value of the slider.
+     */
     @PropertySetter("value")
     public void setValue(int value) {
-        if (value != this.value) {
-            sync("value", this.value = value);
-        }
+        propertyChange("value", this.value, this.value = value, true);
     }
 
-    @PropertyGetter("maxValue")
+    /**
+     * Returns the maximum value for the slider.
+     *
+     * @return The maximum value for the slider.
+     */
+    @PropertyGetter("maxvalue")
     public int getMaxValue() {
-        return maxValue;
+        return maxvalue;
     }
 
-    @PropertySetter("maxValue")
-    public void setMaxValue(int maxValue) {
-        if (maxValue != this.maxValue) {
-            sync("maxValue", this.maxValue = maxValue);
-        }
+    /**
+     * Sets the maximum value for the slider.
+     *
+     * @param maxvalue The maximum value for the slider.
+     */
+    @PropertySetter("maxvalue")
+    public void setMaxValue(int maxvalue) {
+        propertyChange("maxvalue", this.maxvalue, this.maxvalue = maxvalue, true);
     }
 
 }

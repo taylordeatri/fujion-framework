@@ -2,7 +2,7 @@
  * #%L
  * fujion
  * %%
- * Copyright (C) 2008 - 2016 Regenstrief Institute, Inc.
+ * Copyright (C) 2008 - 2017 Regenstrief Institute, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,30 @@
  *
  * #L%
  */
-package org.fujion.highcharts;
+package org.fujion.model;
 
-public class Point {
+import java.lang.reflect.Method;
+
+import org.fujion.component.BaseComponent;
+
+public interface IBinding {
     
+    void init(BaseComponent instance, String propertyName, Method getter, Method setter);
+    
+    /**
+     * Read from model, write to target.
+     */
+    public interface IReadBinding extends IBinding {
+        
+        void read();
+    }
+
+    /**
+     * Read from target, write to model.
+     */
+    public interface IWriteBinding extends IBinding {
+        
+        void write();
+    }
+
 }

@@ -2,20 +2,20 @@
  * #%L
  * fujion
  * %%
- * Copyright (C) 2008 - 2016 Regenstrief Institute, Inc.
+ * Copyright (C) 2008 - 2017 Regenstrief Institute, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  * #L%
  */
 package org.fujion.component;
@@ -34,12 +34,27 @@ import org.fujion.annotation.Component.PropertySetter;
 @Component(tag = "radiogroup", widgetClass = "Radiogroup", content = ContentHandling.AS_CHILD, parentTag = "*", childTag = @ChildTag("*"))
 public class Radiogroup extends BaseUIComponent {
     
+    /**
+     * Orientation of radio buttons within this group.
+     */
     public enum Orientation {
-        HORIZONTAL, VERTICAL
+        /**
+         * Radio buttons are displayed in a row.
+         */
+        HORIZONTAL,
+        /**
+         * Radio buttons are display in a column.
+         */
+        VERTICAL
     }
     
     private Orientation orientation = Orientation.HORIZONTAL;
     
+    /**
+     * Returns the currently selected radio button in this group, if any.
+     *
+     * @return The currently selected radio button in this group, possibly null.
+     */
     public Radiobutton getSelected() {
         return getSelected(this);
     }
@@ -62,17 +77,25 @@ public class Radiogroup extends BaseUIComponent {
         return null;
     }
     
+    /**
+     * Returns the {@link Orientation orientation} of radio buttons belonging to this group.
+     *
+     * @return The {@link Orientation orientation} of radio buttons belonging to this group.
+     */
     @PropertyGetter("orientation")
     public Orientation getOrientation() {
         return orientation;
     }
     
+    /**
+     * Sets the {@link Orientation orientation} of radio buttons belonging to this group.
+     *
+     * @param orientation The {@link Orientation orientation} of radio buttons belonging to this
+     *            group.
+     */
     @PropertySetter("orientation")
     public void setOrientation(Orientation orientation) {
-        orientation = orientation == null ? Orientation.HORIZONTAL : orientation;
-        
-        if (orientation != this.orientation) {
-            sync("orientation", this.orientation = orientation);
-        }
+        propertyChange("orientation", this.orientation, this.orientation = defaultify(orientation, Orientation.HORIZONTAL),
+            true);
     }
 }

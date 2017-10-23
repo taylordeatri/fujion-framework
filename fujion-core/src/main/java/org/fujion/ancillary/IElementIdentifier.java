@@ -2,7 +2,7 @@
  * #%L
  * fujion
  * %%
- * Copyright (C) 2008 - 2016 Regenstrief Institute, Inc.
+ * Copyright (C) 2008 - 2017 Regenstrief Institute, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,13 +21,15 @@
 package org.fujion.ancillary;
 
 /**
- * Interface for classes that have a unique identifier for an HTML element.
+ * Interface for classes that assign a unique identifier to an HTML element.
  */
 public interface IElementIdentifier {
-
+    
     /**
-     * @return The unique identifier of the HTML element.
+     * Returns the unique identifier of the corresponding HTML element.
+     * 
+     * @return HTML element unique identifier.
      */
     String getId();
-
+    
 }

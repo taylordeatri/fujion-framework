@@ -268,7 +268,7 @@ define('fujion-core', ['jquery', 'jquery-ui', 'lodash'], function($) {
 		}
 	},
 	
-	/*------------------------------ Websocket Support ------------------------------*/
+	/*------------------------------ WebSocket Support ------------------------------*/
 	
 	ws: {
 		_init: function(options) {
@@ -487,9 +487,7 @@ define('fujion-core', ['jquery', 'jquery-ui', 'lodash'], function($) {
 	widget: {
 		_registry: {},
 		
-		_zmodal: 999,
-		
-		_popup: {},
+		_addon: {},
 		
 		_init: function() {
 		    $.widget.bridge('uitooltip', $.ui.tooltip);
@@ -497,6 +495,21 @@ define('fujion-core', ['jquery', 'jquery-ui', 'lodash'], function($) {
 			$('body').on('click', function() {
 				fujion.widget.Popup.closePopups();
 			});
+		},
+		
+		/**
+		 * Register an add-on widget.
+		 * 
+		 * @param {String} moduleName The module name.
+		 * @param {String} className The name of the widget class.
+		 * @param {object} classObject The widget class.
+		 * @return {object} The module object.
+		 */
+		addon: function(moduleName, className, classObject) {
+			var addon = fujion.widget._addon;
+			addon[moduleName] = addon[moduleName] || {};
+			addon[moduleName][className] = classObject;
+			return addon[moduleName];
 		},
 		
 		/**
@@ -543,6 +556,8 @@ define('fujion-core', ['jquery', 'jquery-ui', 'lodash'], function($) {
 		}
 		
 	},
+	
+	/*------------------------------ Logging Support ------------------------------*/
 	
 	log: {
 		level: {},
@@ -686,13 +701,6 @@ define('fujion-core', ['jquery', 'jquery-ui', 'lodash'], function($) {
 	 */
 	submit: function(form) {
 		fujion.$(form).submit();
-	},
-	
-	/**
-	 * Enables or disables close confirmation.
-	 */
-	canClose: function(value) {
-		fujion._canClose = value;
 	},
 	
 	/**

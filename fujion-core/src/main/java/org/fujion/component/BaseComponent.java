@@ -2,7 +2,7 @@
  * #%L
  * fujion
  * %%
- * Copyright (C) 2008 - 2016 Regenstrief Institute, Inc.
+ * Copyright (C) 2008 - 2017 Regenstrief Institute, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@
 package org.fujion.component;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -47,11 +48,13 @@ import org.fujion.annotation.WiredComponentScanner;
 import org.fujion.client.ClientInvocation;
 import org.fujion.client.ClientInvocationQueue;
 import org.fujion.common.MiscUtil;
+import org.fujion.component.BaseScriptComponent.ExecutionMode;
 import org.fujion.event.Event;
 import org.fujion.event.EventListeners;
 import org.fujion.event.EventUtil;
 import org.fujion.event.ForwardListener;
 import org.fujion.event.IEventListener;
+import org.fujion.event.PropertychangeEvent;
 import org.fujion.event.StatechangeEvent;
 import org.springframework.util.Assert;
 
@@ -60,8 +63,12 @@ import org.springframework.util.Assert;
  */
 public abstract class BaseComponent implements IElementIdentifier {
 
+    private static final String ATTR_CONTROLLER = "controller";
+    
     /**
-     * Reference to a subcomponent.
+     * Reference to a subcomponent. A subcomponent typically does not have an explicit
+     * implementation on the server, but does have a corresponding HTML element on the client. This
+     * class exists to allow client invocations to be directed to that element.
      */
     public static class SubComponent implements IElementIdentifier {
 
@@ -87,6 +94,11 @@ public abstract class BaseComponent implements IElementIdentifier {
 
         private Map<String, BaseComponent> names;
 
+        /**
+         * Add a component's name (if any).
+         *
+         * @param component Component whose name is to be added.
+         */
         public void add(BaseComponent component) {
             String name = component.getName();
 
@@ -96,6 +108,11 @@ public abstract class BaseComponent implements IElementIdentifier {
             }
         }
 
+        /**
+         * Remove a component's name (if any).
+         *
+         * @param component Component whose name is to be removed.
+         */
         public void remove(BaseComponent component) {
             String name = component.getName();
 
@@ -108,6 +125,12 @@ public abstract class BaseComponent implements IElementIdentifier {
             return names == null ? null : names.get(name);
         }
 
+        /**
+         * Validate that a component's name does not conflict with an existing name.
+         *
+         * @param component Component to be validated.
+         * @exception ComponentException Thrown if a name collision is detected.
+         */
         public void validate(BaseComponent component) {
             _validate(component, getNameRoot());
         }
@@ -141,6 +164,12 @@ public abstract class BaseComponent implements IElementIdentifier {
             return root == null ? getRoot() : root;
         }
 
+        /**
+         * Returns a component from the index given its name.
+         *
+         * @param name Component name
+         * @return The corresponding component, or null if none found.
+         */
         public BaseComponent find(String name) {
             return _find(name, getNameRoot());
         }
@@ -190,6 +219,8 @@ public abstract class BaseComponent implements IElementIdentifier {
     
     private boolean namespace;
 
+    private List<Object> controllers;
+
     private final List<BaseComponent> children = new LinkedList<>();
 
     private final Map<String, Object> attributes = new HashMap<>();
@@ -200,35 +231,59 @@ public abstract class BaseComponent implements IElementIdentifier {
 
     private final NameIndex nameIndex = new NameIndex();
 
+    /**
+     * Validates that a component still exists (i.e., is not dead).
+     *
+     * @param comp Component to validate.
+     * @exception ComponentException Thrown upon validation failure.
+     */
     protected static void validate(BaseComponent comp) {
         if (comp != null && comp.isDead()) {
             throw new ComponentException("Component no longer exists: %s", comp.getId());
         }
     }
 
-    public BaseComponent() {
+    /**
+     * Create a component. Event handler annotations are processed at this time.
+     */
+    protected BaseComponent() {
         componentDefinition = ComponentRegistry.getInstance().get(getClass());
         namespace = this instanceof INamespace;
         EventHandlerScanner.wire(this, this);
     }
 
+    /**
+     * Return the component's definition.
+     *
+     * @return The component's definition.
+     */
     public ComponentDefinition getDefinition() {
         return componentDefinition;
     }
 
+    /**
+     * Returns the name associated with this instance. Names must be unique within a common
+     * namespace.
+     *
+     * @return The component's name.
+     */
     @PropertyGetter("name")
     public String getName() {
         return name;
     }
 
+    /**
+     * Sets the name associated with this instance. Names must be unique within a common namespace.
+     *
+     * @param name The component's name.
+     */
     @PropertySetter("name")
     public void setName(String name) {
         if (!areEqual(name = nullify(name), this.name)) {
             validateName(name);
             nameIndex.remove(this);
-            this.name = name;
+            propertyChange("name", this.name, this.name = name, true);
             nameIndex.add(this);
-            sync("name", name);
         }
     }
 
@@ -242,21 +297,37 @@ public abstract class BaseComponent implements IElementIdentifier {
         }
     }
 
+    /**
+     * Returns the id of the client widget corresponding to this component.
+     *
+     * @see org.fujion.ancillary.IElementIdentifier#getId()
+     */
     @Override
     @PropertyGetter("id")
     public String getId() {
         return id;
     }
 
+    /**
+     * Sets the id of the client widget. Once set, the id is immutable.
+     *
+     * @param id The id of the client widget.
+     */
     /*package*/ void _setId(String id) {
         Assert.isNull(this.id, "Unique id cannot be modified.");
         this.id = id;
     }
 
+    /**
+     * Removes, but does not destroy, this component from its parent.
+     */
     public void detach() {
         setParent(null);
     }
 
+    /**
+     * Destroys this component.
+     */
     public void destroy() {
         if (dead) {
             return;
@@ -281,6 +352,11 @@ public abstract class BaseComponent implements IElementIdentifier {
         eventListeners.removeAll();
     }
 
+    /**
+     * Destroy a component and all its children upon finalization.
+     *
+     * @see java.lang.Object#finalize()
+     */
     @Override
     public void finalize() throws Throwable {
         super.finalize();
@@ -290,31 +366,66 @@ public abstract class BaseComponent implements IElementIdentifier {
         }
     }
 
+    /**
+     * Destroy all children under this
+     */
     public void destroyChildren() {
         while (!children.isEmpty()) {
             children.get(0).destroy();
         }
     }
 
+    /**
+     * Override to perform any special cleanup operations when this component is destroyed.
+     */
     protected void onDestroy() {
     }
 
+    /**
+     * Returns true if the component is dead (meaning its corresponding widget has been destroyed).
+     * Any operation on a dead component that would cause a client invocation will fail.
+     *
+     * @return True if the component is dead.
+     */
     public boolean isDead() {
         return dead;
     }
 
+    /**
+     * Validates that this component is not dead.
+     *
+     * @exception ComponentException Thrown if validation fails.
+     */
     protected void validate() {
         validate(this);
     }
 
+    /**
+     * Returns this component's parent, if any.
+     *
+     * @return The parent, or null if there is no parent.
+     */
     public BaseComponent getParent() {
         return parent;
     }
 
+    /**
+     * Validates that a component would a valid parent for this component.
+     *
+     * @param parent Component to validate.
+     * @return True if the component would be a valid parent for this component.
+     */
     protected boolean validateParent(BaseComponent parent) {
         return parent == null || componentDefinition.isParentTag(parent.componentDefinition.getTag());
     }
 
+    /**
+     * Sets the component's parent.
+     *
+     * @param parent The new parent.
+     * @exception ComponentException Thrown if the new parent is not a valid parent for this
+     *                component.
+     */
     public void setParent(BaseComponent parent) {
         if (parent != this.parent) {
             if (parent == null) {
@@ -327,14 +438,39 @@ public abstract class BaseComponent implements IElementIdentifier {
         }
     }
 
+    /**
+     * Returns the attribute map for this component.
+     *
+     * @return The attribute map.
+     */
     public Map<String, Object> getAttributes() {
         return attributes;
     }
 
+    /**
+     * Returns the value of the named attribute.
+     *
+     * @param name The attribute name.
+     * @return The named attribute's value (or null if not found).
+     */
     public Object getAttribute(String name) {
         return attributes.get(name);
     }
 
+    /**
+     * Returns the value of the named attribute, cast to the specified type.
+     *
+     * @param <T> The attribute value's expected type.
+     * @param name The attribute name.
+     * @param dflt The default attribute value. This will be returned under one of the following
+     *            conditions:
+     *            <ul>
+     *            <li>The named attribute does not exist</li>
+     *            <li>The named attribute value is null</li>
+     *            <li>The named attribute value cannot be cast to the specified type</li>
+     *            </ul>
+     * @return The value of the named attribute, or the default value.
+     */
     @SuppressWarnings("unchecked")
     public <T> T getAttribute(String name, T dflt) {
         try {
@@ -345,14 +481,30 @@ public abstract class BaseComponent implements IElementIdentifier {
         }
     }
 
-    public <T> T getAttribute(String name, Class<T> clazz) {
+    /**
+     * Returns the value of the named attribute, converted to the specified type.
+     *
+     * @param <T> The return type.
+     * @param name The attribute name.
+     * @param type The return type for the attribute value.
+     * @return The value of the named attribute, or null if the existing value cannot be converted
+     *         to the specified type.
+     */
+    public <T> T getAttribute(String name, Class<T> type) {
         try {
-            return ConvertUtil.convert(attributes.get(name), clazz, this);
+            return ConvertUtil.convert(attributes.get(name), type, this);
         } catch (Exception e) {
             return null;
         }
     }
 
+    /**
+     * Finds the named attribute, returning its value. If the named attribute does not exist or has
+     * a null value, the parent chain will be searched until a match is found.
+     *
+     * @param name The attribute name.
+     * @return The attribute value, or null if not found.
+     */
     public Object findAttribute(String name) {
         Object value = null;
         BaseComponent cmp = this;
@@ -364,32 +516,75 @@ public abstract class BaseComponent implements IElementIdentifier {
         return value;
     }
 
+    /**
+     * Sets the value of a named attribute.
+     *
+     * @param name The attribute name.
+     * @param value The new value.
+     * @return The previous value of the named attribute, if any.
+     */
+    @PropertySetter("attr:")
     public Object setAttribute(String name, Object value) {
         return attributes.put(name, value);
     }
 
+    /**
+     * Removes the named attribute if it exists.
+     *
+     * @param name The attribute name.
+     * @return The value of the removed attribute.
+     */
     public Object removeAttribute(String name) {
         return attributes.remove(name);
     }
 
+    /**
+     * Returns true if the named attribute exists.
+     *
+     * @param name The attribute name.
+     * @return True if the named attribute exists.
+     */
     public boolean hasAttribute(String name) {
         return attributes.containsKey(name);
     }
 
-    public void validateIsChild(BaseComponent child) {
+    /**
+     * Validates that the specified component is currently a child of this component.
+     *
+     * @param child The component to check.
+     * @exception ComponentException Thrown if the component fails validation.
+     */
+    protected void validateIsChild(BaseComponent child) {
         if (child != null && child.getParent() != this) {
             throw new ComponentException("Child does not belong to this parent.");
         }
     }
 
+    /**
+     * Validates that the specified component may be added as a child.
+     *
+     * @param child The component to check.
+     * @exception ComponentException Thrown if the component fails validation.
+     */
     protected void validateChild(BaseComponent child) {
         componentDefinition.validateChild(child.componentDefinition, () -> getChildCount(child.getClass()));
     }
 
+    /**
+     * Adds a child to the end of the child list.
+     *
+     * @param child Child to add.
+     */
     public void addChild(BaseComponent child) {
         addChild(child, -1);
     }
 
+    /**
+     * Adds a child to the child list at the specified position.
+     *
+     * @param child Child to add.
+     * @param index The position in the child list where the new child will be inserted.
+     */
     public void addChild(BaseComponent child, int index) {
         boolean noSync = child.getPage() == null && index < 0;
         child.validate();
@@ -400,9 +595,7 @@ public abstract class BaseComponent implements IElementIdentifier {
             nameIndex.validate(child);
         }
 
-        if (!child.validatePage(page)) {
-            throw new ComponentException(this, "Child is already associated with a different page.");
-        }
+        child.validatePage(page);
 
         if (oldParent == this) {
             int i = child.getIndex();
@@ -447,6 +640,12 @@ public abstract class BaseComponent implements IElementIdentifier {
         }
     }
 
+    /**
+     * Adds a child to the child list immediately before the reference child.
+     *
+     * @param child Child to add.
+     * @param before The reference child.
+     */
     public void addChild(BaseComponent child, BaseComponent before) {
         if (before == null) {
             addChild(child);
@@ -461,16 +660,33 @@ public abstract class BaseComponent implements IElementIdentifier {
         addChild(child, i);
     }
 
+    /**
+     * Adds a list of children.
+     *
+     * @param children List of children to add.
+     */
     public void addChildren(Collection<? extends BaseComponent> children) {
         for (BaseComponent child : children) {
             addChild(child);
         }
     }
 
+    /**
+     * Removes a child from this parent.
+     *
+     * @param child Child to remove.
+     */
     public void removeChild(BaseComponent child) {
         _removeChild(child, false, false);
     }
 
+    /**
+     * Removes a child from this parent.
+     *
+     * @param child Child to remove.
+     * @param noSync If true, don't sync change with client.
+     * @param destroy If true, destroy the child once it is removed.
+     */
     /*package*/ void _removeChild(BaseComponent child, boolean noSync, boolean destroy) {
         int index = children.indexOf(child);
 
@@ -491,6 +707,12 @@ public abstract class BaseComponent implements IElementIdentifier {
         afterRemoveChild(child);
     }
 
+    /**
+     * Swap the position of two children.
+     *
+     * @param index1 Index of the first child.
+     * @param index2 Index of the second child.
+     */
     public void swapChildren(int index1, int index2) {
         BaseComponent child1 = children.get(index1);
         BaseComponent child2 = children.get(index2);
@@ -499,28 +721,70 @@ public abstract class BaseComponent implements IElementIdentifier {
         invokeIfAttached("swapChildren", index1, index2);
     }
 
+    /**
+     * Called before a new parent is set.
+     *
+     * @param newParent The new parent.
+     */
     protected void beforeSetParent(BaseComponent newParent) {
     }
 
+    /**
+     * Called after a new parent is set.
+     *
+     * @param oldParent The old parent.
+     */
     protected void afterSetParent(BaseComponent oldParent) {
     }
 
+    /**
+     * Called before a new child is added.
+     *
+     * @param child The new child.
+     */
     protected void beforeAddChild(BaseComponent child) {
     }
 
+    /**
+     * Called after a new child is added.
+     *
+     * @param child The new child.
+     */
     protected void afterAddChild(BaseComponent child) {
     }
 
+    /**
+     * Called before a child is removed.
+     *
+     * @param child The child to be removed.
+     */
     protected void beforeRemoveChild(BaseComponent child) {
     }
 
+    /**
+     * Called after a child is removed.
+     *
+     * @param child The removed child.
+     */
     protected void afterRemoveChild(BaseComponent child) {
     }
 
+    /**
+     * Returns an immutable list of existing children.
+     *
+     * @return List of existing children.
+     */
     public List<BaseComponent> getChildren() {
         return Collections.unmodifiableList(children);
     }
 
+    /**
+     * Returns an iterable of children of the specified type.
+     *
+     * @param <T> The desired type.
+     * @param type The desired type.
+     * @return An iterable of children of the specified type. Never null.
+     */
     public <T extends BaseComponent> Iterable<T> getChildren(Class<T> type) {
         return MiscUtil.iterableForType(getChildren(), type);
     }
@@ -534,6 +798,12 @@ public abstract class BaseComponent implements IElementIdentifier {
         return children.size();
     }
 
+    /**
+     * Returns the count of children of a specified type.
+     *
+     * @param type The desired type.
+     * @return Count of children of the specified type.
+     */
     public int getChildCount(Class<? extends BaseComponent> type) {
         int count = 0;
 
@@ -768,10 +1038,7 @@ public abstract class BaseComponent implements IElementIdentifier {
      * @param page The owning page.
      */
     private void _setPage(Page page) {
-        if (!validatePage(page)) {
-            throw new ComponentException(this, "Component cannot be assigned to a different page");
-        }
-
+        validatePage(page);
         this.page = page;
         page.registerComponent(this, true);
         Map<String, Object> props = new HashMap<>();
@@ -784,6 +1051,11 @@ public abstract class BaseComponent implements IElementIdentifier {
         }
     }
 
+    /**
+     * Called when this component is first attached to a page.
+     *
+     * @param page The attached page.
+     */
     protected void onAttach(Page page) {
     }
 
@@ -791,10 +1063,12 @@ public abstract class BaseComponent implements IElementIdentifier {
      * Validates that the specified page can be an owner of this component.
      *
      * @param page The page to be tested.
-     * @return True if the page can be an owner of this component.
+     * @exception ComponentException If fails validation.
      */
-    protected boolean validatePage(Page page) {
-        return page == this.page || this.page == null;
+    protected void validatePage(Page page) {
+        if (page != this.page && this.page != null) {
+            throw new ComponentException(this, "Component cannot be assigned to a different page");
+        }
     }
 
     /**
@@ -845,7 +1119,7 @@ public abstract class BaseComponent implements IElementIdentifier {
      * @param state The state name.
      * @param value The state value.
      */
-    public void sync(String state, Object value) {
+    protected void sync(String state, Object value) {
         if (!dead) {
             if (getPage() == null) {
                 if (inits == null) {
@@ -1041,64 +1315,206 @@ public abstract class BaseComponent implements IElementIdentifier {
         }
     }
 
+    /**
+     * Adds an event forward. An event forward forwards an event of the specified type received by
+     * this component to another component.
+     *
+     * @param eventType The event type to forward.
+     * @param target The target for the forwarded event.
+     */
+    public void addEventForward(String eventType, BaseComponent target) {
+        addEventForward(eventType, target, null);
+    }
+
+    /**
+     * Adds an event forward. An event forward forwards an event of the specified type received by
+     * this component to another component, optionally with a different event type.
+     *
+     * @param eventType The event type to forward.
+     * @param target The target for the forwarded event.
+     * @param forwardType The type of the forwarded event. If null, the original event type is used.
+     */
     public void addEventForward(String eventType, BaseComponent target, String forwardType) {
         addEventListener(eventType, createForwardListener(eventType, target, forwardType));
     }
 
-    public void addEventForward(Class<? extends Event> eventClass, BaseComponent target, String forwardType) {
-        String eventType = getEventType(eventClass);
-        addEventListener(eventType, createForwardListener(eventType, target, forwardType));
+    /**
+     * Adds an event forward. An event forward forwards an event of the specified type received by
+     * this component to another component.
+     *
+     * @param eventClass The event type to forward.
+     * @param target The target for the forwarded event.
+     */
+    public void addEventForward(Class<? extends Event> eventClass, BaseComponent target) {
+        addEventForward(eventClass, target, null);
     }
 
+    /**
+     * Adds an event forward. An event forward forwards an event of the specified type received by
+     * this component to another component, optionally with a different event type.
+     *
+     * @param eventClass The event type to forward.
+     * @param target The target for the forwarded event.
+     * @param forwardType The type of the forwarded event. If null, the original event type is used.
+     */
+    public void addEventForward(Class<? extends Event> eventClass, BaseComponent target, String forwardType) {
+        addEventForward(getEventType(eventClass), target, forwardType);
+    }
+
+    /**
+     * Removes an event forward, if one exists.
+     *
+     * @param eventType The source event type.
+     * @param target The forwarded event target.
+     */
+    public void removeEventForward(String eventType, BaseComponent target) {
+        removeEventForward(eventType, target, null);
+    }
+
+    /**
+     * Removes an event forward, if one exists.
+     *
+     * @param eventType The source event type.
+     * @param target The forwarded event target.
+     * @param forwardType The forwarded event type. If null, the source event type is used.
+     */
     public void removeEventForward(String eventType, BaseComponent target, String forwardType) {
         removeEventListener(eventType, createForwardListener(eventType, target, forwardType));
     }
 
+    /**
+     * Removes an event forward, if one exists.
+     *
+     * @param eventClass The source event type.
+     * @param target The forwarded event target.
+     */
+    public void removeEventForward(Class<? extends Event> eventClass, BaseComponent target) {
+        removeEventForward(eventClass, target, null);
+    }
+
+    /**
+     * Removes an event forward, if one exists.
+     *
+     * @param eventClass The source event type.
+     * @param target The forwarded event target.
+     * @param forwardType The forwarded event type. If null, the source event type is used.
+     */
     public void removeEventForward(Class<? extends Event> eventClass, BaseComponent target, String forwardType) {
-        String eventType = getEventType(eventClass);
-        removeEventListener(eventType, createForwardListener(eventType, target, forwardType));
+        removeEventForward(getEventType(eventClass), target, forwardType);
     }
 
     private ForwardListener createForwardListener(String eventType, BaseComponent target, String forwardType) {
         return new ForwardListener(forwardType == null ? eventType : forwardType, target == null ? this : target);
     }
 
+    /**
+     * Returns true if this component has any listeners registered for the specified event type.
+     *
+     * @param eventType The event type.
+     * @return True if any registered listeners exist.
+     */
     public boolean hasEventListener(String eventType) {
         return eventListeners.hasListeners(eventType);
     }
 
+    /**
+     * Returns true if this component has any listeners registered for the specified event type.
+     *
+     * @param eventClass The event type.
+     * @return True if any registered listeners exist.
+     */
     public boolean hasEventListener(Class<? extends Event> eventClass) {
         return hasEventListener(getEventType(eventClass));
     }
 
+    /**
+     * Adds an event listener.
+     *
+     * @param eventType The type of event to listen for.
+     * @param eventListener The listener for the event.
+     */
     public void addEventListener(String eventType, IEventListener eventListener) {
         updateEventListener(eventType, eventListener, true, true);
     }
 
+    /**
+     * Adds an event listener.
+     *
+     * @param eventClass The type of event to listen for.
+     * @param eventListener The listener for the event.
+     */
     public void addEventListener(Class<? extends Event> eventClass, IEventListener eventListener) {
         updateEventListener(eventClass, eventListener, true, true);
     }
 
+    /**
+     * Adds an event listener.
+     *
+     * @param eventType The type of event to listen for.
+     * @param eventListener The listener for the event.
+     * @param syncToClient If true, notify the client that a listener has been added. The client
+     *            will normally not send events to the server unless it knows that a listener
+     *            exists.
+     */
     public void addEventListener(String eventType, IEventListener eventListener, boolean syncToClient) {
         updateEventListener(eventType, eventListener, true, syncToClient);
     }
 
+    /**
+     * Adds an event listener.
+     *
+     * @param eventClass The type of event to listen for.
+     * @param eventListener The listener for the event.
+     * @param syncToClient If true, notify the client that a listener has been added. The client
+     *            will normally not send events to the server unless it knows that a listener
+     *            exists.
+     */
     public void addEventListener(Class<? extends Event> eventClass, IEventListener eventListener, boolean syncToClient) {
         updateEventListener(eventClass, eventListener, true, syncToClient);
     }
 
+    /**
+     * Removes an event listener.
+     *
+     * @param eventType The type of event listened for.
+     * @param eventListener The listener for the event.
+     */
     public void removeEventListener(String eventType, IEventListener eventListener) {
         updateEventListener(eventType, eventListener, false, true);
     }
 
+    /**
+     * Removes an event listener.
+     *
+     * @param eventClass The type of event listened for.
+     * @param eventListener The listener for the event.
+     */
     public void removeEventListener(Class<? extends Event> eventClass, IEventListener eventListener) {
         updateEventListener(eventClass, eventListener, false, true);
     }
 
+    /**
+     * Removes an event listener.
+     *
+     * @param eventType The type of event listened for.
+     * @param eventListener The listener for the event.
+     * @param syncToClient If true, notify the client that a listener has been added. The client
+     *            will normally not send events to the server unless it knows that a listener
+     *            exists.
+     */
     public void removeEventListener(String eventType, IEventListener eventListener, boolean syncToClient) {
         updateEventListener(eventType, eventListener, false, syncToClient);
     }
 
+    /**
+     * Removes an event listener.
+     *
+     * @param eventClass The type of event listened for.
+     * @param eventListener The listener for the event.
+     * @param syncToClient If true, notify the client that a listener has been added. The client
+     *            will normally not send events to the server unless it knows that a listener
+     *            exists.
+     */
     public void removeEventListener(Class<? extends Event> eventClass, IEventListener eventListener, boolean syncToClient) {
         updateEventListener(eventClass, eventListener, false, syncToClient);
     }
@@ -1112,6 +1528,7 @@ public abstract class BaseComponent implements IElementIdentifier {
     private void updateEventListener(String eventTypes, IEventListener eventListener, boolean register,
                                      boolean syncToClient) {
         for (String eventType : eventTypes.split("\\ ")) {
+            eventType = EventUtil.stripOn(eventType);
             boolean before = eventListeners.hasListeners(eventType);
 
             if (register) {
@@ -1147,6 +1564,11 @@ public abstract class BaseComponent implements IElementIdentifier {
         return eventType;
     }
 
+    /**
+     * Send an event to this component's registered event listeners.
+     *
+     * @param eventType Type of event to send.
+     */
     public void fireEvent(String eventType) {
         fireEvent(EventUtil.toEvent(eventType));
     }
@@ -1160,6 +1582,45 @@ public abstract class BaseComponent implements IElementIdentifier {
         eventListeners.invoke(event);
     }
 
+    /**
+     * Setter for on* event handlers.
+     *
+     * @param eventName The event name.
+     * @param value Either a script component, a script string, or an event listener.
+     */
+    @PropertySetter("on:")
+    private void setOnHandler(String eventName, Object value) {
+        BaseScriptComponent script;
+
+        if (value instanceof IEventListener) {
+            addEventListener(eventName, (IEventListener) value);
+            return;
+        }
+        
+        if (value instanceof BaseScriptComponent) {
+            script = (BaseScriptComponent) value;
+        } else if (value instanceof String) {
+            script = new ServerScript("groovy", value.toString());
+            script.setMode(ExecutionMode.MANUAL);
+        } else {
+            throw new ComponentException(this, "Illegal type (%s) for event handler \"%s\"", value.getClass(), eventName);
+        }
+
+        addEventListener(eventName, (event) -> {
+            if (script.getPage() == null) {
+                script.setParent(getPage());
+            } else {
+                script.validatePage(getPage());
+            }
+
+            Map<String, Object> variables = new HashMap<>();
+            variables.put(script.getSelf(), this);
+            variables.put("controller", findAttribute(ATTR_CONTROLLER));
+            variables.put("event", event);
+            script.execute(variables);
+        });
+    }
+    
     /**
      * Send an event to all the ancestors of this component. Event propagation stops if any
      * recipient invokes the <code>stopPropagation</code> method on the event.
@@ -1195,12 +1656,18 @@ public abstract class BaseComponent implements IElementIdentifier {
     }
 
     /**
-     * Wires a controller's annotated components and event handlers, using this component to resolve
-     * name references.
+     * Wires a controller's annotated components and event handlers, in that order, using this
+     * component to resolve name references.
      *
-     * @param controller The controller to wire. If a string, is assumed to be the name of the
-     *            controller's implementation class in which case an instance of that class is
-     *            created.
+     * @param controller The controller to wire. The following values are recognized:
+     *            <ul>
+     *            <li>self - Controller is the component itself.</li>
+     *            <li>&lt;String&gt; - Name of the class from which a controller instance will be
+     *            created.</li>
+     *            <li>&lt;Class&gt; - The class from which a controller instance will be
+     *            created.</li>
+     *            <li>All other - The controller instance to be wired.</li>
+     *            </ul>
      */
     @PropertySetter(value = "controller", defer = true)
     public void wireController(Object controller) {
@@ -1210,18 +1677,47 @@ public abstract class BaseComponent implements IElementIdentifier {
 
         if (controller instanceof String) {
             try {
-                controller = "self".equals(controller) ? this : Class.forName((String) controller).newInstance();
+                controller = "self".equals(controller) ? this : Class.forName((String) controller);
+            } catch (Exception e) {
+                throw MiscUtil.toUnchecked(e);
+            }
+        }
+        
+        if (controller instanceof Class) {
+            try {
+                controller = ((Class<?>) controller).newInstance();
             } catch (Exception e) {
                 throw MiscUtil.toUnchecked(e);
             }
         }
 
+        setAttribute(ATTR_CONTROLLER, controller);
         WiredComponentScanner.wire(controller, this);
         EventHandlerScanner.wire(controller, this);
-
+        controllers = controllers == null ? new ArrayList<>() : controllers;
+        controllers.add(controller);
+        
         if (controller instanceof IAutoWired) {
             ((IAutoWired) controller).afterInitialized(this);
         }
+    }
+    
+    /**
+     * Returns an immutable list of controllers wired to this component.
+     *
+     * @return List of controllers wired to this component (never null).
+     */
+    public List<Object> getControllers() {
+        return controllers == null ? Collections.emptyList() : Collections.unmodifiableList(controllers);
+    }
+
+    /**
+     * Returns a reference to the last controller wired to this component.
+     *
+     * @return The last controller wired to this component, or null if none.
+     */
+    public Object getController() {
+        return controllers == null ? null : controllers.get(controllers.size() - 1);
     }
 
     /**
@@ -1309,20 +1805,24 @@ public abstract class BaseComponent implements IElementIdentifier {
         this.data = data;
     }
 
+    /**
+     * Returns the text content associated with this component, if any.
+     *
+     * @return The text content.
+     */
     @PropertyGetter("#text")
     protected String getContent() {
         return content;
     }
 
+    /**
+     * Sets the text content associated with this component.
+     *
+     * @param content The text content.
+     */
     @PropertySetter("#text")
     protected void setContent(String content) {
-        if (!areEqual(content = nullify(content), this.content)) {
-            this.content = content;
-
-            if (contentSynced) {
-                sync("content", content);
-            }
-        }
+        propertyChange("content", this.content, this.content = nullify(content), contentSynced);
     }
 
     /**
@@ -1357,12 +1857,42 @@ public abstract class BaseComponent implements IElementIdentifier {
 
         try {
             Field field = FieldUtils.getField(this.getClass(), state, true);
-            field.set(this, ConvertUtil.convert(event.getValue(), field.getType(), this));
+            Object oldValue = field.get(this);
+            Object newValue = ConvertUtil.convert(event.getValue(), field.getType(), this);
+            field.set(this, newValue);
+            propertyChange(state, oldValue, newValue, false);
         } catch (Exception e) {
             throw new ComponentException(e, "Error updating state: " + state);
         }
     }
 
+    /**
+     * Handle changes to published properties. If the old and new values are the same, no action is
+     * taken. Otherwise, the client is notified of the new value (if syncToClient is true) and a
+     * {@link PropertychangeEvent} is fired.
+     *
+     * @param propertyName The property name.
+     * @param oldValue The old value.
+     * @param newValue The new value.
+     * @param syncToClient If true, notify client of change.
+     * @return True if property value changed.
+     */
+    protected boolean propertyChange(String propertyName, Object oldValue, Object newValue, boolean syncToClient) {
+        if (areEqual(oldValue, newValue)) {
+            return false;
+        }
+
+        if (syncToClient) {
+            sync(propertyName, newValue);
+        }
+        
+        if (this.hasEventListener(PropertychangeEvent.TYPE)) {
+            fireEvent(new PropertychangeEvent(this, propertyName, oldValue, newValue));
+        }
+
+        return true;
+    }
+    
     /**
      * Returns basic information about this component for display purposes.
      */

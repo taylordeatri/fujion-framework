@@ -2,20 +2,20 @@
  * #%L
  * fujion
  * %%
- * Copyright (C) 2008 - 2016 Regenstrief Institute, Inc.
+ * Copyright (C) 2008 - 2017 Regenstrief Institute, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  * #L%
  */
 package org.fujion.component;
@@ -32,43 +32,80 @@ import org.fujion.annotation.Component.PropertySetter;
 @Component(tag = "toolbar", widgetClass = "Toolbar", content = ContentHandling.AS_CHILD, parentTag = "*", childTag = @ChildTag("*"))
 public class Toolbar extends BaseUIComponent {
     
+    /**
+     * Alignment of children within the tool bar. Default is START.
+     */
     public enum Alignment {
-        START, CENTER, END
+        /**
+         * Children are aligned to the left (if horizontal) or top (if vertical).
+         */
+        START,
+        /**
+         * Children are centered.
+         */
+        CENTER,
+        /**
+         * Children are aligned to the right (if horizontal) or bottom (if vertical).
+         */
+        END
     }
     
+    /**
+     * Orientation of the tool bar. Default is HORIZONTAL.
+     */
     public enum Orientation {
-        HORIZONTAL, VERTICAL
+        /**
+         * Tool bar is oriented horizontally.
+         */
+        HORIZONTAL,
+        /**
+         * Tool bar is oriented vertically.
+         */
+        VERTICAL
     }
     
     private Alignment alignment = Alignment.START;
     
     private Orientation orientation = Orientation.HORIZONTAL;
     
+    /**
+     * Returns the {@link Alignment alignment} of children within the tool bar.
+     *
+     * @return The {@link Alignment alignment} of children within the tool bar.
+     */
     @PropertyGetter("alignment")
     public Alignment getAlignment() {
         return alignment;
     }
     
+    /**
+     * Sets the {@link Alignment alignment} of children within the tool bar.
+     *
+     * @param alignment The {@link Alignment alignment} of children within the tool bar.
+     */
     @PropertySetter("alignment")
     public void setAlignment(Alignment alignment) {
-        alignment = alignment == null ? Alignment.START : alignment;
-        
-        if (alignment != this.alignment) {
-            sync("alignment", this.alignment = alignment);
-        }
+        propertyChange("alignment", this.alignment, this.alignment = defaultify(alignment, Alignment.START), true);
     }
     
+    /**
+     * Returns the {@link Orientation orientation} of the tool bar.
+     *
+     * @return The {@link Orientation orientation} of the tool bar.
+     */
     @PropertyGetter("orientation")
     public Orientation getOrientation() {
         return orientation;
     }
     
+    /**
+     * Sets the {@link Orientation orientation} of the tool bar.
+     *
+     * @param orientation The {@link Orientation orientation} of the tool bar.
+     */
     @PropertySetter("orientation")
     public void setOrientation(Orientation orientation) {
-        orientation = orientation == null ? Orientation.HORIZONTAL : orientation;
-        
-        if (orientation != this.orientation) {
-            sync("orientation", this.orientation = orientation);
-        }
+        propertyChange("orientation", this.orientation, this.orientation = defaultify(orientation, Orientation.HORIZONTAL),
+            true);
     }
 }

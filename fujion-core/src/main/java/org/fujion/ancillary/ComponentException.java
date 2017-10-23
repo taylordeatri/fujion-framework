@@ -2,7 +2,7 @@
  * #%L
  * fujion
  * %%
- * Copyright (C) 2008 - 2016 Regenstrief Institute, Inc.
+ * Copyright (C) 2008 - 2017 Regenstrief Institute, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,9 @@ import java.lang.reflect.InvocationTargetException;
 import org.fujion.component.BaseComponent;
 import org.springframework.core.NestedRuntimeException;
 
+/**
+ * Run time exception related to a component operation.
+ */
 public class ComponentException extends NestedRuntimeException {
     
     private static final long serialVersionUID = 1L;
@@ -74,10 +77,23 @@ public class ComponentException extends NestedRuntimeException {
         this(null, null, component, message, args);
     }
     
+    /**
+     * Returns the component instance that caused the exception.
+     *
+     * @return Component instance that caused the exception. May be null.
+     */
     public BaseComponent getComponent() {
         return component;
     }
     
+    /**
+     * Returns the class of the component that caused the exception. If a component instance is
+     * associated with the exception, the class will be that of the component instance. However, if
+     * the exception occurred while attempting to create an instance of a component, the component
+     * instance will be null and only the component class will be set.
+     *
+     * @return Class of the component that caused the exception. May be null.
+     */
     public Class<? extends BaseComponent> getComponentClass() {
         return componentClass;
     }

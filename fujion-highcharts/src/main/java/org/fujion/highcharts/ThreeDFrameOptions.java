@@ -2,7 +2,7 @@
  * #%L
  * fujion
  * %%
- * Copyright (C) 2008 - 2016 Regenstrief Institute, Inc.
+ * Copyright (C) 2008 - 2017 Regenstrief Institute, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,13 +22,16 @@ package org.fujion.highcharts;
 
 import org.fujion.ancillary.Options;
 
+/**
+ * Options for a 3D frame.
+ */
 public class ThreeDFrameOptions extends Options {
-    
+
     /**
      * The color of the panel. Defaults to transparent.
      */
     public String color;
-
+    
     /**
      * The thickness of the panel. Defaults to 1.
      */

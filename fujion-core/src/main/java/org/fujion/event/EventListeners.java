@@ -2,40 +2,37 @@
  * #%L
  * fujion
  * %%
- * Copyright (C) 2008 - 2016 Regenstrief Institute, Inc.
+ * Copyright (C) 2008 - 2017 Regenstrief Institute, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  * #L%
  */
 package org.fujion.event;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Manages event listeners for a single component.
  */
 public class EventListeners {
     
-    private final Map<String, Set<IEventListener>> allListeners = new HashMap<>();
+    private final Map<String, EventListenerSet> allListeners = new HashMap<>();
     
     /**
      * Add a listener for the given event type.
-     * 
+     *
      * @param eventType The event type.
      * @param eventListener The event listener.
      */
@@ -45,12 +42,12 @@ public class EventListeners {
     
     /**
      * Remove a listener for the given event type.
-     * 
+     *
      * @param eventType The event type.
      * @param eventListener The event listener.
      */
     public void remove(String eventType, IEventListener eventListener) {
-        Set<IEventListener> listeners = getListeners(eventType, false);
+        EventListenerSet listeners = getListeners(eventType, false);
         
         if (listeners != null) {
             listeners.remove(eventListener);
@@ -70,7 +67,7 @@ public class EventListeners {
     
     /**
      * Remove all listeners for the specified event type only.
-     * 
+     *
      * @param eventType The event type.
      */
     public void removeAll(String eventType) {
@@ -79,39 +76,33 @@ public class EventListeners {
     
     /**
      * Invoke all listeners for this type of event.
-     * 
+     *
      * @param event An event.
      */
     public void invoke(Event event) {
-        Set<IEventListener> listeners = getListeners(event.getType(), false);
+        EventListenerSet listeners = getListeners(event.getType(), false);
         
         if (listeners != null) {
-            for (IEventListener listener : new ArrayList<>(listeners)) {
-                if (event.isStopped()) {
-                    break;
-                }
-                
-                listener.onEvent(event);
-            }
+            listeners.onEvent(event);
         }
     }
     
     /**
      * Returns true if this event type has any listeners.
-     * 
+     *
      * @param eventType The event type.
      * @return True if there is at least one listener for the event type.
      */
     public boolean hasListeners(String eventType) {
-        Set<IEventListener> listeners = getListeners(eventType, false);
+        EventListenerSet listeners = getListeners(eventType, false);
         return listeners != null && !listeners.isEmpty();
     }
     
-    private Set<IEventListener> getListeners(String eventType, boolean forceCreate) {
-        Set<IEventListener> listeners = allListeners.get(eventType);
+    private EventListenerSet getListeners(String eventType, boolean forceCreate) {
+        EventListenerSet listeners = allListeners.get(eventType);
         
         if (listeners == null && forceCreate) {
-            allListeners.put(eventType, listeners = new LinkedHashSet<IEventListener>());
+            allListeners.put(eventType, listeners = new EventListenerSet());
         }
         
         return listeners;

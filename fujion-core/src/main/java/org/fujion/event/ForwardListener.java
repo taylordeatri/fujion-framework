@@ -2,7 +2,7 @@
  * #%L
  * fujion
  * %%
- * Copyright (C) 2008 - 2016 Regenstrief Institute, Inc.
+ * Copyright (C) 2008 - 2017 Regenstrief Institute, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,46 +20,42 @@
  */
 package org.fujion.event;
 
-import org.fujion.common.MiscUtil;
 import org.fujion.component.BaseComponent;
 import org.springframework.util.Assert;
 
+/**
+ * Implementation for a listener for a forwarded event.
+ */
 public class ForwardListener implements IEventListener {
-
+    
     private final String forwardType;
-
+    
     private final BaseComponent target;
-
+    
     public ForwardListener(String forwardType, BaseComponent target) {
         Assert.notNull(this.forwardType = forwardType, "A forward type must be specified.");
         Assert.notNull(this.target = target, "A forward target must be specified");
     }
-
+    
     @Override
     public void onEvent(Event event) {
         if (event.getType().equals(forwardType)) {
             if (event.getTarget() != this.target) {
                 EventUtil.send(event, target);
             }
-
-            return;
-        }
-
-        try {
+        } else {
             Event newEvent = new ForwardedEvent(forwardType, event);
             EventUtil.send(newEvent, target);
-        } catch (Exception e) {
-            throw MiscUtil.toUnchecked(e);
         }
     }
-
+    
     @Override
     public boolean equals(Object object) {
         if (object instanceof ForwardListener) {
             ForwardListener fl = (ForwardListener) object;
             return fl.target == target && fl.forwardType.equals(forwardType);
         }
-
+        
         return false;
     }
 }

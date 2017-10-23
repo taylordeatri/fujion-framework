@@ -2,7 +2,7 @@
  * #%L
  * fujion
  * %%
- * Copyright (C) 2008 - 2016 Regenstrief Institute, Inc.
+ * Copyright (C) 2008 - 2017 Regenstrief Institute, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,9 +29,9 @@ import java.util.Properties;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.fujion.client.WebJarLocator;
 import org.fujion.common.AbstractRegistry;
 import org.fujion.common.MiscUtil;
-import org.fujion.client.WebJarLocator;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -41,7 +41,26 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 
 /**
- * Loads themes from all theme-*.properties files.
+ * A registry of all themes discovered during application startup. Themes are loaded from
+ * <i>theme.properties</i> files located in either the WEB-INF or META-INF folder. A
+ * <i>theme.properties</i> file can contain one or more SystemJS overrides that change the default
+ * theme. The format is:
+ *
+ * <pre>
+ * &lt;theme-name&gt;/&lt;path to config entry&gt;=&lt;override value&gt;
+ * </pre>
+ *
+ * For example, to override the default Bootstrap theme with one of the publicly available
+ * alternates:
+ *
+ * <pre>
+ *      cosmo/paths/bootstrap-css=webjars/bootswatch-cosmo/css/bootstrap.css
+ *      cerulean/paths/bootstrap-css=webjars/bootswatch-cerulean/css/bootstrap.css
+ *      cyborg/paths/bootstrap-css=webjars/bootswatch-cyborg/css/bootstrap.css
+ *      darkly/paths/bootstrap-css=webjars/bootswatch-darkly/css/bootstrap.css
+ *      sandstone/paths/bootstrap-css=webjars/bootswatch-sandstone/css/bootstrap.css
+ *      slate/paths/bootstrap-css=webjars/bootswatch-slate/css/bootstrap.css
+ * </pre>
  */
 public class ThemeRegistry extends AbstractRegistry<String, Theme> implements ApplicationContextAware {
     
@@ -49,6 +68,11 @@ public class ThemeRegistry extends AbstractRegistry<String, Theme> implements Ap
     
     private static final ThemeRegistry instance = new ThemeRegistry();
 
+    /**
+     * Returns a singleton instance of the theme registry.
+     *
+     * @return Singleton instance of the theme registry.
+     */
     public static ThemeRegistry getInstance() {
         return instance;
     }
@@ -64,6 +88,13 @@ public class ThemeRegistry extends AbstractRegistry<String, Theme> implements Ap
         loadThemes(applicationContext, "WEB-INF");
     }
 
+    /**
+     * Locates and processes <i>theme.properties</i> files. This will create and register new themes
+     * based on the contents of these files.
+     *
+     * @param applicationContext The application context to use to locate files.
+     * @param path The root path to search for files.
+     */
     private void loadThemes(ApplicationContext applicationContext, String path) {
         try {
             for (Resource resource : applicationContext.getResources(path + "/theme.properties")) {

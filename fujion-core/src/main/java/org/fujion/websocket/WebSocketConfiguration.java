@@ -2,7 +2,7 @@
  * #%L
  * fujion
  * %%
- * Copyright (C) 2008 - 2016 Regenstrief Institute, Inc.
+ * Copyright (C) 2008 - 2017 Regenstrief Institute, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,27 +30,27 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 import org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor;
 
 /**
- * Configurer for the web socket connection.
+ * Configurator for the web socket connection.
  */
 @Configuration
 @EnableWebSocket
 public class WebSocketConfiguration implements WebSocketConfigurer {
-
-    private static long keepaliveInterval;
     
+    private static long keepaliveInterval;
+
     @Autowired
     private WebSocketHandler fujion_WebSocketHandler;
-    
+
     /**
      * Returns the keep-alive interval, in milliseconds. The client will transmit a ping packet when
-     * no transmission has occurred within this interval. A value of <= 0 disables this feature.
+     * no transmission has occurred within this interval. A value of &lt;= 0 disables this feature.
      *
      * @return The keep-alive interval.
      */
     public static long getKeepaliveInterval() {
         return keepaliveInterval;
     }
-
+    
     /**
      * Register the web socket handler and add a handshake interceptor to copy attributes from the
      * http session to the web socket.
@@ -61,7 +61,7 @@ public class WebSocketConfiguration implements WebSocketConfigurer {
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
         registry.addHandler(fujion_WebSocketHandler, "/ws/**").addInterceptors(new HttpSessionHandshakeInterceptor());
     }
-
+    
     /**
      * Sets the keep-alive interval, in milliseconds. The client will transmit a ping packet when no
      * transmission has occurred within this interval.

@@ -2,7 +2,7 @@
  * #%L
  * fujion
  * %%
- * Copyright (C) 2008 - 2016 Regenstrief Institute, Inc.
+ * Copyright (C) 2008 - 2017 Regenstrief Institute, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,12 +32,13 @@ import java.util.Map;
 import javax.servlet.ServletContext;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.fujion.common.MiscUtil;
 import org.fujion.client.ClientInvocation;
 import org.fujion.client.ClientRequest;
 import org.fujion.client.ExecutionContext;
+import org.fujion.common.MiscUtil;
 import org.fujion.core.WebUtil;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
@@ -179,8 +180,11 @@ public class WebSocketHandler extends AbstractWebSocketHandler implements BeanPo
      * @param exception The exception.
      */
     public static void sendError(WebSocketSession socket, Throwable exception) {
+        exception = ExceptionUtils.getRootCause(exception);
+
         if (exception instanceof InvocationTargetException) {
             exception = ((InvocationTargetException) exception).getTargetException();
+            exception = ExceptionUtils.getRootCause(exception);
         }
 
         try (StringWriter writer = new StringWriter(); PrintWriter print = new PrintWriter(writer);) {

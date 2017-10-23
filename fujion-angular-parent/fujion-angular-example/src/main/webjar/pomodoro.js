@@ -50,9 +50,7 @@ PomodoroComponent = __decorate([
     }),
     __metadata("design:paramtypes", [])
 ], PomodoroComponent);
-// Must export component to be bootstrapped as AngularComponent
-var AngularComponent = PomodoroComponent;
-exports.AngularComponent = AngularComponent;
+exports.AngularComponent = PomodoroComponent;
 /* Any additional metadata to be passed to the application module during bootstrapping
  * may be exported as in the following example:
  *

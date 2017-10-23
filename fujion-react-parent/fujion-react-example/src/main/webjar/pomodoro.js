@@ -193,6 +193,4 @@ var PomodoroComponent = function (_Component4) {
 
 //Must export component to be instantiated as ReactComponent
 
-var ReactComponent = PomodoroComponent;
-
-exports.ReactComponent = ReactComponent;
+exports.ReactComponent = PomodoroComponent;

@@ -2,7 +2,7 @@
  * #%L
  * fujion
  * %%
- * Copyright (C) 2008 - 2016 Regenstrief Institute, Inc.
+ * Copyright (C) 2008 - 2017 Regenstrief Institute, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,61 +32,109 @@ import org.springframework.web.socket.WebSocketSession;
  * Synchronizes state changes from the server to the client.
  */
 public class Synchronizer {
-    
+
     private final ClientInvocationQueue queue;
-    
+
     private final WebSocketSession session;
-    
+
     private boolean queueing;
-    
+
+    /**
+     * Create a synchronizer for the specific web socket session.
+     * 
+     * @param session The web socket session.
+     */
     public Synchronizer(WebSocketSession session) {
         this.session = session;
         queue = new ClientInvocationQueue();
     }
-    
+
+    /**
+     * Activate queueing. All client invocations will be queued until queueing is deactivated.
+     */
     public void startQueueing() {
         queueing = true;
     }
-    
+
+    /**
+     * Deactivate queueing. Any queued invocations will be immediately sent to the client.
+     */
     public void stopQueueing() {
         queueing = false;
         sendToClient(queue.flush());
     }
-    
+
+    /**
+     * Clear the client invocation queue.
+     */
     public void clear() {
         queue.clear();
     }
-    
+
+    /**
+     * Creates and sends a client invocation to create a widget.
+     *
+     * @param parent Parent of the new widget.
+     * @param props Property values used to initialize the new widget.
+     * @param state State values used to initialize the new widget.
+     * @return This synchronizer instance (for chaining).
+     */
     public Synchronizer createWidget(BaseComponent parent, Map<String, Object> props, Map<String, Object> state) {
         return sendToClient(new ClientInvocation((String) null, "fujion.widget.create", parent, props, state));
     }
-    
+
+    /**
+     * Process queued client invocations.
+     *
+     * @param queue A client invocation queue.
+     * @return This synchronizer instance (for chaining).
+     */
     public Synchronizer processQueue(ClientInvocationQueue queue) {
         return sendToClient(queue.flush());
     }
-    
+
+    /**
+     * Creates and sends a client invocation to invoke a specified function on a component.
+     *
+     * @param component Identifier of component whose function is to be invoked.
+     * @param function Name of the function to be invoked.
+     * @param args Arguments to pass to the functions.
+     * @return This synchronizer instance (for chaining).
+     */
     public Synchronizer invokeClient(IElementIdentifier component, String function, Object... args) {
         ClientInvocation invocation = new ClientInvocation(component, function, args);
         return sendToClient(invocation);
     }
-    
+
+    /**
+     * Sends (or queues) a client invocation.
+     *
+     * @param invocation Client invocation.
+     * @return This synchronizer instance (for chaining).
+     */
     public Synchronizer sendToClient(ClientInvocation invocation) {
         if (queueing) {
             queue.queue(invocation);
         } else {
             WebSocketHandler.send(session, invocation);
         }
-        
+
         return this;
     }
-    
+
+    /**
+     * Sends (or queues) multiple client invocations.
+     *
+     * @param invocations List of client invocations.
+     * @return This synchronizer instance (for chaining).
+     */
     public Synchronizer sendToClient(Collection<ClientInvocation> invocations) {
         if (queueing) {
             queue.queue(invocations);
         } else {
             WebSocketHandler.send(session, invocations);
         }
-        
+
         return this;
     }
 }

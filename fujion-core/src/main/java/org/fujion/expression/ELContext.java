@@ -2,7 +2,7 @@
  * #%L
  * fujion
  * %%
- * Copyright (C) 2008 - 2016 Regenstrief Institute, Inc.
+ * Copyright (C) 2008 - 2017 Regenstrief Institute, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,6 +38,14 @@ public class ELContext {
 
     private final Map<String, Object> args;
     
+    /**
+     * Create an EL context.
+     *
+     * @param component The current component.
+     * @param parent The component that will become the parent.
+     * @param element The current page element.
+     * @param args The argument map passed to the materializer.
+     */
     public ELContext(BaseComponent component, BaseComponent parent, PageElement element, Map<String, Object> args) {
         this.component = component;
         this.parent = parent;
@@ -45,11 +53,27 @@ public class ELContext {
         this.args = args;
     }
     
+    /**
+     * Returns a value for the named object. If the name is "self", the component itself is
+     * returned. Otherwise, name resolution is attempted from several sources in the following
+     * order:
+     * <ol>
+     * <li>Tag library prefixes</li>
+     * <li>The argument map passed to the materializer</li>
+     * <li>The component's attribute map</li>
+     * <li>The component's namespace</li>
+     * <li>All ancestor attribute maps</li>
+     * </ol>
+     *
+     * @param name The object name.
+     * @return The value of the named object, or null if not found.
+     */
     public Object getValue(String name) {
         Object result = "self".equals(name) ? component : element.getTagLibrary(name);
         result = result != null ? result : args == null ? null : args.get(name);
         result = result != null ? result : component.getAttribute(name);
         result = result != null ? result : parent == null ? null : parent.findByName(name);
+        result = result != null ? result : parent == null ? null : parent.findAttribute(name);
         return result;
     }
 }

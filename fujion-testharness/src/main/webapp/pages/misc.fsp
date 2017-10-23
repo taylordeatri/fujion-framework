@@ -67,7 +67,7 @@
 			<row>
 				<span name="custom">
 					This span has a custom attribute.
-					<?attribute key="test" value="this is a custom attribute"?>
+					<?attribute name="test" value="this is a custom attribute"?>
 				</span>
 				Test of custom attribute: ${custom.test}
 			</row>

@@ -1,4 +1,4 @@
-<page>
+<fsp>
 	<paneview orientation="horizontal" height="90%" width="50%">
 		<pane splittable="true">
 			Should have a vertical splitter to the right
@@ -15,4 +15,4 @@
 			Should not have a splitter below
 		</pane>
 	</paneview>
-</page>
+</fsp>

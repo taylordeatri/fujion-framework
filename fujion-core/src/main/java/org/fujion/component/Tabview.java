@@ -2,20 +2,20 @@
  * #%L
  * fujion
  * %%
- * Copyright (C) 2008 - 2016 Regenstrief Institute, Inc.
+ * Copyright (C) 2008 - 2017 Regenstrief Institute, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  * #L%
  */
 package org.fujion.component;
@@ -31,18 +31,46 @@ import org.fujion.annotation.Component.PropertySetter;
 @Component(tag = "tabview", widgetModule = "fujion-tabview", widgetClass = "Tabview", parentTag = "*", childTag = @ChildTag("tab"))
 public class Tabview extends BaseUIComponent {
     
+    /**
+     * Placement of tabs in a tab view. Default is top.
+     */
     public enum TabPosition {
-        TOP, BOTTOM, LEFT, RIGHT
+        /**
+         * Position tabs at the top of the tab view.
+         */
+        TOP,
+        /**
+         * Position tabs at the bottom of the tab view.
+         */
+        BOTTOM,
+        /**
+         * Position tabs on the left side of the tab view.
+         */
+        LEFT,
+        /**
+         * Position tabs on the right side of the tab view.
+         */
+        RIGHT
     }
     
     private Tab selectedTab;
     
     private TabPosition tabPosition = TabPosition.TOP;
     
+    /**
+     * Returns the currently selected tab, if any.
+     *
+     * @return The currently selected tab (may be null).
+     */
     public Tab getSelectedTab() {
         return selectedTab;
     }
     
+    /**
+     * Sets the currently selected tab.
+     *
+     * @param selectedTab The tab to select (may be null).
+     */
     public void setSelectedTab(Tab selectedTab) {
         validateIsChild(selectedTab);
         
@@ -57,13 +85,11 @@ public class Tabview extends BaseUIComponent {
         }
     }
     
-    @Override
-    protected void afterRemoveChild(BaseComponent child) {
-        if (child == selectedTab) {
-            selectedTab = null;
-        }
-    }
-    
+    /**
+     * If the added tab is marked as selected, update the selected tab.
+     *
+     * @see org.fujion.component.BaseUIComponent#afterAddChild(org.fujion.component.BaseComponent)
+     */
     @Override
     protected void afterAddChild(BaseComponent child) {
         if (((Tab) child).isSelected()) {
@@ -71,18 +97,36 @@ public class Tabview extends BaseUIComponent {
         }
     }
     
+    /**
+     * If the removed tab is selected, clear the selection.
+     *
+     * @see org.fujion.component.BaseUIComponent#afterRemoveChild(org.fujion.component.BaseComponent)
+     */
+    @Override
+    protected void afterRemoveChild(BaseComponent child) {
+        if (child == selectedTab) {
+            selectedTab = null;
+        }
+    }
+    
+    /**
+     * Returns the tab {@link TabPosition position}.
+     *
+     * @return The tab {@link TabPosition position}.
+     */
     @PropertyGetter("tabPosition")
     public TabPosition getTabPosition() {
         return tabPosition;
     }
     
+    /**
+     * Sets the tab {@link TabPosition position}.
+     *
+     * @param tabPosition The tab {@link TabPosition position}.
+     */
     @PropertySetter("tabPosition")
     public void setTabPosition(TabPosition tabPosition) {
-        tabPosition = tabPosition == null ? TabPosition.TOP : tabPosition;
-        
-        if (tabPosition != this.tabPosition) {
-            sync("tabPosition", this.tabPosition = tabPosition);
-        }
+        propertyChange("tabPosition", this.tabPosition, this.tabPosition = defaultify(tabPosition, TabPosition.TOP), true);
     }
     
 }

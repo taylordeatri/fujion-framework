@@ -2,7 +2,7 @@
  * #%L
  * fujion
  * %%
- * Copyright (C) 2008 - 2016 Regenstrief Institute, Inc.
+ * Copyright (C) 2008 - 2017 Regenstrief Institute, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,7 +39,11 @@ import org.apache.commons.io.IOUtils;
 import org.fujion.ancillary.ComponentRegistry;
 import org.fujion.annotation.Component.ContentHandling;
 import org.fujion.annotation.ComponentDefinition.Cardinality;
+import org.fujion.common.StrUtil;
+import org.fujion.common.Version;
+import org.fujion.common.Version.VersionPart;
 import org.fujion.common.XMLUtil;
+import org.fujion.page.PageParser;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -51,8 +55,6 @@ public class SchemaGenerator {
     
     private final Document schema;
 
-    private static final String NS_FUJION = "http://www.fujion.org/schema/fsp";
-    
     private static final String NS_SCHEMA = "http://www.w3.org/2001/XMLSchema";
     
     private static final String NS_VERSIONING = "http://www.w3.org/2007/XMLSchema-versioning";
@@ -70,7 +72,7 @@ public class SchemaGenerator {
         Option option = new Option("p", "package", true, "Java package(s) to scan (default: " + DEFAULT_PACKAGES[0] + ")");
         option.setArgs(Option.UNLIMITED_VALUES);
         options.addOption(option);
-        option = new Option("v", false, "Schema v1.0 compatible (default: v1.1 compatible)");
+        option = new Option("f", "fujionVersion", true, "Fujion Framework version");
         options.addOption(option);
         option = new Option("h", "help", false, "This help message");
         options.addOption(option);
@@ -82,7 +84,14 @@ public class SchemaGenerator {
         }
         
         String[] packages = cmd.hasOption("p") ? cmd.getOptionValues("p") : DEFAULT_PACKAGES;
-        String xml = new SchemaGenerator(packages, cmd.hasOption("v")).toString();
+        String fujionVersion = cmd.getOptionValue("f");
+        
+        if (fujionVersion != null) {
+            fujionVersion = new Version(fujionVersion).toString(VersionPart.MINOR);
+            fujionVersion = StrUtil.piece(fujionVersion, ".", 1, 2);
+        }
+        
+        String xml = new SchemaGenerator(packages, fujionVersion).toString();
         String output = cmd.getArgs().length == 0 ? null : cmd.getArgs()[0];
         
         if (output == null) {
@@ -94,7 +103,7 @@ public class SchemaGenerator {
         }
     }
     
-    public SchemaGenerator(String[] packages, boolean v1_0_compatible) throws Exception {
+    public SchemaGenerator(String[] packages, String fujionVersion) throws Exception {
         ComponentRegistry registry = ComponentRegistry.getInstance();
         
         for (String pkg : packages) {
@@ -105,18 +114,33 @@ public class SchemaGenerator {
         DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
         schema = docBuilder.newDocument();
         Element root = schema.createElementNS(NS_SCHEMA, "xs:schema");
-        root.setAttribute("targetNamespace", NS_FUJION);
-        root.setAttribute("xmlns:fsp", NS_FUJION);
-        root.setAttributeNS(NS_VERSIONING, "vc:minVersion", v1_0_compatible ? "1.0" : "1.1");
+        root.setAttribute("targetNamespace", PageParser.NS_FSP);
+        root.setAttribute("xmlns:fsp", PageParser.NS_FSP);
+        root.setAttributeNS(NS_VERSIONING, "vc:minVersion", "1.1");
         root.setAttribute("elementFormDefault", "qualified");
         schema.appendChild(root);
-        
+        Element annot = createElement("annotation", root);
+        createElement("documentation", annot)
+                .setTextContent("Fujion Server Page Schema" + (fujionVersion == null ? "" : ", version " + fujionVersion));
+        Element ele = createElement("simpleType", root, "name", "el");
+        ele = createElement("restriction", ele, "base", "xs:string");
+        createElement("pattern", ele, "value", ".*\\$\\{.+\\}.*");
+        addExtendedType("boolean", root);
+        addExtendedType("decimal", root);
+        addExtendedType("integer", root);
+        ele = createElement("element", root, "name", "fsp");
+        ele = createElement("complexType", ele, "mixed", "true");
+        ele = createElement("all", ele);
+        ele = createElement("any", ele, "namespace", "##targetNamespace");
+        ele.setAttribute("minOccurs", "0");
+        ele.setAttribute("maxOccurs", "unbounded");
+
         for (ComponentDefinition def : registry) {
             if (def.getTag().startsWith("#")) {
                 continue;
             }
             
-            Element ele = createElement("element", root, "name", def.getTag());
+            ele = createElement("element", root, "name", def.getTag());
             Element ct = createElement("complexType", ele);
             
             boolean childrenAllowed = def.childrenAllowed();
@@ -131,15 +155,7 @@ public class SchemaGenerator {
                     ct.setAttribute("mixed", "true");
                 }
                 
-                Element childAnchor;
-                
-                if (v1_0_compatible) {
-                    childAnchor = createElement("choice", ct);
-                    childAnchor.setAttribute("minOccurs", "0");
-                    childAnchor.setAttribute("maxOccurs", "unbounded");
-                } else {
-                    childAnchor = createElement("all", ct);
-                }
+                Element childAnchor = createElement("all", ct);
                 
                 for (Entry<String, Cardinality> childTag : def.getChildTags().entrySet()) {
                     String tag = childTag.getKey();
@@ -159,9 +175,13 @@ public class SchemaGenerator {
             
             processAttributes(def.getSetters(), ct);
             processAttributes(def.getFactoryParameters(), ct);
+            createElement("anyAttribute", ct, "namespace", "##other").setAttribute("processContents", "lax");
         }
     }
     
+    /**
+     * Returns the text representation of the generated schema.
+     */
     @Override
     public String toString() {
         return XMLUtil.toString(schema);
@@ -169,7 +189,9 @@ public class SchemaGenerator {
     
     private void processAttributes(Map<String, Method> setters, Element ct) {
         for (Entry<String, Method> setter : setters.entrySet()) {
-            if (setter.getKey().startsWith("#")) {
+            String key = setter.getKey();
+            
+            if (key.startsWith("#") || key.endsWith(":")) {
                 continue;
             }
             
@@ -205,8 +227,19 @@ public class SchemaGenerator {
         }
     }
     
+    private Element addExtendedType(String type, Element root) {
+        Element ele = createElement("simpleType", root, "name", type);
+        createElement("union", ele, "memberTypes", "xs:" + type + " fsp:el");
+        return ele;
+    }
+    
     private void processEnum(Element attr, Class<?> javaType) {
-        Element st = createElement("simpleType", attr);
+        String name = findElement("element", attr).getAttribute("name") + "_" + attr.getAttribute("name");
+        Element root = attr.getOwnerDocument().getDocumentElement();
+        attr.setAttribute("type", "fsp:" + name);
+        Element st = createElement("simpleType", root, "name", name);
+        Element union = createElement("union", st, "memberTypes", "fsp:el");
+        st = createElement("simpleType", union);
         Element res = createElement("restriction", st);
         res.setAttribute("base", "xs:string");
         
@@ -217,9 +250,9 @@ public class SchemaGenerator {
     
     private String getType(Class<?> javaType) {
         String type = null;
-        type = type != null ? type : getType(javaType, "xs:boolean", boolean.class, Boolean.class);
-        type = type != null ? type : getType(javaType, "xs:integer", int.class, Integer.class);
-        type = type != null ? type : getType(javaType, "xs:decimal", float.class, Float.class, double.class, Double.class);
+        type = type != null ? type : getType(javaType, "fsp:boolean", boolean.class, Boolean.class);
+        type = type != null ? type : getType(javaType, "fsp:integer", int.class, Integer.class);
+        type = type != null ? type : getType(javaType, "fsp:decimal", float.class, Float.class, double.class, Double.class);
         return type != null ? type : "xs:string";
     }
     
@@ -233,29 +266,56 @@ public class SchemaGenerator {
         return null;
     }
     
+    private Element findElement(String tag, Element ele) {
+        tag = "xs:" + tag;
+
+        while (ele != null) {
+            if (ele.getTagName().equals(tag)) {
+                return ele;
+            }
+            
+            ele = (Element) ele.getParentNode();
+        }
+        
+        return null;
+    }
+    
+    private Element createElement(String tag) {
+        return schema.createElement("xs:" + tag);
+    }
+
     private Element createElement(String tag, Element parent) {
         return createElement(tag, parent, null, null);
     }
     
     private Element createElement(String tag, Element parent, String keyName, String keyValue) {
-        Element element = schema.createElement("xs:" + tag);
-        
+        Element element = createElement(tag);
+        Element ref = null;
+
         if (keyName != null) {
-            NodeList nodes = parent.getChildNodes();
             element.setAttribute(keyName, keyValue);
+        }
+        
+        NodeList nodes = parent.getChildNodes();
+        
+        for (int i = 0, j = nodes.getLength(); i < j; i++) {
+            Element sib = (Element) nodes.item(i);
             
-            for (int i = 0, j = nodes.getLength(); i < j; i++) {
-                Element sib = (Element) nodes.item(i);
-                String val = sib.getAttribute(keyName);
-                
-                if (val != null && val.compareToIgnoreCase(keyValue) >= 0) {
-                    parent.insertBefore(element, sib);
-                    return element;
-                }
+            if (!sib.getTagName().endsWith(tag)) {
+                continue;
+            }
+            
+            String val = keyName == null ? null : sib.getAttribute(keyName);
+            
+            if (val != null && val.compareToIgnoreCase(keyValue) >= 0) {
+                ref = sib;
+                break;
+            } else {
+                ref = (Element) sib.getNextSibling();
             }
         }
         
-        parent.appendChild(element);
+        parent.insertBefore(element, ref);
         return element;
     }
 }

@@ -2,20 +2,20 @@
  * #%L
  * fujion
  * %%
- * Copyright (C) 2008 - 2016 Regenstrief Institute, Inc.
+ * Copyright (C) 2008 - 2017 Regenstrief Institute, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  * #L%
  */
 package org.fujion.taglib;
@@ -26,46 +26,56 @@ package org.fujion.taglib;
  * signature that matches the parameter list.
  */
 public class TagLibraryFunction {
-    
+
     private final String className;
-    
+
     private final String methodSignature;
-    
+
     private final String methodName;
-    
+
     TagLibraryFunction(String className, String methodSignature) {
         this.className = className.trim();
         this.methodSignature = methodSignature;
         this.methodName = extractMethodName(methodSignature);
     }
-    
+
     private String extractMethodName(String methodSignature) {
         int i = methodSignature.indexOf(" ");
         int j = methodSignature.indexOf("(", i);
         return methodSignature.substring(i + 1, j < 0 ? methodSignature.length() : j).trim();
     }
-    
+
+    /**
+     * Returns the fully qualified name of the class.
+     *
+     * @return The fully qualified name of the class.
+     */
     public String getClassName() {
         return className;
     }
-    
+
+    /**
+     * Returns the method name.
+     *
+     * @return The method name.
+     */
     public String getMethodName() {
         return methodName;
     }
-    
+
     @Override
     public String toString() {
         return className + "." + methodName;
     }
-    
+
     @Override
     public boolean equals(Object object) {
         if (object instanceof TagLibraryFunction) {
             TagLibraryFunction fcn = (TagLibraryFunction) object;
             return fcn.className.equals(className) && fcn.methodSignature.equals(methodSignature);
         }
-        
+
         return false;
     }
-    
+
 }
